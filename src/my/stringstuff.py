@@ -7,7 +7,6 @@ stringstuff
 '''
 
 import os
-from parse import parse
 import requests
 
 
