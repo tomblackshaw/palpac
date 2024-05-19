@@ -105,6 +105,7 @@ WMO_code_warnings_dct = {
 97: ("Yeah, I noticed, smartass.", "There is a heavy thunderstorm with rain or snow, right now, with hail."),
 98: ("I didn't know that was possible.", "There is a heavy thunderstorm with duststorm or sandstorm."),
 99: ("Are the gods trying to kill us?", "There is a heavy thunderstorm, right now, with hail."),
+100:("We are all going to die. Lovely!", "The apocalypse is upon us. Gather your loved ones together and pray to whichever god or gods you worship. As usual, atheists should email Richard Dawkins.")
 }
 
 # simplesay('Freya', wmo_code_warnings_dct[random.randint(0, len(wmo_code_warnings_dct))])
