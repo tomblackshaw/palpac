@@ -11,13 +11,13 @@ from my.tools import SelfCachingCall
 from elevenlabs import play
 s = SpeakmymindSingleton
 prof_name= [r for r in s.voiceinfo if r.samples is not None][0].name
-play(s.audio('hello there','Rachel'))
-play(s.audio('Hi there. This is a test.', s.random_name))
-prof_audio = lambda text: s.audio(text, prof_name, advanced=True, model='eleven_multilingual_v2', stability=0.50, similarity_boost=0.01, style=0.10,use_speaker_boost=True)
-freya_audio = lambda text: s.audio(text, 'Freya', advanced=True, model='eleven_multilingual_v2', stability=0.30, similarity_boost=0.01, style=0.50,use_speaker_boost=True)
+play(s.audio('Rachel', 'hello there'))
+play(s.audio(s.random_name, 'Hi there. This is a test.'))
+prof_audio = lambda text: s.audio(prof_name, text, advanced=True, model='eleven_multilingual_v2', stability=0.50, similarity_boost=0.01, style=0.10,use_speaker_boost=True)
+freya_audio = lambda text: s.audio('Freya', text, advanced=True, model='eleven_multilingual_v2', stability=0.30, similarity_boost=0.01, style=0.50,use_speaker_boost=True)
 play(s.audio(voice="Freya", text="Word up, homie G skillet dawg. What's crack-a-lackin'?"))
-annoying_audio = lambda name: s.audio("Like, OMG, you are totes late, Chuckles. JK, it's 7AM and POV your drip is straight fire. Or gay fire. Whatevs. Anyway, time to rise and shine, my short king sigma!",
-                name, advanced=True, model='eleven_multilingual_v2', stability=0.30, similarity_boost=0.01, style=0.90,use_speaker_boost=True)
+annoying_audio = lambda voice: s.audio(voice=voice, text="Like, OMG, you are totes late, Chuckles. JK, it's 7AM and POV your drip is straight fire. Or gay fire. Whatevs. Anyway, time to rise and shine, my short king sigma!",
+                advanced=True, model='eleven_multilingual_v2', stability=0.30, similarity_boost=0.01, style=0.90,use_speaker_boost=True)
 
 data_lst = [annoying_audio(au) for au in ('Freya', prof_name)]
 for d in data_lst:
@@ -115,7 +115,7 @@ class _SpeakmymindClass(object):
     def get_name_of_id(self, an_id):
         return [r for r in self.voiceinfo if r.voice_id == an_id][0].name
 
-    def audio(self, text, voice, getgenerator=False, advanced=False, model=None, similarity_boost=None, stability=None, style=None, use_speaker_boost=None):
+    def audio(self, voice, text, getgenerator=False, advanced=False, model=None, similarity_boost=None, stability=None, style=None, use_speaker_boost=None):
         if advanced is False:
             audio = self.client.generate(text=text, voice=voice)
         else:
@@ -128,6 +128,6 @@ class _SpeakmymindClass(object):
         return audio if getgenerator else b''.join(audio)
 
 
-# bytesresult = speakclient.audio('hello there','Rachel')
+# bytesresult = speakclient.audio('Rachel', 'hello there')
 # play(bytesresult)
 SpeakmymindSingleton = _SpeakmymindClass()
