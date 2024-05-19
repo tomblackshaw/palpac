@@ -8,16 +8,19 @@ weatherstuff
 See https://github.com/frenck/python-open-meteo
 '''
 import random
+import time
 import urllib
 
 from bs4 import BeautifulSoup
 from elevenlabs import play
 from open_meteo import OpenMeteo
+from open_meteo.exceptions import OpenMeteoConnectionError
 from open_meteo.models import DailyParameters, HourlyParameters
 from parse import parse
 
 from my.consts import WMO_code_warnings_dct
 from my.stringstuff import wind_direction_str
+from my.tools import SelfCachingCall, StillAwaitingCachedValue
 
 
 def get_lat_and_long(url='http://cqcounter.com/whois/my_ip_address.php'):
@@ -35,7 +38,7 @@ def get_lat_and_long(url='http://cqcounter.com/whois/my_ip_address.php'):
     return(latitude, longitude)
 
 
-def get_weather():
+def get_weather_SUB():
     (latitude, longitude) = get_lat_and_long()
     import asyncio
 
@@ -64,6 +67,27 @@ def get_weather():
     return asyncio.run(main())
 
 
+our_weather_caching_call = None
+
+
+def get_weather():
+    '''
+from my.weatherstuff import *
+w = get_weather()
+    '''
+    global our_weather_caching_call
+    if our_weather_caching_call is None:
+        our_weather_caching_call = SelfCachingCall(120, get_weather_SUB)
+    try:
+        return our_weather_caching_call.result
+    except StillAwaitingCachedValue as e:
+        print("Still awaiting cached value for weather (error=%s). Retrying." % str(e))
+        time.sleep(1)
+        return get_weather()
+    except OpenMeteoConnectionError:
+        raise StillAwaitingCachedValue("Still trying to get weather data from OpenMeteo")
+
+
 def play_dialogue_lst(dialogue_lst, stability, similarity_boost, style):
     from my.speakmymind import SpeakmymindSingleton as s
     speechgen = lambda voice, text: s.audio(voice=voice, text=text, advanced=True, model='eleven_multilingual_v2', stability=stability, similarity_boost=similarity_boost, style=style, use_speaker_boost=True)
@@ -76,6 +100,8 @@ def play_dialogue_lst(dialogue_lst, stability, similarity_boost, style):
 
 
 def generate_weather_report_dialogue(myweather, speaker1, speaker2, testing=False):
+    if myweather is None:
+        raise ValueError("Please specify a valid parameter for myweather. Usually, you supply the result of a call to get_weather().")
     randgreeting = lambda: random.choice(["Look who it is", "Howdy", 'Hi', 'Hello', 'Sup', 'Hey', "How you doin'", 'What it do', 'Greetings', "G'day", 'Hi there', "What's up", "How's it going", "What's good"])
     randweatherhi = lambda: random.choice(["What's the weather like today?", "How's the weather?", "Weather-wise, where are we at?", "Let's talk weather.", "Tell us about today's weather.", "What will today's weather be like?"])
     randnudge = lambda: random.choice(["Have you anything to add?", "Anything else?", "Is there more?", "You seem tense.",
@@ -83,7 +109,7 @@ def generate_weather_report_dialogue(myweather, speaker1, speaker2, testing=Fals
                                        "But?", "What is it you're not telling me?", "Spit it out.", "Oh, God. Here it comes.",
                                        "Finish your thought.", "Continue.", "Uh oh. I know that look."])
     randgoodbye = lambda: random.choice(["Oh %s, bless your heart.", "Oh %s, that's lovely news.", "%s, you made my day. Really. I'm super cereal.", "Thanks for nothing, %s.", "That's great, %s.",
-                                        "%s, you're a star.", "Hey %s, you're a regular Nostradamus.", "As meteorologists go, %s, you're okay.", "Thanks go to %s, our meteorologist, for that report."]) % speaker2
+                                        "%s, you're a star.", "Hey %s, you're a regular Nostradamus.", "As nerds go, %s, you're okay."]) % speaker2
     forecast_rainfall_quantity = myweather.daily.precipitation_sum[0]  # day 1 of the seven-day forecast
     forecast_rainfall_hours = myweather.daily.precipitation_hours[0]  # day 1 of the seven-day forecast
     chance_of_rain = max(myweather.hourly.precipitation)
@@ -140,11 +166,11 @@ def generate_weather_report_dialogue(myweather, speaker1, speaker2, testing=Fals
     if wmo_warning:
         dialogue_lst.append([speaker1, randnudge()])
         dialogue_lst.append([speaker2, wmo_warning])
-    dialogue_lst.append([speaker1, '%s %s' % (wmo_retort if wmo_retort else '', randgoodbye())])  # This concludes our weather report.
+    dialogue_lst.append([speaker1, '%s %s' % (wmo_retort if wmo_retort else '', randgoodbye() + " Thanks go to %s, our meteorologist, for that report." % speaker2)])  # This concludes our weather report.
     return dialogue_lst
 
 
-def do_a_weather_report(myweather, speaker1, speaker2, testing=False, stability=0.90, similarity_boost=0.01, style=0.5):
+def do_a_weather_report(myweather, speaker1, speaker2, testing=False, stability=0.30, similarity_boost=0.01, style=0.5):
     from my.speakmymind import SpeakmymindSingleton as s
     prof_name = [r for r in s.voiceinfo if r.samples is not None][0].name
     if speaker1 == speaker2:
@@ -163,6 +189,8 @@ def do_a_weather_report(myweather, speaker1, speaker2, testing=False, stability=
 from my.speakmymind import SpeakmymindSingleton as s
 from my.weatherstuff import *
 import random
+do_a_weather_report(get_weather(), random.choice(s.voicenames), random.choice(s.voicenames), True)
+
 w = get_weather()
 #dialogue_lst = generate_weather_report_dialogue(testing=True, myweather=w, speaker1 = random.choice(s.voicenames), speaker2 = random.choice(s.voicenames))
 do_a_weather_report(testing=True, myweather=w, speaker1 = random.choice(s.voicenames), speaker2 = random.choice(s.voicenames), stability=0.10, similarity_boost=0.01, style=0.9)
