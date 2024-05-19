@@ -7,21 +7,14 @@ weatherstuff
 
 See https://github.com/frenck/python-open-meteo
 '''
-import os
-from random import randint, choice
 import random
-import sys
 import urllib
 
 from bs4 import BeautifulSoup
-from elevenlabs import play, stream
-from elevenlabs.client import ElevenLabs, VoiceSettings, Voice
+from elevenlabs import play
 from open_meteo import OpenMeteo
-import open_meteo
 from open_meteo.models import DailyParameters, HourlyParameters
 from parse import parse
-from python_weather.enums import WindDirection
-import requests
 
 from my.consts import WMO_code_warnings_dct
 from my.speakmymind import SpeakmymindSingleton
