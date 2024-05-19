@@ -94,7 +94,7 @@ def generate_weather_report_dialogue(myweather, speaker1, speaker2, testing=Fals
     windspeed = myweather.current_weather.wind_speed
     winddirection = myweather.current_weather.wind_direction
     if testing:
-        wcode = random.randint(1, 100)
+        wcode = random.randint(0, 100)
         forecast_rainfall_quantity = random.randint(1, 100) / 10.
         forecast_rainfall_hours = random.randint(0, 24)
         mintemp = random.randint(-50, 10)
