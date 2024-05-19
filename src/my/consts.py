@@ -7,7 +7,7 @@ SOURCE: https://www.nodc.noaa.gov/archive/arc0021/0002199/1.1/data/0-data/HTML/W
 WMO_code_warnings_dct = {
 0: ("Blue skies", "...with not a cloud in the sky!"),
 1: ("Those clouds are fading away.", "The clouds are generally dissolving or becoming less developed."),
-2: ("No change, then.", "The state of sky on the whole is unchanged since the last time you asked."),
+2: ("If you can think of a more meaningless answer, please write it down and never say it out loud.", "The state of sky on the whole is unchanged since the last time you asked."),
 3: ("Clouds are gathering.", "Clouds are generally forming or developing."),
 4: ("Mother Nature is smoking.", "Visibility reduced by smoke, perhaps from forest fires, industrial smoke or volcanic ashes."),
 5: ("Purple haze all in my brain.", "There is a haze."),
