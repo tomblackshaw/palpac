@@ -46,8 +46,7 @@ class Login(QWidget):
  
 if __name__ == '__main__':
     add_to_os_path('/opt/homebrew/bin')
-    os.system('''echo $PWD''')
-    os.system('''pyuic6 ui/newform.ui -o ui/newform.py''')
+    assert(0 == os.system('''pyuic6 -o ui/newform.py ui/newform.ui'''))
     # Prepare to speak. Contact ElevenLabs and get a clientclass.
     # Make a request to the ZenQuotes API
     app = QApplication(sys.argv)
