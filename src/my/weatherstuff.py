@@ -110,7 +110,7 @@ def do_a_weather_report(myweather, speaker1, speaker2, testing=False, stability=
     if wmo_warning:
         lst.append(speechgen(speaker1, randnudge()))
         lst.append(speechgen(speaker2, wmo_warning))
-    lst.append(speechgen(speaker1, '%s... ... %s.' % (wmo_retort if wmo_retort else '', randgoodbye())))  # This concludes our weather report.
+    lst.append(speechgen(speaker1, '%s %s' % (wmo_retort if wmo_retort else '', randgoodbye())))  # This concludes our weather report.
     for i in lst:
         play(i)
 
