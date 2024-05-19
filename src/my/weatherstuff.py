@@ -76,7 +76,7 @@ def do_a_weather_report(myweather, speaker1, speaker2, testing=False, stability=
                                        "There's more, isn't there?", "Okay, what's the bad news?", "You look constipated.", "Go on.", "And?",
                                        "But?", "What is it you're not telling me?", "Spit it out.", "Oh, God. Here it comes.",
                                        "Finish your thought."])
-    randgoodbye = lambda: random.choice(["Oh %s, bless your heart.", "Oh %s, that's lovely news.", "%s, you made my day. Really. I'm super cereal.", "Thanks for nothing, %s.", "Oh, that's great, %s.",
+    randgoodbye = lambda: random.choice(["Oh %s, bless your heart.", "Oh %s, that's lovely news.", "%s, you made my day. Really. I'm super cereal.", "Thanks for nothing, %s.", "That's great, %s.",
                                         "%s, you're a star.", "Hey %s, you're a regular Nostradamus."]) % speaker2
     speechgen = lambda voice, text: s.audio(voice=voice, text=text, advanced=True, model='eleven_multilingual_v2', stability=stability, similarity_boost=similarity_boost, style=style, use_speaker_boost=True)
     # speechgen = lambda voice, text: \
