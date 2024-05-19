@@ -63,13 +63,6 @@ class Error(Exception):
         super().__init__(message)
 
 
-class FrontendError(Error):
-    """Class for all frontend errors"""
-
-    def __init__(self, message):
-        super().__init__(message)
-
-
 class CachingError(Error):
     """Class for all caching errors"""
 
