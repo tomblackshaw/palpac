@@ -70,7 +70,7 @@ def do_a_weather_report(myweather, speaker1, speaker2, testing=False, stability=
     prof_name= [r for r in s.voiceinfo if r.samples is not None][0].name
     if speaker1 == speaker2:
         speaker1 = prof_name
-    randgreeting = lambda: random.choice(['Hi', 'Hello', 'Sup', 'Hey', "How you doin'", 'What it do', 'Greetings', "G'day", 'Hi there', "What's up", "How's it going", "Whar's good"])
+    randgreeting = lambda: random.choice(['Hi', 'Hello', 'Sup', 'Hey', "How you doin'", 'What it do', 'Greetings', "G'day", 'Hi there', "What's up", "How's it going", "What's good"])
     randweatherhi = lambda: random.choice(["What's the weather like today?", "How's the weather?", "Weather-wise, where are we at?", "Let's talk weather.", "Tell us about today's weather.", "What will today's weather be like?"])
     randnudge = lambda: random.choice(["Have you anything to add?", "Anything else?", "Is there more?", "You seem tense.",
                                        "There's more, isn't there?", "Okay, what's the bad news?", "You look constipated.", "Go on.", "And?",
