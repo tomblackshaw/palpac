@@ -77,7 +77,7 @@ w = get_weather()
     '''
     global our_weather_caching_call
     if our_weather_caching_call is None:
-        our_weather_caching_call = SelfCachingCall(120, get_weather_SUB)
+        our_weather_caching_call = SelfCachingCall(300, get_weather_SUB)
     try:
         return our_weather_caching_call.result
     except StillAwaitingCachedValue as e:
