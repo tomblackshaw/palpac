@@ -166,7 +166,7 @@ def generate_weather_report_dialogue(myweather, speaker1, speaker2, testing=Fals
     if wmo_warning:
         dialogue_lst.append([speaker1, randnudge()])
         dialogue_lst.append([speaker2, wmo_warning])
-    dialogue_lst.append([speaker1, '%s %s' % (wmo_retort if wmo_retort else '', randgoodbye() + " Thanks go to %s, our meteorologist, for that report." % speaker2)])  # This concludes our weather report.
+    dialogue_lst.append([speaker1, '%s %s' % (wmo_retort if wmo_retort else '', randgoodbye() + " That was %s, our meteorologist." % speaker2)])  # This concludes our weather report.
     return dialogue_lst
 
 
