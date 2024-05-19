@@ -8,7 +8,7 @@ speakmymind
 '''
 from my.speakmymind import SpeakmymindSingleton
 from my.tools import SelfCachingCall
-from elevenlabs import play
+from elevenlabs import play, stream
 s = SpeakmymindSingleton
 prof_name= [r for r in s.voiceinfo if r.samples is not None][0].name
 play(s.audio('hello there','Rachel'))
@@ -59,9 +59,18 @@ simplesay = lambda voice, text: play(s.audio(voice=voice, text=text, advanced=Tr
 
 '''
 import os
-from random import choice
+from random import randint, choice
+import sys
+import urllib
 
-from elevenlabs.client import ElevenLabs, Voice
+from bs4 import BeautifulSoup
+from elevenlabs import play, stream
+from elevenlabs.client import ElevenLabs, VoiceSettings, Voice
+from open_meteo import OpenMeteo
+import open_meteo
+from open_meteo.models import DailyParameters, HourlyParameters
+from parse import parse
+import requests
 
 from my.globals import ELEVENLABS_KEY_BASENAME
 from my.stringstuff import flatten
