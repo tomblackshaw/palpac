@@ -83,7 +83,7 @@ def generate_weather_report_dialogue(myweather, speaker1, speaker2, testing=Fals
                                        "But?", "What is it you're not telling me?", "Spit it out.", "Oh, God. Here it comes.",
                                        "Finish your thought.", "Continue.", "Uh oh. I know that look."])
     randgoodbye = lambda: random.choice(["Oh %s, bless your heart.", "Oh %s, that's lovely news.", "%s, you made my day. Really. I'm super cereal.", "Thanks for nothing, %s.", "That's great, %s.",
-                                        "%s, you're a star.", "Hey %s, you're a regular Nostradamus."]) % speaker2
+                                        "%s, you're a star.", "Hey %s, you're a regular Nostradamus.", "As meteorologists go, %s, you're okay.", "Thanks go to %s, our meteorologist, for that report."]) % speaker2
     forecast_rainfall_quantity = myweather.daily.precipitation_sum[0]  # day 1 of the seven-day forecast
     forecast_rainfall_hours = myweather.daily.precipitation_hours[0]  # day 1 of the seven-day forecast
     chance_of_rain = max(myweather.hourly.precipitation)
@@ -111,27 +111,31 @@ def generate_weather_report_dialogue(myweather, speaker1, speaker2, testing=Fals
                                     rainH=int(forecast_rainfall_hours),
                                     rainQ=int(forecast_rainfall_quantity),
                                     rainunit='centimeter' if forecast_rainfall_quantity == 1 else 'centimeters')
+
+    if wcode not in WMO_code_warnings_dct.keys():
+        print("Warning - %s is not a recognized weather code. I am choosing 100 instead." % str(wcode))
+        wcode = 100
     (wmo_retort, wmo_warning) = (None, None) if wcode == 0 else WMO_code_warnings_dct[wcode]
-    temper_txt = "The temperature is {tempC} degrees Celsius, {tempF} Fahrenheit, with a maximum of {maxC} (that's {maxF}) and a minimum of {minC} (that's {minF}).".format(
+    wind_txt = 'no wind' if windspeed < 1.0 else "{windspeed} KPH winds blowing {winddir}.".format(windspeed=windspeed, winddir=wind_direction_str(winddirection))
+    temper_txt = "The temperature is {tempC} degrees Celsius, {tempF} Fahrenheit, with a maximum of {maxC} (that's {maxF}), a minimum of {minC} (that's {minF}), and {wind_txt}".format(
         tempC=temperature ,
         tempF=int(temperature * 1.8 + 32),
         maxC=maxtemp,
         maxF=int(maxtemp * 1.8 + 32),
         minC=mintemp,
-        minF=int(mintemp * 1.8 + 32)
+        minF=int(mintemp * 1.8 + 32),
+        wind_txt=wind_txt
         ).replace('-', 'minus ').replace(' 1 degrees', ' 1 degree')
-    wind_txt = 'Wind Speed: zero.' if windspeed < 1.0 else "Wind Speed %d KPH blowing %s." % (windspeed, wind_direction_str(winddirection))
     dialogue_lst = []
-    dialogue_lst.append([speaker1, "Hi, I'm {oldn} and here's {name} with the weather report. {greeting} {name}. {question}".format(
+    dialogue_lst.append([speaker1, "Hi, I'm {oldn} and here's {name} with the weather report. {greeting}, {name}. {question}".format(
         greeting=randgreeting(),
         oldn=speaker1,
         name=speaker2,
         question=randweatherhi())])
-    dialogue_lst.append([speaker2, "{greeting}, {name}. {temper_txt} {wind_txt} {rain_txt}".format(
+    dialogue_lst.append([speaker2, "{greeting}, {name}. {temper_txt} {rain_txt}".format(
         greeting=randgreeting(),
         name=speaker1,
         temper_txt=temper_txt,
-        wind_txt=wind_txt,
         rain_txt=rain_txt)])
     if wmo_warning:
         dialogue_lst.append([speaker1, randnudge()])
@@ -153,17 +157,21 @@ def do_a_weather_report(myweather, speaker1, speaker2, testing=False, stability=
     dialogue_lst = generate_weather_report_dialogue(myweather=myweather, speaker1=speaker1, speaker2=speaker2, testing=testing)
     play_dialogue_lst(dialogue_lst=dialogue_lst, stability=stability, similarity_boost=similarity_boost, style=style)
 
+
+
 '''
-from my.speakmymind import SpeakmymindSingleton
+from my.speakmymind import SpeakmymindSingleton as s
 from my.weatherstuff import *
-from my.stringstuff import wind_direction_str
 import random
-s = SpeakmymindSingleton
-prof_name= [r for r in s.voiceinfo if r.samples is not None][0].name
 w = get_weather()
+#dialogue_lst = generate_weather_report_dialogue(testing=True, myweather=w, speaker1 = random.choice(s.voicenames), speaker2 = random.choice(s.voicenames))
+do_a_weather_report(testing=True, myweather=w, speaker1 = random.choice(s.voicenames), speaker2 = random.choice(s.voicenames), stability=0.10, similarity_boost=0.01, style=0.9)
+
+
+prof_name= [r for r in s.voiceinfo if r.samples is not None][0].name
 dialogue_lst = generate_weather_report_dialogue(testing=True, myweather=w, speaker1 = random.choice(s.voicenames), speaker2 = random.choice(s.voicenames))
 play_dialogue_lst(dialogue_lst, 0.90, 0.01, 0.5)
-do_a_weather_report(testing=True, myweather=w, speaker1 = random.choice(s.voicenames), speaker2 = random.choice(s.voicenames), , stability=0.90, similarity_boost=0.01, style=0.5)
+do_a_weather_report(testing=True, myweather=w, speaker1 = prof_name, speaker2 = random.choice(s.voicenames), stability=0.90, similarity_boost=0.01, style=0.5)
 do_a_weather_report(testing=True, myweather=w, speaker1 = random.choice(s.voicenames), speaker2 = random.choice(s.voicenames), stability=0.50, similarity_boost=0.01, style=0.5)
 do_a_weather_report(testing=True, myweather=w, speaker1 = random.choice(s.voicenames), speaker2 = random.choice(s.voicenames), stability=0.10, similarity_boost=0.01, style=0.9)
 '''
