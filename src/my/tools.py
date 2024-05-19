@@ -169,7 +169,7 @@ class SelfCachingCall:
         >>> #................freq, func, paramsForfunc
         >>> c = SelfCachingCall(2, myfunc, 100)
         >>> c.result
-        my.globals.exceptions.FrontendStillAwaitingCachedValue: We have not cached the first result yet
+        my.globals.exceptions.StillAwaitingCachedValue: We have not cached the first result yet
         >>> sleep(1); c.result
         605
 
@@ -192,7 +192,7 @@ class SelfCachingCall:
             only catch it; it cached it.
 
     Exceptions:
-        FrontendStillAwaitingCachedValue: If we don't have a cached value yet, this exception is raised.
+        StillAwaitingCachedValue: If we don't have a cached value yet, this exception is raised.
 
     """
 
