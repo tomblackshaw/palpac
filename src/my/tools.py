@@ -23,10 +23,10 @@ d = SelfCachingCall(5, os.system, "ping -W2 -c1 cinqcent.local > /dev/null 2> /d
 '''
 
 import copy
-import datetime
-import random
-import string
-from threading import Condition, Lock, Thread
+# import datetime
+# import random
+# import string
+from threading import Thread  # Condition, Lock,
 from time import sleep
 import time
 
@@ -181,7 +181,7 @@ def timeit(method):
             name = kw.get('log_name', method.__name__.upper())
             kw['log_time'][name] = int((te - ts) * 1000)
         else:
-            print('%r  %2.2f ms' %
+            logit('%r  %2.2f ms' %
                   (method.__name__, (te - ts) * 1000))
         return result
 
