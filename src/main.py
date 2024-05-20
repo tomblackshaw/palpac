@@ -56,7 +56,7 @@ def compile_all_uic_files(a_path):
                 raise PyQtUICompilerError("{cmd} failed".format(cmd=cmd))
 
 
-class FunTestWidget(QWidget):
+class FunWidget(QWidget):
 
     def __init__(self, speechclient):
         super().__init__()
@@ -89,7 +89,7 @@ if __name__ == '__main__':
     # Make a request to the ZenQuotes API
     app = QApplication(sys.argv)
     from my.speakmymind import SpeakmymindSingleton as speechclient
-    qwin = FunTestWidget(speechclient=speechclient)
+    qwin = FunWidget(speechclient=speechclient)
 #    ex = Example(speechclient=speechclient)
     sys.exit(app.exec())
 
