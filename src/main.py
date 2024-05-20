@@ -1,21 +1,22 @@
 # -*- coding: utf-8 -*-
-"""main.py
+"""Main source file and subroutine.
 
-Created on May 18, 2024
-
-@author: Tom Blackshaw
-
-PALPAC - the passive-aggressive Linux-based personal alarm clock
+This is the script that is run by the OS (or the user) when they want to
+launch PALPAC. A bash script, I imagine, will 'cd' into this folder
+and run main.py (me) accordingly.
 
 Example:
-    To run a unit test::
+    This is how a sample script would look::
 
-        $ python3 -m unittest discover
-    ...or...
-        $ python3 -m unittest test.blah.blah.blah
+        $ cd /path/to/palpac/files
+        $ cd src
+        $ python3 main.py
+
+Section breaks are created by resuming unindented text. Section breaks
+are also implicitly created anytime a new section starts.
 
 Todo:
-    * QQQ Finish me QQQ
+    * For module TODOs
     * You have to also use ``sphinx.ext.todo`` extension
 
 .. _Google Python Style Guide:
@@ -35,22 +36,17 @@ from my.tools import compile_all_uic_files
 from ui.newform import Ui_Form
 
 
-def compile_all_uic_files(a_path):
-    from os import listdir
-    from os.path import isfile, join
-    onlyfiles = [f for f in listdir(a_path) if isfile(join(a_path, f))]
-    for f in onlyfiles:
-        if f.endswith('.ui'):
-            cmd = '''pyuic6 -o "{a_path}/{pyfile}" "{a_path}/{uifile}"'''.format(
-                a_path=a_path,
-                uifile=f,
-                pyfile=f[:-2] + 'py')
-            if 0 != os.system(cmd):
-                raise PyQtUICompilerError("{cmd} failed".format(cmd=cmd))
-
-
 class FunWidget(QWidget):
+    """The FunWidget (a subclass of QWidget) for testing PALPAC.
 
+    This is a sample subclass for running a simple PyQt app and testing
+    some of the PALPAC subroutines.
+
+    Attributes:
+        attr1 (str): Description of `attr1`.
+        attr2 (:obj:`int`, optional): Description of `attr2`.
+
+    """
     def __init__(self, isay):
         super().__init__()
         self.isay = isay
@@ -67,9 +63,37 @@ class FunWidget(QWidget):
         self.show()
 
     def repopulateWithRandomQuote(self):
+        """Class methods are similar to regular functions.
+
+        Note:
+            Do not include the `self` parameter in the ``Args`` section.
+
+        Args:
+            param1: The first parameter.
+            param2: The second parameter.
+
+        Returns:
+            True if successful, False otherwise.
+            TODO finish me
+
+        """
         self.ui.plainTextEdit.setPlainText(get_random_quote())
 
     def playme(self):
+        """Class methods are similar to regular functions.
+
+        Note:
+            Do not include the `self` parameter in the ``Args`` section.
+
+        Args:
+            param1: The first parameter.
+            param2: The second parameter.
+
+        Returns:
+            True if successful, False otherwise.
+            TODO finish me
+
+        """
         play(self.speechclient.audio(text=self.ui.plainTextEdit.toPlainText(), voice=self.tts.random_name))
 
 #########################################################################################################
@@ -78,11 +102,8 @@ class FunWidget(QWidget):
 if __name__ == '__main__':
     add_to_os_path_if_existent('/opt/homebrew/bin', strict=False)
     compile_all_uic_files('ui')
-    # Prepare to speak. Contact ElevenLabs and get a clientclass.
-    # Make a request to the ZenQuotes API
     app = QApplication(sys.argv)
     from my.text2speech import Text2SpeechSingleton as tts
     qwin = FunWidget(tts=tts)
 #    ex = Example(speechclient=speechclient)
     sys.exit(app.exec())
-
