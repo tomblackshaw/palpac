@@ -7,7 +7,10 @@ Created on May 19, 2024
 '''
 
 import datetime
+import os
 import time
+
+from my.exceptions import PyQtUICompilerError
 
 
 def timeit(method):
@@ -36,3 +39,18 @@ def logit(s, logfile_fname='/tmp/null.txt'):
     except:
         pass
     print(s)
+
+
+def compile_all_uic_files(a_path):
+    from os import listdir
+    from os.path import isfile, join
+    onlyfiles = [f for f in listdir(a_path) if isfile(join(a_path, f))]
+    for f in onlyfiles:
+        if f.endswith('.ui'):
+            cmd = '''pyuic6 -o "{a_path}/{pyfile}" "{a_path}/{uifile}"'''.format(
+                a_path=a_path,
+                uifile=f,
+                pyfile=f[:-2] + 'py')
+            if 0 != os.system(cmd):
+                raise PyQtUICompilerError("{cmd} failed".format(cmd=cmd))
+

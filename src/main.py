@@ -23,14 +23,15 @@ Todo:
 
 """
 
-import os
+# import os
 import sys
 
 from PyQt6.QtWidgets import QWidget, QApplication  # QPushButton, QLineEdit, QInputDialog, QApplication)
 from elevenlabs import play
 
-from my.exceptions import PyQtUICompilerError
+# from my.exceptions import PyQtUICompilerError
 from my.stringutils import add_to_os_path_if_existent, get_random_quote
+from my.tools import compile_all_uic_files
 from ui.newform import Ui_Form
 
 
