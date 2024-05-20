@@ -34,7 +34,7 @@ for line in [t for t in txt.split('\n')]:
 import os
 import sys
 
-from PyQt6.QtWidgets import (QWidget, QPushButton, QLineEdit, QInputDialog, QApplication)
+from PyQt6.QtWidgets import QWidget, QApplication  # QPushButton, QLineEdit, QInputDialog, QApplication)
 from elevenlabs import play
 
 from my.exceptions import PyQtUICompilerError
