@@ -147,7 +147,7 @@ def play_dialogue_lst(tts, dialogue_lst, stability=0.5, similarity_boost=0.01, s
         style: The similarity level (between 0.0 and 0.5 recommended).
 
     Returns:
-        (none)
+        n/a
 
     Raises:
         IOError: An error occurred accessing the smalltable.

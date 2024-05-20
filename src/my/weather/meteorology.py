@@ -1,8 +1,31 @@
-'''
-Created on May 20, 2024
+# -*- coding: utf-8 -*-
+"""my.weather
+
+Created on May 19, 2024
 
 @author: Tom Blackshaw
-'''
+
+This module facilitates my access to the Open Meteo online weather service.
+See See https://github.com/frenck/python-open-meteo for more information.
+
+Example:
+    lat,lng = get_lat_and_long()
+    w = get_weather()
+
+Section breaks are created by resuming unindented text. Section breaks
+are also implicitly created anytime a new section starts.
+
+Attributes:
+    n/a
+
+Todo:
+    * For module TODOs
+    * You have to also use ``sphinx.ext.todo`` extension
+
+.. _Google Python Style Guide:
+   http://google.github.io/styleguide/pyguide.html
+
+"""
 
 import random
 import urllib
@@ -19,7 +42,6 @@ from my.exceptions import WebAPITimeoutError, WebAPIOutputError, StillAwaitingCa
 from my.globals import DEFAULT_LATLONG_URL, MAX_LATLONG_TIMEOUT
 from my.stringutils import wind_direction_str, url_validator
 from my.text2speech import play_dialogue_lst
-
 
 def get_lat_and_long(url=DEFAULT_LATLONG_URL, timeout=10):
     """Gets my latitude and longitude.
@@ -84,7 +106,7 @@ def get_weather_SUB():
     weather. I do not process the result. I merely return it.
 
     Args:
-        (none)
+        n/a
 
     Returns:
         open_meteo.models.Forecast: structure containing weather info. For
@@ -107,6 +129,7 @@ def get_weather_SUB():
     Raises:
         TimeoutError: The API thinks I'm trying too hard. It rejected my
             attempt to interrogate it.
+
     """
     (latitude, longitude) = get_lat_and_long()
     import asyncio
@@ -141,10 +164,27 @@ our_weather_caching_call = None
 
 
 def get_weather():
-    '''
-    from my.weatherstuff import *
-    w = get_weather()
-    '''
+    """Returns the cached result of a call to get_weather_SUB().
+
+    The programmer calls me. I return a recently cached result of a call
+    to get_weather_SUB(), courtesy of a self-caching class. I return
+    the same as get_weather_SUB() returns, albeit cached.
+
+    Args:
+        n/a
+
+    Returns:
+        See get_weather_SUB().
+
+    Raises:
+        StillAwaitingCachedValue: The self-caching instance of
+            get_weather_SUB() hasn't returned a value yet. I am still
+            waiting for a response to its first call to openmeteo.
+        WebAPIOutputError: The openmeteo website gave an illegible
+            response to our request for weather data.
+        WebAPITimeoutError: The openmeteo website timed out.
+
+    """
     global our_weather_caching_call
     if our_weather_caching_call is None:
         our_weather_caching_call = SelfCachingCall(300, get_weather_SUB)
@@ -153,8 +193,10 @@ def get_weather():
         if force_update:
             our_weather_caching_call._update_me()
         return our_weather_caching_call.result
-    except (OpenMeteoConnectionError, StillAwaitingCachedValue):
-        raise StillAwaitingCachedValue("Still trying to get weather data from OpenMeteo")
+    except TimeoutError:
+        raise WebAPITimeoutError("The openmeteo website timed out")
+    except WebAPIOutputError:
+        raise WebAPIOutputError("The openmeteo website returned an incomprehensible output")
 
 
 def generate_weather_report_dialogue(myweather, speaker1, speaker2, testing=False):
@@ -165,15 +207,15 @@ def generate_weather_report_dialogue(myweather, speaker1, speaker2, testing=Fals
     for the region covered by the report.
 
     Args:
-        myweather: An open_meteo.models.Forecast structure, containing weather
+        myweather (open_meteo.models.Forecast): a structure containing weather
             info for the latitude and longitude passed to get_weather().
-        speaker1: The name of the Eleven Labs voice to be used for speaker#1.
-        speaker2: The name of the Eleven Labs voice to be used for speaker#2.
+        speaker1 (str): The name of the Eleven Labs voice to be used for speaker#1.
+        speaker2 (str): The name of the Eleven Labs voice to be used for speaker#2.
         testing: If True, randomize the weather values, for testing.
             If False, don't.
 
     Returns:
-        A list of tuples, containing the names and the dialogue. For example:
+        list of tuples: The names and the dialogue. For example:
 
         [('Rachel', 'Hi there. How are you?'),
         ('Callum', 'Fine. How is the weather?'),
@@ -183,8 +225,8 @@ def generate_weather_report_dialogue(myweather, speaker1, speaker2, testing=Fals
         Returned strings are always UTF-8.
 
     Raises:
-        QQQError: An error occurred but I don't know what it is. This entry
-            is defective. I haven't finished writing it. QQQ TODO FIXME.
+        FIXME: I do not know which exceptions may occur. Please add entries.
+
     """
     if myweather is None:
         raise ValueError("Please specify a valid parameter for myweather. Usually, you supply the result of a call to get_weather().")
@@ -257,8 +299,36 @@ def generate_weather_report_dialogue(myweather, speaker1, speaker2, testing=Fals
     return dialogue_lst
 
 
-def do_a_weather_report(speechclient, myweather, speaker1, speaker2, testing=False, stability=0.30, similarity_boost=0.01, style=0.5):
-    prof_name = [r for r in speechclient.voiceinfo if r.samples is not None][0].name
+def do_a_weather_report(tts, myweather, speaker1, speaker2, testing=False, stability=0.30, similarity_boost=0.01, style=0.5):
+    """Read a real weather report out loud, using AI voices.
+
+    The weather info itself comes from openmeteo. The AI voices are from Eleven
+    Labs. The dialogue is assembled here and recited here.
+
+    Args:
+        tts (Text2SpeechSingleton): The class instance that wraps around the
+            libraries from Eleven Labs and facilitates actual speech.
+        myweather (open_meteo.models.Forecast): The record containing the
+            current information about the weather and the forecast.
+        speaker1 (str): The name of speaker 1. A list of voices may be
+            obtained from the variable tts.voicenames
+        speaker2 (str): The name of speaker 2.
+        testing (bool): If True, randomize weather info.
+        stability (float): How closely should the output be modeled on the
+            original voice? Keep it above 0.30 for best results.
+        similarity_boost (float): How much inflection etc. should be allowed
+            in the voice?
+        style (float): How much unnecessary drama should be in the voice?
+            Keep the value below 0.5 for best results.
+
+    Returns:
+        n/a
+
+    .. _PEP 484:
+        https://www.python.org/dev/peps/pep-0484/
+
+    """
+    prof_name = [r for r in tts.voiceinfo if r.samples is not None][0].name
     if speaker1 == speaker2:
         speaker1 = prof_name
     # speechgen = lambda voice, text: \
@@ -267,4 +337,4 @@ def do_a_weather_report(speechclient, myweather, speaker1, speaker2, testing=Fal
     #         else \
     #         s.audio(voice=voice, text=text)
     dialogue_lst = generate_weather_report_dialogue(myweather=myweather, speaker1=speaker1, speaker2=speaker2, testing=testing)
-    play_dialogue_lst(speechclient=speechclient, dialogue_lst=dialogue_lst, stability=stability, similarity_boost=similarity_boost, style=style)
+    play_dialogue_lst(tts=tts, dialogue_lst=dialogue_lst, stability=stability, similarity_boost=similarity_boost, style=style)

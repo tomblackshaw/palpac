@@ -1,31 +1,45 @@
-#!/usr/bin/python3
+# -*- coding: utf-8 -*-
+"""my.classes.selfcachingcall
 
-'''
 Created on May 19, 2024
 
 @author: Tom Blackshaw
 
-tools
+This module contains the SelfCachingCall class, for automatically updating
+and caching the result of an OS call, Python function call, or external
+binary call.
 
-import os
+Examples:
+    from my.classes.selfcachingcall import SelfCachingCall
+    import time, os
+    d = SelfCachingCall(5, os.system, "ping -W2 -c1 cinqcent.local > /dev/null 2> /dev/null")
+    for i in range(0,10):
+        time.sleep(1)
+        print(d.result)
+    d.join()
 
-from tools.selfcachingcall import SelfCachingCall
+    def myfunc(addme):
+        global GVAR
+        GVAR += addme
+        return GVAR
 
-GVAR = 5
-def myfunc(addme):
-    global GVAR
-    GVAR += addme
-    return GVAR
+    GVAR = 5
+    c = SelfCachingCall(2, myfunc, 100)
+    while True:
+        time.sleep(1)
+        print(GVAR)
+    c.join()
 
-c = SelfCachingCall(2, myfunc, 100)
-d = SelfCachingCall(5, os.system, "ping -W2 -c1 cinqcent.local > /dev/null 2> /dev/null")
-[all_mac_addresses_dct[k]['pinger'].result for k in all_mac_addresses_dct.keys()]
-'''
+Todo:
+    * For module TODOs
+    * You have to also use ``sphinx.ext.todo`` extension
+
+.. _Google Python Style Guide:
+   http://google.github.io/styleguide/pyguide.html
+
+"""
 
 import copy
-# import datetime
-# import random
-# import string
 from threading import Thread  # Condition, Lock,
 from time import sleep
 
