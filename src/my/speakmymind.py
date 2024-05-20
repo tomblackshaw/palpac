@@ -64,7 +64,7 @@ from elevenlabs.client import ElevenLabs, Voice
 
 from my.classes import singleton, logit
 from my.globals import ELEVENLABS_KEY_BASENAME
-from my.stringstuff import flatten
+from my.stringutils import flatten
 
 
 def get_elevenlabs_clientclass(key_filename):

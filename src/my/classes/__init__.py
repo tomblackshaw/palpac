@@ -9,15 +9,6 @@ from time import sleep
 import time
 
 
-def logit(s, logfile_fname='/tmp/null.txt'):
-    datestr = "{:%B %d, %Y @ %H:%M:%S}".format(datetime.datetime.now())
-    s = '%s  %s' % (datestr, s)
-    try:
-        with open(logfile_fname, 'a+') as f:
-            f.write('%s\n' % s)
-    except:
-        pass
-    print(s)
 
 
 def singleton(cls):

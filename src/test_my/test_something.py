@@ -4,7 +4,7 @@ Created on May 20, 2024
 @author: Tom Blackshaw
 '''
 import unittest
-from my.stringstuff import generate_random_string, MAX_RANDGENSTR_LEN
+from my.stringutils import generate_random_string, MAX_RANDGENSTR_LEN
 
 
 class Test(unittest.TestCase):

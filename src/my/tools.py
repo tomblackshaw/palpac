@@ -6,6 +6,7 @@ Created on May 19, 2024
 @author: Tom Blackshaw
 '''
 
+import datetime
 import time
 
 
@@ -19,9 +20,19 @@ def timeit(method):
             name = kw.get('log_name', method.__name__.upper())
             kw['log_time'][name] = int((te - ts) * 1000)
         else:
-            from my.classes import logit
             logit('%r  %2.2f ms' %
                   (method.__name__, (te - ts) * 1000))
         return result
 
     return timed
+
+
+def logit(s, logfile_fname='/tmp/null.txt'):
+    datestr = "{:%B %d, %Y @ %H:%M:%S}".format(datetime.datetime.now())
+    s = '%s  %s' % (datestr, s)
+    try:
+        with open(logfile_fname, 'a+') as f:
+            f.write('%s\n' % s)
+    except:
+        pass
+    print(s)

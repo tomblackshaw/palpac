@@ -12,9 +12,7 @@ import string
 from urllib.parse import urlparse
 
 import requests
-
-from my.classes import logit
-from my.tools import SelfCachingCall, StillAwaitingCachedValue
+from my.tools import logit
 
 MAX_RANDGENSTR_LEN = 99999  # used by generate_random_string()
 
@@ -102,6 +100,7 @@ def get_random_quote(force_update=False):
         StillAwaitingCachedValue: Unable to get cached quote.
 
     """
+    from my.classes.selfcachingcall import SelfCachingCall, StillAwaitingCachedValue
     global our_randomquote_caching_call
     if our_randomquote_caching_call is None:
         our_randomquote_caching_call = SelfCachingCall(300, get_random_zenquote_SUB)

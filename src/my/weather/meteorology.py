@@ -18,7 +18,7 @@ from my.consts import WMO_code_warnings_dct
 from my.exceptions import WebAPITimeoutError, WebAPIOutputError
 from my.globals import DEFAULT_LATLONG_URL, MAX_LATLONG_TIMEOUT
 from my.speakmymind import play_dialogue_lst
-from my.stringstuff import wind_direction_str, url_validator
+from my.stringutils import wind_direction_str, url_validator
 from my.tools import SelfCachingCall, StillAwaitingCachedValue
 
 
