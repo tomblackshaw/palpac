@@ -32,13 +32,12 @@ import urllib
 
 from bs4 import BeautifulSoup
 from open_meteo import OpenMeteo
-from open_meteo.exceptions import OpenMeteoConnectionError
 from open_meteo.models import DailyParameters, HourlyParameters
 from parse import parse
 
 from my.classes.selfcachingcall import SelfCachingCall
 from my.consts import WMO_code_warnings_dct
-from my.exceptions import WebAPITimeoutError, WebAPIOutputError, StillAwaitingCachedValue
+from my.exceptions import WebAPITimeoutError, WebAPIOutputError
 from my.globals import DEFAULT_LATLONG_URL, MAX_LATLONG_TIMEOUT
 from my.stringutils import wind_direction_str, url_validator
 from my.text2speech import play_dialogue_lst
