@@ -4,12 +4,10 @@ Created on May 19, 2024
 @author: Tom Blackshaw
 speakmymind
 '''
-
 '''
-from my.speakmymind import SpeakmymindSingleton
+from my.speakmymind import SpeakmymindSingleton as s
 from my.tools import SelfCachingCall
 from elevenlabs import play
-s = SpeakmymindSingleton
 prof_name= [r for r in s.voiceinfo if r.samples is not None][0].name
 play(s.audio('Rachel', 'hello there'))
 play(s.audio(s.random_name, 'Hi there. This is a test.'))
@@ -58,14 +56,15 @@ simplesay = lambda voice, text: play(s.audio(voice=voice, text=text, advanced=Tr
 
 
 '''
+
 import os
 from random import choice
 
 from elevenlabs.client import ElevenLabs, Voice
 
+from my.classes import singleton, logit
 from my.globals import ELEVENLABS_KEY_BASENAME
 from my.stringstuff import flatten
-from my.tools import singleton
 
 
 def get_elevenlabs_clientclass(key_filename):
@@ -128,6 +127,38 @@ class _SpeakmymindClass(object):
         return audio if getgenerator else b''.join(audio)
 
 
+SpeakmymindSingleton = _SpeakmymindClass()
+
+
+def play_dialogue_lst(speakmymindsingleton, dialogue_lst, stability=0.5, similarity_boost=0.01, style=0.5):
+    """Recites dialogue.
+
+    Using the Eleven Labs website's API, their Python module, and mpv/ffmpeg, I play
+    the supplied dialogue list. 'Do' the named voices, too. FYI, the API's key is
+    stored at ~/$ELEVENLABS_KEY_BASENAME.
+
+    Args:
+        dialogue_lst: List of dialogue tuples. The first item is the name of the voice
+            to be used. The second item is the text to be recited.
+        stability: The stability level (between 0.3 and 1.0 recommended).
+        similarity_boost: The similarity level (between 0.01 and 1.0 recommended).
+        style: The similarity level (between 0.0 and 0.5 recommended).
+
+    Returns:
+        (none)
+
+    Raises:
+        IOError: An error occurred accessing the smalltable.
+    """
+    from elevenlabs import play
+    speechgen = lambda voice, text: speakmymindsingleton.audio(voice=voice, text=text, advanced=True, model='eleven_multilingual_v2', stability=stability, similarity_boost=similarity_boost, style=style, use_speaker_boost=True)
+    data_to_play = []
+    for (name, text) in dialogue_lst:
+        logit("{name}: {text}".format(name=name, text=text))
+        data_to_play.append(speechgen(name, text))
+    for d in data_to_play:
+        play(d)
+
+
 # bytesresult = speakclient.audio('Rachel', 'hello there')
 # play(bytesresult)
-SpeakmymindSingleton = _SpeakmymindClass()

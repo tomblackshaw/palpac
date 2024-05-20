@@ -1,44 +1,114 @@
 '''
-Created on May 19, 2024
+Created on May 20, 2024
 
 @author: Tom Blackshaw
-
-weatherstuff
-
-See https://github.com/frenck/python-open-meteo
 '''
+
 import random
-import time
 import urllib
 
 from bs4 import BeautifulSoup
-from elevenlabs import play
 from open_meteo import OpenMeteo
 from open_meteo.exceptions import OpenMeteoConnectionError
 from open_meteo.models import DailyParameters, HourlyParameters
 from parse import parse
 
+from my.classes import logit
 from my.consts import WMO_code_warnings_dct
-from my.stringstuff import wind_direction_str
+from my.exceptions import WebAPITimeoutError, WebAPIOutputError
+from my.globals import DEFAULT_LATLONG_URL, MAX_LATLONG_TIMEOUT
+from my.speakmymind import play_dialogue_lst
+from my.stringstuff import wind_direction_str, url_validator
 from my.tools import SelfCachingCall, StillAwaitingCachedValue
 
 
-def get_lat_and_long(url='http://cqcounter.com/whois/my_ip_address.php'):
-    '''wget  -O - | egrep "IP Location|City|Latitude|Longitude"'''
-    uf = urllib.request.urlopen(url)
+def get_lat_and_long(url=DEFAULT_LATLONG_URL, timeout=10):
+    """Gets my latitude and longitude.
+
+    By calling cqcounter.com's relevant URL, I deduce my current latitude
+    and longitude. I return it as a two-item tuple.
+
+    Args:
+        url (str, optional): An alternate URL for the PHP or other URL.
+        timeout (int, optional): How long to wait before timing out. Range
+            permitted: 0-MAX_LATLONG_TIMEOUT seconds.
+
+    Returns:
+        A two-item tuple of my latitude and longitude. For example:
+
+        (-69.43, -8.574132)
+
+        Returned values is always a tuple. Returned numbers are always
+        floats.
+
+    Raises:
+        ValueError: The URL or the timeout was invalid.
+        WebAPIOutputError: The URL's output gave an incomprehensible set
+            of lat/long values. This might be a result of a bad URL.
+
+    """
+    if timeout <= 0 or timeout > MAX_LATLONG_TIMEOUT:
+        raise ValueError("{timeout} is a silly timeout value; please change it & try again".format(timeout=timeout))
+    if not url_validator(url):
+        raise ValueError("{url} is not a valid URL; please ensure that it begins with http at least".format(url=url))
+    try:
+        uf = urllib.request.urlopen(url, timeout=timeout)
+    except urllib.error.URLError as e:
+        if 'timed out' in str(e):
+            raise WebAPITimeoutError("{url} timed out; please try again later".format(url=url))
+        else:
+            raise ValueError("{url} is not a valid URL, according to urllib; please fix it".format(url=url))
+    except urllib.error.HTTPError:
+        raise WebAPIOutputError("{url} timed out while I was trying to get my latitude and longitude from it".format(url=url))
+    except Exception as e:
+        raise WebAPIOutputError("{url} gave an unspecified error: {e}; please check the source code and try again".format(url=url, e=str(e)))
     html = uf.read()
     soup = BeautifulSoup(html, 'html.parser')
     fmt_str = """{}°{}'{}" {}"""
-    potlines_lst = [soup.find('td', string=i).find_next_sibling("td").text.strip() for i in ('IP Location', 'City', 'Latitude', 'Longitude', 'Distance')]
-    latitude_res = parse(fmt_str, [r for r in potlines_lst if 'N' in r or 'S' in r][-1])
-    longitude_res = parse(fmt_str, [r for r in potlines_lst if 'E' in r or 'W' in r][-1])
-    myconv = lambda incoming: (float(incoming[0]) + float(incoming[1]) / 60. + float(incoming[2]) / 3600.) * (1 if 'N' in incoming[3] or 'W' in incoming[3] else -1)
-    latitude = myconv(latitude_res)
-    longitude = myconv(longitude_res)
-    return(latitude, longitude)
+    try:
+        potlines_lst = [soup.find('td', string=i).find_next_sibling("td").text.strip() for i in ('IP Location', 'City', 'Latitude', 'Longitude', 'Distance')]
+        latitude_res = parse(fmt_str, [r for r in potlines_lst if 'N' in r or 'S' in r][-1])
+        longitude_res = parse(fmt_str, [r for r in potlines_lst if 'E' in r or 'W' in r][-1])
+        myconv = lambda incoming: (float(incoming[0]) + float(incoming[1]) / 60. + float(incoming[2]) / 3600.) * (1 if 'N' in incoming[3] or 'W' in incoming[3] else -1)
+        latitude = myconv(latitude_res)
+        longitude = myconv(longitude_res)
+    except (ValueError, AttributeError, IndexError):
+        raise WebAPIOutputError("The URL '%s' did not produce meaningful lat/long values. Please check the URL and try again." % url)
+    else:
+        return(latitude, longitude)
 
 
 def get_weather_SUB():
+    """Retrieve weather info from OpenMeteo.
+
+    I call the OpenMeteo API to retrieve detailed information on my local
+    weather. I do not process the result. I merely return it.
+
+    Args:
+        (none)
+
+    Returns:
+        open_meteo.models.Forecast: structure containing weather info. For
+        example:
+
+        $ d = get_weather_SUB()
+        $ d.current_weather
+        CurrentWeather(time=datetime.datetime(...), temperature=15.5, wind_speed=10.5, ...)
+        $ d.elevation
+        109.5
+        $ d.latitude
+        101.10
+        $ d.longitude
+        50.50
+        $ d.hourly.precipitation
+        [0.0, 0.0, 0.0, 0.0, ...]
+
+        Returned item is always an open_meteo.models.Forecast type.
+
+    Raises:
+        TimeoutError: The API thinks I'm trying too hard. It rejected my
+            attempt to interrogate it.
+    """
     (latitude, longitude) = get_lat_and_long()
     import asyncio
 
@@ -64,6 +134,7 @@ def get_weather_SUB():
                 ],
             )
         return(forecast)
+
     return asyncio.run(main())
 
 
@@ -72,34 +143,50 @@ our_weather_caching_call = None
 
 def get_weather():
     '''
-from my.weatherstuff import *
-w = get_weather()
+    from my.weatherstuff import *
+    w = get_weather()
     '''
     global our_weather_caching_call
     if our_weather_caching_call is None:
         our_weather_caching_call = SelfCachingCall(300, get_weather_SUB)
+        force_update = True
     try:
+        if force_update:
+            our_weather_caching_call._update_me()
         return our_weather_caching_call.result
-    except StillAwaitingCachedValue as e:
-        print("Still awaiting cached value for weather (error=%s). Retrying." % str(e))
-        time.sleep(1)
-        return get_weather()
-    except OpenMeteoConnectionError:
+    except (OpenMeteoConnectionError, StillAwaitingCachedValue):
         raise StillAwaitingCachedValue("Still trying to get weather data from OpenMeteo")
 
 
-def play_dialogue_lst(dialogue_lst, stability, similarity_boost, style):
-    from my.speakmymind import SpeakmymindSingleton as s
-    speechgen = lambda voice, text: s.audio(voice=voice, text=text, advanced=True, model='eleven_multilingual_v2', stability=stability, similarity_boost=similarity_boost, style=style, use_speaker_boost=True)
-    data_to_play = []
-    for (name, text) in dialogue_lst:
-        print("{name}: {text}".format(name=name, text=text))
-        data_to_play.append(speechgen(name, text))
-    for d in data_to_play:
-        play(d)
-
-
 def generate_weather_report_dialogue(myweather, speaker1, speaker2, testing=False):
+    """Generate a dialogue from the weather.
+
+    From the supplied OpenMeteo result, generate a slightly sarcastic dialogue
+    between two Eleven Labs voices. The dialogue contains meterological info
+    for the region covered by the report.
+
+    Args:
+        myweather: An open_meteo.models.Forecast structure, containing weather
+            info for the latitude and longitude passed to get_weather().
+        speaker1: The name of the Eleven Labs voice to be used for speaker#1.
+        speaker2: The name of the Eleven Labs voice to be used for speaker#2.
+        testing: If True, randomize the weather values, for testing.
+            If False, don't.
+
+    Returns:
+        A list of tuples, containing the names and the dialogue. For example:
+
+        [('Rachel', 'Hi there. How are you?'),
+        ('Callum', 'Fine. How is the weather?'),
+        ('Rachel', 'It sucks.'),
+        ('Callum', 'OK, then.')]
+
+        Returned strings are always UTF-8.
+
+    Raises:
+        QQQError: An error occurred but I don't know what it is. This entry
+            is defective. I haven't finished writing it. QQQ TODO FIXME.
+    """
     if myweather is None:
         raise ValueError("Please specify a valid parameter for myweather. Usually, you supply the result of a call to get_weather().")
     randgreeting = lambda: random.choice(["Look who it is", "Howdy", 'Hi', 'Hello', 'Sup', 'Hey', "How you doin'", 'What it do', 'Greetings', "G'day", 'Hi there', "What's up", "How's it going", "What's good"])
@@ -125,7 +212,7 @@ def generate_weather_report_dialogue(myweather, speaker1, speaker2, testing=Fals
         forecast_rainfall_hours = random.randint(0, 24)
         mintemp = random.randint(-50, 10)
         maxtemp = mintemp + random.randint(1, 100)
-        temperature = int((mintemp+maxtemp)/2)
+        temperature = int((mintemp + maxtemp) / 2)
         windspeed = random.randint(0, 100)
         winddirection = random.randint(0, 360)
     if forecast_rainfall_hours < 1 or chance_of_rain < 0.01:
@@ -139,7 +226,7 @@ def generate_weather_report_dialogue(myweather, speaker1, speaker2, testing=Fals
                                     rainunit='centimeter' if forecast_rainfall_quantity == 1 else 'centimeters')
 
     if wcode not in WMO_code_warnings_dct.keys():
-        print("Warning - %s is not a recognized weather code. I am choosing 100 instead." % str(wcode))
+        logit("Warning - %s is not a recognized weather code. I am choosing 100 instead." % str(wcode))
         wcode = 100
     (wmo_retort, wmo_warning) = (None, None) if wcode == 0 else WMO_code_warnings_dct[wcode]
     wind_txt = 'no wind' if windspeed < 1.0 else "{windspeed} KPH winds blowing {winddir}.".format(windspeed=windspeed, winddir=wind_direction_str(winddirection))
@@ -170,9 +257,8 @@ def generate_weather_report_dialogue(myweather, speaker1, speaker2, testing=Fals
     return dialogue_lst
 
 
-def do_a_weather_report(myweather, speaker1, speaker2, testing=False, stability=0.30, similarity_boost=0.01, style=0.5):
-    from my.speakmymind import SpeakmymindSingleton as s
-    prof_name = [r for r in s.voiceinfo if r.samples is not None][0].name
+def do_a_weather_report(speechclient, myweather, speaker1, speaker2, testing=False, stability=0.30, similarity_boost=0.01, style=0.5):
+    prof_name = [r for r in speechclient.voiceinfo if r.samples is not None][0].name
     if speaker1 == speaker2:
         speaker1 = prof_name
     # speechgen = lambda voice, text: \
@@ -181,25 +267,4 @@ def do_a_weather_report(myweather, speaker1, speaker2, testing=False, stability=
     #         else \
     #         s.audio(voice=voice, text=text)
     dialogue_lst = generate_weather_report_dialogue(myweather=myweather, speaker1=speaker1, speaker2=speaker2, testing=testing)
-    play_dialogue_lst(dialogue_lst=dialogue_lst, stability=stability, similarity_boost=similarity_boost, style=style)
-
-
-
-'''
-from my.speakmymind import SpeakmymindSingleton as s
-from my.weatherstuff import *
-import random
-do_a_weather_report(get_weather(), random.choice(s.voicenames), random.choice(s.voicenames), True)
-
-w = get_weather()
-#dialogue_lst = generate_weather_report_dialogue(testing=True, myweather=w, speaker1 = random.choice(s.voicenames), speaker2 = random.choice(s.voicenames))
-do_a_weather_report(testing=True, myweather=w, speaker1 = random.choice(s.voicenames), speaker2 = random.choice(s.voicenames), stability=0.10, similarity_boost=0.01, style=0.9)
-
-
-prof_name= [r for r in s.voiceinfo if r.samples is not None][0].name
-dialogue_lst = generate_weather_report_dialogue(testing=True, myweather=w, speaker1 = random.choice(s.voicenames), speaker2 = random.choice(s.voicenames))
-play_dialogue_lst(dialogue_lst, 0.90, 0.01, 0.5)
-do_a_weather_report(testing=True, myweather=w, speaker1 = prof_name, speaker2 = random.choice(s.voicenames), stability=0.90, similarity_boost=0.01, style=0.5)
-do_a_weather_report(testing=True, myweather=w, speaker1 = random.choice(s.voicenames), speaker2 = random.choice(s.voicenames), stability=0.50, similarity_boost=0.01, style=0.5)
-do_a_weather_report(testing=True, myweather=w, speaker1 = random.choice(s.voicenames), speaker2 = random.choice(s.voicenames), stability=0.10, similarity_boost=0.01, style=0.9)
-'''
+    play_dialogue_lst(speechclient=speechclient, dialogue_lst=dialogue_lst, stability=stability, similarity_boost=similarity_boost, style=style)
