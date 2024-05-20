@@ -24,13 +24,12 @@ Todo:
 
 """
 
-# import os
 import sys
 
-from PyQt6.QtWidgets import QWidget, QApplication  # QPushButton, QLineEdit, QInputDialog, QApplication)
+from PyQt6.QtWidgets import QWidget, QApplication
 from elevenlabs import play
 
-# from my.exceptions import PyQtUICompilerError
+from my.exceptions import StillAwaitingCachedValue
 from my.stringutils import add_to_os_path_if_existent, get_random_quote
 from my.tools import compile_all_uic_files
 from ui.newform import Ui_Form
@@ -64,35 +63,37 @@ class FunWidget(QWidget):
         self.show()
 
     def repopulateWithRandomQuote(self):
-        """Class methods are similar to regular functions.
+        """Save a random inspirational quote to the plainTextEdit field.
 
         Note:
-            Do not include the `self` parameter in the ``Args`` section.
+            This uses get_random_quote().
 
         Args:
-            param1: The first parameter.
-            param2: The second parameter.
+            n/a
 
         Returns:
-            True if successful, False otherwise.
-            TODO finish me
+            n/a
 
         """
-        self.ui.plainTextEdit.setPlainText(get_random_quote())
+        try:
+            txt = get_random_quote()
+        except StillAwaitingCachedValue:
+            txt = 'Unable to obtain quote: cache is not populated yet.'
+        except Exception as e:
+            txt = 'Unable to obtain quote: {e}'.format(e=str(e))
+        self.ui.plainTextEdit.setPlainText(txt)
 
     def playme(self):
-        """Class methods are similar to regular functions.
+        """Play the supplied text.
 
         Note:
-            Do not include the `self` parameter in the ``Args`` section.
+            This uses self.tts, which is the singleton for talking to ElevenLabs.
 
         Args:
-            param1: The first parameter.
-            param2: The second parameter.
+            n/a
 
         Returns:
-            True if successful, False otherwise.
-            TODO finish me
+            n/a
 
         """
         play(self.tts.audio(text=self.ui.plainTextEdit.toPlainText(), voice=self.tts.random_name))
@@ -106,5 +107,4 @@ if __name__ == '__main__':
     app = QApplication(sys.argv)
     from my.text2speech import Text2SpeechSingleton as tts
     qwin = FunWidget(tts=tts)
-#    ex = Example(speechclient=speechclient)
     sys.exit(app.exec())
