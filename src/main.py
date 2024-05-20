@@ -21,14 +21,6 @@ Todo:
 .. _Google Python Style Guide:
    http://google.github.io/styleguide/pyguide.html
 
-lst = get_list_of_all_disks()
-unmatched_devs = []
-for line in [t for t in txt.split('\n')]:
-    dev = line.split(' ')[-1]
-    if dev != '' \
-    and os.path.exists(os.path.join('/dev', dev)) \
-    and dev not in ([os.path.basename(p.node) for p in d.partitions]):
-        unmatched_devs.append(dev)
 """
 
 import os
