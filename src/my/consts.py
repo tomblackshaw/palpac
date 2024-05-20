@@ -1,8 +1,31 @@
-'''
-consts
+# -*- coding: utf-8 -*-
+"""my.consts
+
+Created on May 19, 2024
+
+@author: Tom Blackshaw
+
+This module contains the most boring constants that you'll ever read.
+This is where the second line of my multi-line comment goes.
+
+Example:
+    n/a
+
+Section breaks are created by resuming unindented text. Section breaks
+are also implicitly created anytime a new section starts.
+
+Attributes:
+    n/a
+
+Todo:
+    * For module TODOs
+    * You have to also use ``sphinx.ext.todo`` extension
+
+.. _Google Python Style Guide:
+   http://google.github.io/styleguide/pyguide.html
 
 SOURCE: https://www.nodc.noaa.gov/archive/arc0021/0002199/1.1/data/0-data/HTML/WMO-CODE/WMO4677.HTM
-'''
+"""
 
 WMO_code_warnings_dct = {
 0: ("Blue skies", "...with not a cloud in the sky!"),
@@ -107,5 +130,3 @@ WMO_code_warnings_dct = {
 99: ("Are the gods trying to kill us?", "There is a heavy thunderstorm, right now, with hail."),
 100:("We are all going to die. Lovely!", "The apocalypse is upon us. Gather your loved ones together and pray to whichever god or gods you worship. As usual, atheists should email Richard Dawkins.")
 }
-
-# simplesay('Freya', wmo_code_warnings_dct[random.randint(0, len(wmo_code_warnings_dct))])

@@ -2,6 +2,19 @@
 Created on May 20, 2024
 
 @author: Tom Blackshaw
+
+
+
+
+Error
+    StartupError
+        PyQtStartupError
+            PyQtUICompilerError
+    WebAPIError
+        WebAPIOutputError
+        WebAPITimeoutError
+    CachingError
+        StillAwaitingCachedValue
 '''
 
 
