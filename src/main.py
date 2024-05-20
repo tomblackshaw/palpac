@@ -50,9 +50,9 @@ def compile_all_uic_files(a_path):
 
 class FunWidget(QWidget):
 
-    def __init__(self, speechclient):
+    def __init__(self, isay):
         super().__init__()
-        self.speechclient = speechclient
+        self.isay = isay
 
         # use the Ui_login_form
         self.ui = Ui_Form()
@@ -69,7 +69,7 @@ class FunWidget(QWidget):
         self.ui.plainTextEdit.setPlainText(get_random_quote())
 
     def playme(self):
-        play(self.speechclient.audio(text=self.ui.plainTextEdit.toPlainText(), voice=self.speechclient.random_name))
+        play(self.speechclient.audio(text=self.ui.plainTextEdit.toPlainText(), voice=self.tts.random_name))
 
 #########################################################################################################
 
@@ -80,8 +80,8 @@ if __name__ == '__main__':
     # Prepare to speak. Contact ElevenLabs and get a clientclass.
     # Make a request to the ZenQuotes API
     app = QApplication(sys.argv)
-    from my.speakmymind import SpeakmymindSingleton as speechclient
-    qwin = FunWidget(speechclient=speechclient)
+    from my.text2speech import Text2SpeechSingleton as tts
+    qwin = FunWidget(tts=tts)
 #    ex = Example(speechclient=speechclient)
     sys.exit(app.exec())
 

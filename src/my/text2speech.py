@@ -2,18 +2,19 @@
 Created on May 19, 2024
 
 @author: Tom Blackshaw
-speakmymind
-'''
-'''
-from my.speakmymind import SpeakmymindSingleton as s
+isay
+
+Wrapper for ElevenLabs API
+
+from my.text2speech import Text2SpeechSingleton as tts
 from my.tools import SelfCachingCall
 from elevenlabs import play
 prof_name= [r for r in s.voiceinfo if r.samples is not None][0].name
-play(s.audio('Rachel', 'hello there'))
-play(s.audio(s.random_name, 'Hi there. This is a test.'))
+play(tts.audio('Rachel', 'hello there'))
+play(tts.audio(tts.random_name, 'Hi there. This is a test.'))
 prof_audio = lambda text: s.audio(prof_name, text, advanced=True, model='eleven_multilingual_v2', stability=0.50, similarity_boost=0.01, style=0.10,use_speaker_boost=True)
 freya_audio = lambda text: s.audio('Freya', text, advanced=True, model='eleven_multilingual_v2', stability=0.30, similarity_boost=0.01, style=0.50,use_speaker_boost=True)
-play(s.audio(voice="Freya", text="Word up, homie G skillet dawg. What's crack-a-lackin'?"))
+play(tts.audio(voice="Freya", text="Word up, homie G skillet dawg. What's crack-a-lackin'?"))
 annoying_audio = lambda voice: s.audio(voice=voice, text="Like, OMG, you are totes late, Chuckles. JK, it's 7AM and POV your drip is straight fire. Or gay fire. Whatevs. Anyway, time to rise and shine, my short king sigma!",
                 advanced=True, model='eleven_multilingual_v2', stability=0.30, similarity_boost=0.01, style=0.90,use_speaker_boost=True)
 
@@ -52,7 +53,7 @@ data_lst = [dramatic_audio(voice=voice, text=text) for voice, text in prompts]
 for d in data_lst:
     play(d)
 
-simplesay = lambda voice, text: play(s.audio(voice=voice, text=text, advanced=True, model='eleven_multilingual_v2', stability=0.70, similarity_boost=0.01, style=0.9,use_speaker_boost=True))
+simplesay = lambda voice, text: play(tts.audio(voice=voice, text=text, advanced=True, model='eleven_multilingual_v2', stability=0.70, similarity_boost=0.01, style=0.9,use_speaker_boost=True))
 
 
 '''
@@ -62,7 +63,7 @@ from random import choice
 
 from elevenlabs.client import ElevenLabs, Voice
 
-from my.classes import singleton, logit
+from my.classes import singleton
 from my.globals import ELEVENLABS_KEY_BASENAME
 from my.stringutils import flatten
 
@@ -127,10 +128,10 @@ class _SpeakmymindClass(object):
         return audio if getgenerator else b''.join(audio)
 
 
-SpeakmymindSingleton = _SpeakmymindClass()
+Text2SpeechSingleton = _SpeakmymindClass()
 
 
-def play_dialogue_lst(speakmymindsingleton, dialogue_lst, stability=0.5, similarity_boost=0.01, style=0.5):
+def play_dialogue_lst(tts, dialogue_lst, stability=0.5, similarity_boost=0.01, style=0.5):
     """Recites dialogue.
 
     Using the Eleven Labs website's API, their Python module, and mpv/ffmpeg, I play
@@ -138,6 +139,7 @@ def play_dialogue_lst(speakmymindsingleton, dialogue_lst, stability=0.5, similar
     stored at ~/$ELEVENLABS_KEY_BASENAME.
 
     Args:
+        tts: Text-to-speech singleton Text2SpeechSingleton.
         dialogue_lst: List of dialogue tuples. The first item is the name of the voice
             to be used. The second item is the text to be recited.
         stability: The stability level (between 0.3 and 1.0 recommended).
@@ -151,8 +153,9 @@ def play_dialogue_lst(speakmymindsingleton, dialogue_lst, stability=0.5, similar
         IOError: An error occurred accessing the smalltable.
     """
     from elevenlabs import play
-    speechgen = lambda voice, text: speakmymindsingleton.audio(voice=voice, text=text, advanced=True, model='eleven_multilingual_v2', stability=stability, similarity_boost=similarity_boost, style=style, use_speaker_boost=True)
+    speechgen = lambda voice, text: tts.audio(voice=voice, text=text, advanced=True, model='eleven_multilingual_v2', stability=stability, similarity_boost=similarity_boost, style=style, use_speaker_boost=True)
     data_to_play = []
+    from my.tools import logit
     for (name, text) in dialogue_lst:
         logit("{name}: {text}".format(name=name, text=text))
         data_to_play.append(speechgen(name, text))

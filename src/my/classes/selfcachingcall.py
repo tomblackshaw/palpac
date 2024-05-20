@@ -29,8 +29,9 @@ import copy
 from threading import Thread  # Condition, Lock,
 from time import sleep
 
-from my.classes import ReadWriteLock, logit
+from my.classes import ReadWriteLock
 from my.exceptions import StillAwaitingCachedValue
+from my.tools import logit
 
 
 class SelfCachingCall:
@@ -108,7 +109,6 @@ class SelfCachingCall:
                 time_left_before_update -= sleep_for_how_long
                 sleep(sleep_for_how_long)
         logit('No more soup for you')
-#         self.join() # FIXME: Why was this commented out?!
 
     def _update_me(self):
         try:

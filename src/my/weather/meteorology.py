@@ -13,13 +13,12 @@ from open_meteo.exceptions import OpenMeteoConnectionError
 from open_meteo.models import DailyParameters, HourlyParameters
 from parse import parse
 
-from my.classes import logit
+from my.classes.selfcachingcall import SelfCachingCall
 from my.consts import WMO_code_warnings_dct
-from my.exceptions import WebAPITimeoutError, WebAPIOutputError
+from my.exceptions import WebAPITimeoutError, WebAPIOutputError, StillAwaitingCachedValue
 from my.globals import DEFAULT_LATLONG_URL, MAX_LATLONG_TIMEOUT
-from my.speakmymind import play_dialogue_lst
 from my.stringutils import wind_direction_str, url_validator
-from my.tools import SelfCachingCall, StillAwaitingCachedValue
+from my.text2speech import play_dialogue_lst
 
 
 def get_lat_and_long(url=DEFAULT_LATLONG_URL, timeout=10):
@@ -226,6 +225,7 @@ def generate_weather_report_dialogue(myweather, speaker1, speaker2, testing=Fals
                                     rainunit='centimeter' if forecast_rainfall_quantity == 1 else 'centimeters')
 
     if wcode not in WMO_code_warnings_dct.keys():
+        from my.tools import logit
         logit("Warning - %s is not a recognized weather code. I am choosing 100 instead." % str(wcode))
         wcode = 100
     (wmo_retort, wmo_warning) = (None, None) if wcode == 0 else WMO_code_warnings_dct[wcode]
