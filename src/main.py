@@ -47,9 +47,10 @@ class FunWidget(QWidget):
         attr2 (:obj:`int`, optional): Description of `attr2`.
 
     """
-    def __init__(self, isay):
+
+    def __init__(self, tts):
         super().__init__()
-        self.isay = isay
+        self.tts = tts
 
         # use the Ui_login_form
         self.ui = Ui_Form()
@@ -94,7 +95,7 @@ class FunWidget(QWidget):
             TODO finish me
 
         """
-        play(self.speechclient.audio(text=self.ui.plainTextEdit.toPlainText(), voice=self.tts.random_name))
+        play(self.tts.audio(text=self.ui.plainTextEdit.toPlainText(), voice=self.tts.random_name))
 
 #########################################################################################################
 
