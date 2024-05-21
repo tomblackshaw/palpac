@@ -127,7 +127,6 @@ class _SpeakmymindClass(object):
         return audio if getgenerator else b''.join(audio)
 
 
-Text2SpeechSingleton = _SpeakmymindClass()
 
 
 def play_dialogue_lst(tts, dialogue_lst, stability=0.5, similarity_boost=0.01, style=0.5):
@@ -164,3 +163,7 @@ def play_dialogue_lst(tts, dialogue_lst, stability=0.5, similarity_boost=0.01, s
 
 # bytesresult = speakclient.audio('Rachel', 'hello there')
 # play(bytesresult)
+
+
+Text2SpeechSingleton = _SpeakmymindClass()
+
