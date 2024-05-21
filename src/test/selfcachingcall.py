@@ -10,20 +10,15 @@ from my.classes.selfcachingcall import SelfCachingCall
 from my.exceptions import StillAwaitingCachedValue
 
 
-
 class Test(unittest.TestCase):
 
-    def __init__(self):
-        self.gvar = 0
-        super().__init__()
-
     def setUp(self):
-        pass
+        self.gvar = 0
 
     def tearDown(self):
-        pass
+        del self.gvar
 
-    def testBBC(self):
+    def testMyBbc(self):
         timeout = 3
         d = SelfCachingCall(5, os.system, "ping -W{timeout} -c1 bbc.com > /dev/null 2> /dev/null".format(timeout=timeout))
         time.sleep(timeout)
@@ -31,6 +26,7 @@ class Test(unittest.TestCase):
         d.join()
 
     def testLocalhost(self):
+
         timeout = 2
         d = SelfCachingCall(timeout, os.system, "ping -W{timeout} -c1 localhost > /dev/null 2> /dev/null".format(timeout=timeout))
         time.sleep(timeout)
@@ -38,6 +34,7 @@ class Test(unittest.TestCase):
         d.join()
 
     def testBadURL(self):
+
         timeout = 2
         d = SelfCachingCall(timeout, os.system, "ping -W{timeout} -c1 www.ahfuioashdfilknsf.com > /dev/null 2> /dev/null".format(timeout=timeout))
         time.sleep(timeout)
@@ -45,6 +42,7 @@ class Test(unittest.TestCase):
         d.join()
 
     def testGoofyParams(self):
+
         def x():
             d = SelfCachingCall(0, os.system("ls / 2> /dev/null > /dev/null"))
             d.join()
@@ -70,6 +68,7 @@ class Test(unittest.TestCase):
         c.join()
 
     def testGlobalVarIncrementing(self):
+
         pauselen = .1
         growthnum = 100
         self.gvar = 0
@@ -88,6 +87,7 @@ class Test(unittest.TestCase):
         c.join()
 
     def testFailureOfCachedFunction(self):
+
         pauselen = .2
         self.gvar = 0
 
@@ -110,7 +110,6 @@ class Test(unittest.TestCase):
         time.sleep(pauselen)
         self.assertLessEqual(c.result, 56)
         c.join()
-
 
 
 if __name__ == "__main__":
