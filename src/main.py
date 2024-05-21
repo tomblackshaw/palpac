@@ -27,11 +27,11 @@ Todo:
 import sys
 
 from PyQt6.QtWidgets import QWidget, QApplication
-
 from elevenlabs import play
 
+from my.classes.randomquoteclass import RandomQuoteSingleton as q
 from my.exceptions import StillAwaitingCachedValue
-from my.stringutils import add_to_os_path_if_existent, get_random_quote
+from my.stringutils import add_to_os_path_if_existent
 from my.tools import compile_all_uic_files
 from ui.newform import Ui_Form
 
@@ -77,7 +77,7 @@ class FunWidget(QWidget):
 
         """
         try:
-            txt = get_random_quote()
+            txt = q.quote
         except StillAwaitingCachedValue:
             txt = 'Unable to obtain quote: cache is not populated yet.'
         except Exception as e:
