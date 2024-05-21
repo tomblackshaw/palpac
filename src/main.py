@@ -27,6 +27,7 @@ Todo:
 import sys
 
 from PyQt6.QtWidgets import QWidget, QApplication
+
 from elevenlabs import play
 
 from my.exceptions import StillAwaitingCachedValue
