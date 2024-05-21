@@ -3,9 +3,6 @@ Created on May 20, 2024
 
 @author: Tom Blackshaw
 
-
-
-
 Error
     StartupError
         PyQtStartupError
@@ -87,7 +84,7 @@ class StillAwaitingCachedValue(CachingError):
     Of course, this means that there won't be a result at first. Otherwise,
     the programmer would have to wait until the first result had been cached:
     the opposite of the intended purpose of this class. Granted, the programmer
-    would have to wait only once; still, I don't like that. I would rather
+    would have to wait only once. Still, I don't like that. I would rather
     raise an exception and say, "We haven't cached the first value yet."
 
     Example:
