@@ -12,7 +12,7 @@ binary call.
 Examples:
     from my.classes.selfcachingcall import SelfCachingCall
     import time, os
-    d = SelfCachingCall(5, os.system, "ping -W2 -c1 cinqcent.local > /dev/null 2> /dev/null")
+    d = SelfCachingCall(5, os.system, "ping -W2 -c1 bbc.com > /dev/null 2> /dev/null")
     for i in range(0,10):
         time.sleep(1)
         print(d.result)
@@ -72,7 +72,8 @@ class SelfCachingCall:
 
     Note:
         If the programmer tries to read the cached value before the first call to the function,
-        an exception will be thrown.
+        an exception will be thrown. If the most recent function call throws an exception, the act
+        of reading c.result will cause that exception to be thrown.
 
     Args:
         refreshfrequency (int): How often should I call the function
@@ -122,7 +123,7 @@ class SelfCachingCall:
                 sleep_for_how_long = min(1, time_left_before_update)
                 time_left_before_update -= sleep_for_how_long
                 sleep(sleep_for_how_long)
-        logit('No more soup for you')
+#        logit('No more soup for you')
 
     def _update_me(self):
         try:
