@@ -34,10 +34,10 @@ def logit(s, logfile_fname='/tmp/null.txt'):
     datestr = "{:%B %d, %Y @ %H:%M:%S}".format(datetime.datetime.now())
     s = '%s  %s' % (datestr, s)
     try:
-        with open(logfile_fname, 'a+') as f:
+        with open(logfile_fname, mode='a+', encoding="utf-8") as f:
             f.write('%s\n' % s)
-    except:
-        pass
+    except Exception as e:  # pylint: disable=broad-exception-caught
+        print("WARNING -- unable to log ===> {s} <=== {e}".format(s=s, e=str(e)))
     print(s)
 
 
