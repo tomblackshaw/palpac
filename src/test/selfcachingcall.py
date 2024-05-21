@@ -9,10 +9,13 @@ import unittest
 from my.classes.selfcachingcall import SelfCachingCall
 from my.exceptions import StillAwaitingCachedValue
 
-GVAR = 0
 
 
 class Test(unittest.TestCase):
+
+    def __init__(self):
+        self.gvar = 0
+        super().__init__()
 
     def setUp(self):
         pass
@@ -50,19 +53,18 @@ class Test(unittest.TestCase):
 
     def testPrematureResultAccess(self):
         pauselen = .2
+        self.gvar = 0
 
         def myfunc():
-            global GVAR
             time.sleep(pauselen)
-            GVAR += 1
-            return GVAR * 100
+            self.gvar += 1
+            return self.gvar * 100
 
         def getres(c):
             return c.result
 
-        global GVAR
-        GVAR = 0
-        self.assertEqual(GVAR, 0)
+        self.gvar = 0
+        self.assertEqual(self.gvar, 0)
         c = SelfCachingCall(pauselen, myfunc)
         self.assertRaises(StillAwaitingCachedValue, getres, c)
         c.join()
@@ -70,15 +72,14 @@ class Test(unittest.TestCase):
     def testGlobalVarIncrementing(self):
         pauselen = .1
         growthnum = 100
+        self.gvar = 0
 
         def myfunc(addme):
-            global GVAR
-            GVAR += addme
-            return GVAR
+            self.gvar += addme
+            return self.gvar
 
-        global GVAR
-        GVAR = 0
-        self.assertEqual(GVAR, 0)
+        self.gvar = 0
+        self.assertEqual(self.gvar, 0)
         c = SelfCachingCall(pauselen, myfunc, growthnum)
         time.sleep(pauselen / 2)
         for i in range(1, 20):
@@ -88,25 +89,24 @@ class Test(unittest.TestCase):
 
     def testFailureOfCachedFunction(self):
         pauselen = .2
+        self.gvar = 0
 
         def myfunc():
-            global GVAR
-            GVAR += 1
-            return GVAR
+            self.gvar += 1
+            return self.gvar
 
         def getres(c):
             return c.result
 
-        global GVAR
-        GVAR = 999
-        self.assertEqual(GVAR, 999)
+        self.gvar = 999
+        self.assertEqual(self.gvar, 999)
         c = SelfCachingCall(pauselen, myfunc)
         time.sleep(pauselen)
         self.assertGreaterEqual(c.result, 1000)
-        GVAR = 'Hello there. I shall cause myfunc() to fail. Let us see how SelfCachingCall handles this.'
+        self.gvar = 'Hello there. I shall cause myfunc() to fail. Let us see how SelfCachingCall handles this.'
         time.sleep(pauselen * 1.5)
         self.assertRaises(TypeError, getres, c)
-        GVAR = 55
+        self.gvar = 55
         time.sleep(pauselen)
         self.assertLessEqual(c.result, 56)
         c.join()

@@ -39,9 +39,9 @@ Todo:
 
 """
 
-import copy
 from threading import Thread  # Condition, Lock,
 from time import sleep
+import copy
 
 from my.classes import ReadWriteLock
 from my.exceptions import StillAwaitingCachedValue
@@ -81,7 +81,7 @@ class SelfCachingCall(object):
         args,kwargs: Pass these parameters to the function
 
     Methods:
-        _update_me(): Force a new call to the function; save the result in our cache.
+        update_me(): Force a new call to the function; save the result in our cache.
 
     Attributes:
         result (int): result of most recent (cached) call to the function that's being cached
@@ -119,7 +119,7 @@ class SelfCachingCall(object):
         time_left_before_update = 0
         while not self.__time_to_join:
             if time_left_before_update <= 0:
-                self._update_me()
+                self.update_me()
                 time_left_before_update = self.__refreshfrequency
             else:
                 sleep_for_how_long = min(1, time_left_before_update)
@@ -127,12 +127,12 @@ class SelfCachingCall(object):
                 sleep(sleep_for_how_long)
 #        logit('No more soup for you')
 
-    def _update_me(self):
+    def update_me(self):
         try:
             self.__update_lock.acquire_write()
             the_new_result = self.__func(*self.__args, **self.__kwargs)
             the_new_error = None
-        except Exception as e:
+        except Exception as e:  # pylint: disable=broad-exception-caught
             the_new_result = None
             the_new_error = e
         finally:
@@ -157,8 +157,7 @@ class SelfCachingCall(object):
                 else:
                     reterr = self.__error
                     break
-        except Exception as e:
-            #             from my.globals.logging import Logger
+        except Exception as e:  # pylint: disable=broad-exception-caught
             logit('SelfCachingCall.result reported this ==> %s' % str(e))
             retval = None
             reterr = e
