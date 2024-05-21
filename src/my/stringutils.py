@@ -60,7 +60,7 @@ def add_to_os_path_if_existent(a_path, strict=True):
         os.environ['PATH'] += os.pathsep + a_path
 
 
-def get_random_zenquote_SUB():
+def get_random_zenquote(timeout=10):
     """Return an uplifting quote.
 
     Using the API at https://zenquotes.io, I retrieve a random quote --
@@ -77,7 +77,7 @@ def get_random_zenquote_SUB():
         WebAPIOutputError: Website's output was incomprehensible.
 
     """
-    response = requests.get('https://zenquotes.io/api/random')
+    response = requests.get('https://zenquotes.io/api/random', timeout=timeout)
     try:
         data = response.json()[0]
         quote = data['q'] + ' - ' + data['a']
@@ -90,33 +90,6 @@ def get_random_zenquote_SUB():
 
 
 __our_randomquote_caching_call = None
-
-
-def get_random_quote(force_update=False):
-    """Obtain a (locally cached) uplifting quote from ZenQuote.
-
-    Using a locally cached copy of the most recent
-
-    Args:
-        force_update (bool): If True, force the cache to update.
-
-    Returns:
-        str: The resultant quote.
-
-    Raises:
-        WebAPITimeoutError: Unable to access website to get quote.
-        WebAPIOutputError: Website's output was incomprehensible.
-        StillAwaitingCachedValue: Still waiting for cache to be initialized.
-
-    """
-    from my.classes.selfcachingcall import SelfCachingCall
-    global __our_randomquote_caching_call
-    if __our_randomquote_caching_call is None:
-        __our_randomquote_caching_call = SelfCachingCall(300, get_random_zenquote_SUB)
-        force_update = True
-    if force_update:
-        __our_randomquote_caching_call._update_me()
-    return __our_randomquote_caching_call.result
 
 
 def flatten(xss):
