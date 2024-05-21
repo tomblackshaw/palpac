@@ -1,7 +1,9 @@
 eclipse.preferences.version=1
 encoding//src/main.py=utf-8
+encoding//src/my/__init__.py=utf-8
 encoding//src/my/classes/__init__.py=utf-8
 encoding//src/my/classes/selfcachingcall.py=utf-8
+encoding//src/my/consts.py=utf-8
 encoding//src/my/weather/__init__.py=utf-8
 encoding//src/my/weather/meteorology.py=utf-8
 encoding/<project>=UTF-8
