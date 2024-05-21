@@ -35,12 +35,12 @@ from open_meteo import OpenMeteo
 from open_meteo.models import DailyParameters, HourlyParameters
 from parse import parse
 
-from my.classes.selfcachingcall import SelfCachingCall
 from my.consts import WMO_code_warnings_dct
 from my.exceptions import WebAPITimeoutError, WebAPIOutputError
 from my.globals import DEFAULT_LATLONG_URL, MAX_LATLONG_TIMEOUT
 from my.stringutils import wind_direction_str, url_validator
 from my.text2speech import play_dialogue_lst
+
 
 def get_lat_and_long(url=DEFAULT_LATLONG_URL, timeout=10):
     """Gets my latitude and longitude.
@@ -73,32 +73,32 @@ def get_lat_and_long(url=DEFAULT_LATLONG_URL, timeout=10):
         raise ValueError("{url} is not a valid URL; please ensure that it begins with http at least".format(url=url))
     try:
         uf = urllib.request.urlopen(url, timeout=timeout)
+    except urllib.error.HTTPError as e:
+        raise WebAPIOutputError("{url} timed out while I was trying to get my latitude and longitude from it".format(url=url)) from e
     except urllib.error.URLError as e:
         if 'timed out' in str(e):
-            raise WebAPITimeoutError("{url} timed out; please try again later".format(url=url))
+            raise WebAPITimeoutError("{url} timed out; please try again later".format(url=url)) from e
         else:
-            raise ValueError("{url} is not a valid URL, according to urllib; please fix it".format(url=url))
-    except urllib.error.HTTPError:
-        raise WebAPIOutputError("{url} timed out while I was trying to get my latitude and longitude from it".format(url=url))
+            raise ValueError("{url} is not a valid URL, according to urllib; please fix it".format(url=url)) from e
     except Exception as e:
-        raise WebAPIOutputError("{url} gave an unspecified error: {e}; please check the source code and try again".format(url=url, e=str(e)))
+        raise WebAPIOutputError("{url} gave an unspecified error: {e}; please check the source code and try again".format(url=url, e=str(e))) from e
     html = uf.read()
     soup = BeautifulSoup(html, 'html.parser')
     fmt_str = """{}°{}'{}" {}"""
     try:
-        potlines_lst = [soup.find('td', string=i).find_next_sibling("td").text.strip() for i in ('IP Location', 'City', 'Latitude', 'Longitude', 'Distance')]
+        potlines_lst = [soup.find('td', string=field).find_next_sibling("td").text.strip() for field in ('IP Location', 'City', 'Latitude', 'Longitude', 'Distance')]
         latitude_res = parse(fmt_str, [r for r in potlines_lst if 'N' in r or 'S' in r][-1])
         longitude_res = parse(fmt_str, [r for r in potlines_lst if 'E' in r or 'W' in r][-1])
         myconv = lambda incoming: (float(incoming[0]) + float(incoming[1]) / 60. + float(incoming[2]) / 3600.) * (1 if 'N' in incoming[3] or 'W' in incoming[3] else -1)
         latitude = myconv(latitude_res)
         longitude = myconv(longitude_res)
-    except (ValueError, AttributeError, IndexError):
-        raise WebAPIOutputError("The URL '%s' did not produce meaningful lat/long values. Please check the URL and try again." % url)
+    except (ValueError, AttributeError, IndexError) as e:
+        raise WebAPIOutputError("The URL '%s' did not produce meaningful lat/long values. Please check the URL and try again." % url) from e
     else:
         return(latitude, longitude)
 
 
-def get_weather_SUB():
+def get_weather():
     """Retrieve weather info from OpenMeteo.
 
     I call the OpenMeteo API to retrieve detailed information on my local
@@ -111,7 +111,7 @@ def get_weather_SUB():
         open_meteo.models.Forecast: structure containing weather info. For
         example:
 
-        $ d = get_weather_SUB()
+        $ d = get_weather()
         $ d.current_weather
         CurrentWeather(time=datetime.datetime(...), temperature=15.5, wind_speed=10.5, ...)
         $ d.elevation
@@ -159,43 +159,7 @@ def get_weather_SUB():
     return asyncio.run(main())
 
 
-__our_weather_caching_call = None
 
-
-def get_weather():
-    """Returns the cached result of a call to get_weather_SUB().
-
-    The programmer calls me. I return a recently cached result of a call
-    to get_weather_SUB(), courtesy of a self-caching class. I return
-    the same as get_weather_SUB() returns, albeit cached.
-
-    Args:
-        n/a
-
-    Returns:
-        See get_weather_SUB().
-
-    Raises:
-        StillAwaitingCachedValue: The self-caching instance of
-            get_weather_SUB() hasn't returned a value yet. I am still
-            waiting for a response to its first call to openmeteo.
-        WebAPIOutputError: The openmeteo website gave an illegible
-            response to our request for weather data.
-        WebAPITimeoutError: The openmeteo website timed out.
-
-    """
-    global __our_weather_caching_call
-    if __our_weather_caching_call is None:
-        __our_weather_caching_call = SelfCachingCall(300, get_weather_SUB)
-        force_update = True
-    try:
-        if force_update:
-            __our_weather_caching_call._update_me()
-        return __our_weather_caching_call.result
-    except TimeoutError:
-        raise WebAPITimeoutError("The openmeteo website timed out")
-    except WebAPIOutputError:
-        raise WebAPIOutputError("The openmeteo website returned an incomprehensible output")
 
 
 def generate_weather_report_dialogue(myweather, speaker1, speaker2, testing=False):
