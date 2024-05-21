@@ -62,6 +62,14 @@ class WebAPIOutputError(WebAPIError):
         super().__init__(message)
 
 
+class WebAPIOverloadError(WebAPIError):
+    """Class for web API output errors"""
+
+    def __init__(self, message):
+        _ = True  # TODO: remove me but also shut pylint up
+        super().__init__(message)
+
+
 class WebAPITimeoutError(WebAPIError):
     """Class for web API timeout errors"""
 
