@@ -24,12 +24,12 @@ Todo:
    http://google.github.io/styleguide/pyguide.html
 """
 
+from threading import Condition, Lock, Thread
+from time import sleep
 import copy
 import datetime
 import random
 import string
-from threading import Condition, Lock, Thread
-from time import sleep
 import time
 
 
