@@ -159,7 +159,7 @@ def get_weather_SUB():
     return asyncio.run(main())
 
 
-our_weather_caching_call = None
+__our_weather_caching_call = None
 
 
 def get_weather():
@@ -184,14 +184,14 @@ def get_weather():
         WebAPITimeoutError: The openmeteo website timed out.
 
     """
-    global our_weather_caching_call
-    if our_weather_caching_call is None:
-        our_weather_caching_call = SelfCachingCall(300, get_weather_SUB)
+    global __our_weather_caching_call
+    if __our_weather_caching_call is None:
+        __our_weather_caching_call = SelfCachingCall(300, get_weather_SUB)
         force_update = True
     try:
         if force_update:
-            our_weather_caching_call._update_me()
-        return our_weather_caching_call.result
+            __our_weather_caching_call._update_me()
+        return __our_weather_caching_call.result
     except TimeoutError:
         raise WebAPITimeoutError("The openmeteo website timed out")
     except WebAPIOutputError:
