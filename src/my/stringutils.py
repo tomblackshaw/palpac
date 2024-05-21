@@ -71,15 +71,20 @@ def get_random_zenquote_SUB():
         str: Random uplifting message string.
 
     Raises:
-        TimeoutError: Timed out while attempting to access ZenQuotes.
-        ConnectionError: ZenQuotes is refusing connections.
-        KeyError, IndexError: ZenQuotes generated a mangled output.
+        WebAPITimeoutError: Unable to access website to get quote.
+        WebAPIOutputError: Website's output was incomprehensible.
 
     """
     response = requests.get('https://zenquotes.io/api/random')
-    data = response.json()[0]
-    quote = data['q'] + ' - ' + data['a']
-    return quote
+    try:
+        data = response.json()[0]
+        quote = data['q'] + ' - ' + data['a']
+    except (TimeoutError, ConnectionError):
+        raise WebAPITimeoutError("The ZenQuotes website timed out")
+    except (KeyError, IndexError):
+        raise WebAPIOutputError("The output from the ZenQuotes website was incomprehensible")
+    else:
+        return quote
 
 
 our_randomquote_caching_call = None
