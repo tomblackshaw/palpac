@@ -6,9 +6,7 @@ Created on May 19, 2024
 @author: Tom Blackshaw
 
 This module --- my.classes --- exists so that the programmer can keep all
-the subclasses and homemade classes in one place. The file
-'selfcachingcall.py' contains classes for self-updating caches, for
-example, but it isn't part of this file.
+the subclasses and homemade classes in one place.
 
 This is a section break. Why is it here? I do not know. Perhaps I was
 planning to write something more meaningful.
