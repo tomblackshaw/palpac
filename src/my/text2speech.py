@@ -58,8 +58,8 @@ simplesay = lambda voice, text: play(tts.audio(voice=voice, text=text, advanced=
 
 '''
 
-import os
 from random import choice
+import os
 
 from elevenlabs.client import ElevenLabs, Voice
 
