@@ -72,8 +72,7 @@ def get_elevenlabs_clientclass(key_filename):
     try:
         api_key = open(key_filename, 'r', encoding="utf-8").read().strip(' \n')
     except FileNotFoundError as e:
-        del e
-        raise FileNotFoundError ("Please save the Eleven Labs API key to %s and re-run this script." % key_filename)
+        raise FileNotFoundError ("Please save the Eleven Labs API key to %s and re-run this script." % key_filename) from e
     client = ElevenLabs(
         api_key=api_key)
     return client

@@ -81,10 +81,10 @@ def get_random_zenquote_SUB():
     try:
         data = response.json()[0]
         quote = data['q'] + ' - ' + data['a']
-    except (TimeoutError, ConnectionError):
-        raise WebAPITimeoutError("The ZenQuotes website timed out")
-    except (KeyError, IndexError):
-        raise WebAPIOutputError("The output from the ZenQuotes website was incomprehensible")
+    except (TimeoutError, ConnectionError) as e:
+        raise WebAPITimeoutError("The ZenQuotes website timed out") from e
+    except (KeyError, IndexError) as e:
+        raise WebAPIOutputError("The output from the ZenQuotes website was incomprehensible") from e
     else:
         return quote
 
