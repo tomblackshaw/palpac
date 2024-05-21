@@ -28,7 +28,7 @@ class Test_get_lat_and_long(unittest.TestCase):
 
     def testWithGoofyURL(self):
         self.assertRaises(ValueError, get_lat_and_long, 'definitely not a URL', 5)
-        self.assertRaises(ValueError, get_lat_and_long, 'http://cnn.com/nope.nope.nope', 5)
+        self.assertRaises(WebAPIOutputError, get_lat_and_long, 'http://cnn.com/nope.nope.nope', 5)
         self.assertRaises(WebAPIOutputError, get_lat_and_long, DEFAULT_LATLONG_URL + 'qqq', 5)
 
     def testWithGoofyTimeout(self):
