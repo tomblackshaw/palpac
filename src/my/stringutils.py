@@ -12,6 +12,8 @@ import string
 from urllib.parse import urlparse
 
 import requests
+
+from my.exceptions import WebAPITimeoutError, WebAPIOutputError
 from my.tools import logit
 
 MAX_RANDGENSTR_LEN = 99999  # used by generate_random_string()
@@ -87,7 +89,7 @@ def get_random_zenquote_SUB():
         return quote
 
 
-our_randomquote_caching_call = None
+__our_randomquote_caching_call = None
 
 
 def get_random_quote(force_update=False):
@@ -102,20 +104,19 @@ def get_random_quote(force_update=False):
         str: The resultant quote.
 
     Raises:
-        StillAwaitingCachedValue: Unable to get cached quote.
+        WebAPITimeoutError: Unable to access website to get quote.
+        WebAPIOutputError: Website's output was incomprehensible.
+        StillAwaitingCachedValue: Still waiting for cache to be initialized.
 
     """
-    from my.classes.selfcachingcall import SelfCachingCall, StillAwaitingCachedValue
-    global our_randomquote_caching_call
-    if our_randomquote_caching_call is None:
-        our_randomquote_caching_call = SelfCachingCall(300, get_random_zenquote_SUB)
+    from my.classes.selfcachingcall import SelfCachingCall
+    global __our_randomquote_caching_call
+    if __our_randomquote_caching_call is None:
+        __our_randomquote_caching_call = SelfCachingCall(300, get_random_zenquote_SUB)
         force_update = True
-    try:
-        if force_update:
-            our_randomquote_caching_call._update_me()
-        return our_randomquote_caching_call.result
-    except (TimeoutError, ConnectionError, KeyError, IndexError, StillAwaitingCachedValue):
-        raise StillAwaitingCachedValue("Still trying to get inspirational quote from ZenQuote")
+    if force_update:
+        __our_randomquote_caching_call._update_me()
+    return __our_randomquote_caching_call.result
 
 
 def flatten(xss):
