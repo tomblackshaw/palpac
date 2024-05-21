@@ -56,7 +56,7 @@ def singleton(cls):
     return getinstance
 
 
-class ReadWriteLock:
+class ReadWriteLock(object):
     """A lock object that allows many read locks but only one write lock.
 
     This is a lock object that allows many simultaneous "read locks", but
