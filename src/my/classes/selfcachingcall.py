@@ -97,6 +97,8 @@ class SelfCachingCall:
     def __init__(self, refreshfrequency, func, *args, **kwargs):
         assert (isinstance(refreshfrequency, int)
                 or isinstance(refreshfrequency, float))
+        if refreshfrequency <= 0:
+            raise ValueError("When declaring a SelfCachingCall instance, please specify a refreshfrequency greater than 0.")
         self.__args = args
         self.__kwargs = kwargs
         self.__func = func
