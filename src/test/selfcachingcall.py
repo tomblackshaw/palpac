@@ -19,14 +19,13 @@ class Test(unittest.TestCase):
         del self.gvar
 
     def testMyBbc(self):
-        timeout = 3
+        timeout = 2
         d = SelfCachingCall(5, os.system, "ping -W{timeout} -c1 bbc.com > /dev/null 2> /dev/null".format(timeout=timeout))
         time.sleep(timeout)
         self.assertEqual(d.result, 0)
         d.join()
 
     def testLocalhost(self):
-
         timeout = 2
         d = SelfCachingCall(timeout, os.system, "ping -W{timeout} -c1 localhost > /dev/null 2> /dev/null".format(timeout=timeout))
         time.sleep(timeout)
@@ -34,7 +33,6 @@ class Test(unittest.TestCase):
         d.join()
 
     def testBadURL(self):
-
         timeout = 2
         d = SelfCachingCall(timeout, os.system, "ping -W{timeout} -c1 www.ahfuioashdfilknsf.com > /dev/null 2> /dev/null".format(timeout=timeout))
         time.sleep(timeout)
