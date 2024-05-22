@@ -44,7 +44,7 @@ class _WeatherClass(object):
             return self._our_weather_caching_call.result
         except StillAwaitingCachedValue:
             self._our_weather_caching_call.update_me()
-            return self.weather.result
+            return self.weather
         except TimeoutError as e:
             raise WebAPITimeoutError("The openmeteo website timed out") from e
         except WebAPIOutputError:

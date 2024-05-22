@@ -118,3 +118,31 @@ def generate_random_string(length):
     )
     return x
 
+
+def convert_24h_and_mins_to_shorttime(time_24h, time_minutes, diff=0):
+    # TODO: write me
+    if diff != 0:
+        time_minutes += diff
+        while time_minutes < 0:
+            time_minutes += 60
+            time_24h -= (diff // 60)
+        while time_minutes >= 60:
+            time_minutes -= 60
+            time_24h += (diff // 60)
+
+    if time_minutes == 0:
+        if time_24h == 0:
+            return '%d midnight' % (time_24h + 12)
+        if time_24h < 12:
+            return '%dAM' % (time_24h + 12)
+        elif time_24h == 12:
+            return '%d noon' % time_24h
+        elif time_24h < 24:
+            return '%dPM' % (time_24h - 12)
+        else:
+            return '%d hours (how is that possible)' % time_24h
+    else:
+        if time_24h < 12:
+            return '%d:%02dAM' % (time_24h + 12, time_minutes)
+        else:
+            return '%d:%02dAM' % (time_24h - 12, time_minutes)

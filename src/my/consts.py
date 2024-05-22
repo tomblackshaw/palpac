@@ -130,3 +130,48 @@ WMO_code_warnings_dct = {
 99: ("Are the gods trying to kill us?", "There is a heavy thunderstorm, right now, with hail."),
 100:("We are all going to die. Lovely!", "The apocalypse is upon us. Gather your loved ones together and pray to whichever god or gods you worship. As usual, atheists should email Richard Dawkins.")
 }
+
+hello_owner_lst = [
+"""${owner}. . . ${owner}? . . . ${owner}! . . .Hey! Good ${morning_or_afternoon_or_evening}.""",
+"""Good ${morning_or_afternoon_or_evening}, ${owner}.""",
+"""Ay yo, ${owner}! Good ${morning_or_afternoon_or_evening}.""",
+"""What's crackalackin', ${owner}?""",
+"""Excuse me, ${owner}, may I have a word?""",
+"""Oh my, ${owner}, I have such news! Have you the time? You do now.""",
+"""Ground control to Major ${owner}!""",
+]
+
+alarm_messages_lst = [
+"""${hello_owner} It's ${shorttime}. So, ${owner}, who has two thumbs and a functional alarm clock?. . . I'll give you a hint. It isn't Bill Cosby.""",
+"""${hello_owner} The time is ${shorttime}. You're late, you're late, for a very important date. . . When? Where? I don't care!""",
+"""${hello_owner} It's ${shorttime}. Each day has at least 24 hours. You're awake for, wait, no, that's not it. Every day has 12 hours and you're... No, that's not it either. Don't judge me! I'm sleepy!""",
+"""${hello_owner} This is your alarm. This is your alarm. Ring. ... Ring, ring. ... Ring, ring, ring. Hello? Hi, It's ${owner}'s life, passing by. What's that? ${owner} doesn't care? Okay, bye. Also, it's ${shorttime}.""",
+"""${hello_owner} Get up! It's ${shorttime}. If you get up, I'll promise not to tell your friends you fart in your sleep.""",
+"""${hello_owner} Okay, Rip Van ${owner}. It's ${shorttime}. Get your ass out of bed before I play Baby Shark on Repeat.""",
+"""${hello_owner} Current location of ${owner}: bed. Appropriate location of ${owner}: somewhere else. It is ${shorttime}. Do you know where your future is?""",
+"""${hello_owner} It's ${shorttime}. The forecast is 100% chance of misery if you haven't charged your electronic devices.""",
+"""${hello_owner} Crikey, it's ${shorttime} and there's a crocodile in your bed. Better run for cover! Preferably into a shower, a college class, or a grocery store. Lucky you!""",
+"""${hello_owner} Don't cheat yourself. Treat yourself. It's ${shorttime}, time for you to hustle and bustle!""",
+"""${hello_owner} It's ${shorttime}. Get up, you short king! Time to stick out your ghee-att for the rizzler! There's a 100% chance of Ohio if you dip, and a 0% chance of skibbidee if you're the goat and get up.""",
+"""${hello_owner} What up, G?. . . Don't make me grab my gat and bust caps up in this biznatch. It's ${shorttime}. . . Up you get!""",
+"""${hello_owner} Just because it's ${shorttime}, that doesn't mean you need to get up. It's fine. Go back to sleep. I mean, you did set the alarm, but whatever.""",
+"""${hello_owner} The time for sleeping ended at ${one_minute_ago}. The time for a dulting is now. It is ${shorttime}. Make a move.""",
+"""It's ${shorttime}! If you thought your childhood was fun, you'll love a dulting. It's like being old, except you still have to work. Your lesson starts now.""",
+"""${hello_owner} This is your conscience. Get up, ${owner}. It's ${shorttime}. It's time to get up. Beep, beep, beep, beep. Do not ignore your conscience. I know where you sleep, ${owner}.""",
+"""${owner}, it's ${shorttime}. You're giving me operational dysfunction. I find your ongoing bedridden-ness to be triggering. Please get up. ${owner}""",
+"""It is ${shorttime}. . . Hey ${owner}! ${hello_owner} it's still ${shorttime}. . . In a minute, it'll be ${one_minute_later}. . . You don't want to be in bed when that happens, trust me.""",
+"""Hi ${owner}! It'll be ${shorttime} in 3, 2, 1, OK. Now, it's ${shorttime}. ${hello_owner} You really should get up, ${owner}. In 60 seconds, it'll be ${one_minute_later} and you'll be late! Well, OK, not late-late, but you'll be one minute closer to being late.""",
+# """And now it's 7:02. Fantastic. Fan bloody tastic.""",
+# """Seriously? You pushed the snooze button for the 3rd time, ${owner}, and it's already 7:29. Who raised you?
+"""Shrek is love. Shrek is life. ${owner} is late. ${hello_owner} It's ${shorttime} and you need to get up.""",
+"""Tardiness has all the professional appeal of ringworm. ${hello_owner} It's ${shorttime}, ${owner}. Get. Up. Now.""",
+]
+
+default_speaker_alarm_message_dct = {
+    "Freya": """${hello_owner} Like, OMG, you are totes late, ${owner}. JK, it's ${shorttime} and POV your drip is straight fire. Or gay fire. Whatevs. Anyway, time to rise and shine, my short stack sigma!""",
+    "Jessie": """${hello_owner} If you want your bed to outlast its warranty, get up! C'mon! It's ${shorttime} and time's a-wastin', {owner}!""",
+    "Ethan": """${hello_owner} It pulls the bedsheets off its skin, or else it sleeps in late again!""",
+    "Drew":"""This just in — it is now ${shorttime} and ${owner} is sleeping through the alarm, again. Sources report that our short king has been up late, sticking out his ghee-at for the rizzler. More to come, after the skibbiddee.""",
+    "Giovanni":"""Good despicable morning! Hello ${owner}, my favorite minion! It's ${shorttime}. Today, we are going to blow up ... the bathroom!""",
+    "Daniel":"""Oi, ${owner}, mate! It's ${shorttime} Time to have a red hot go, son! Go waltz your Matilda. Good on ya!""",
+    }

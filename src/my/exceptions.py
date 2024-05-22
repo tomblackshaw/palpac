@@ -18,71 +18,69 @@ Error
 class Error(Exception):
     """Base class for other exceptions"""
 
-    def __init__(self, message):
+    def __init__(self, message):  # pylint: disable=useless-parent-delegation
         super().__init__(message)
 
 
 class StartupError(Error):
     """Class for all startup errors"""
 
-    def __init__(self, message):
-        _ = True  # TODO: remove me but also shut pylint up
+    def __init__(self, message):  # pylint: disable=useless-parent-delegation
         super().__init__(message)
 
 
 class PyQtStartupError(StartupError):
     """Class for all PyQt startup errors"""
 
-    def __init__(self, message):
-        _ = True  # TODO: remove me but also shut pylint up
+    def __init__(self, message):  # pylint: disable=useless-parent-delegation
         super().__init__(message)
 
 
 class PyQtUICompilerError(PyQtStartupError):
     """Class for all PyQt startup errors"""
 
-    def __init__(self, message):
-        _ = True  # TODO: remove me but also shut pylint up
+    def __init__(self, message):  # pylint: disable=useless-parent-delegation
+
         super().__init__(message)
 
 
 class WebAPIError(Error):
     """Class for web API errors"""
 
-    def __init__(self, message):
-        _ = True  # TODO: remove me but also shut pylint up
+    def __init__(self, message):  # pylint: disable=useless-parent-delegation
+
         super().__init__(message)
 
 
 class WebAPIOutputError(WebAPIError):
     """Class for web API output errors"""
 
-    def __init__(self, message):
-        _ = True  # TODO: remove me but also shut pylint up
+    def __init__(self, message):  # pylint: disable=useless-parent-delegation
+
         super().__init__(message)
 
 
 class WebAPIOverloadError(WebAPIError):
     """Class for web API output errors"""
 
-    def __init__(self, message):
-        _ = True  # TODO: remove me but also shut pylint up
+    def __init__(self, message):  # pylint: disable=useless-parent-delegation
+
         super().__init__(message)
 
 
 class WebAPITimeoutError(WebAPIError):
     """Class for web API timeout errors"""
 
-    def __init__(self, message):
-        _ = True  # TODO: remove me but also shut pylint up
+    def __init__(self, message):  # pylint: disable=useless-parent-delegation
+
         super().__init__(message)
 
 
 class CachingError(Error):
     """Class for all caching errors"""
 
-    def __init__(self, message):
-        _ = True  # TODO: remove me but also shut pylint up
+    def __init__(self, message):  # pylint: disable=useless-parent-delegation
+
         super().__init__(message)
 
 
@@ -120,6 +118,6 @@ class StillAwaitingCachedValue(CachingError):
 
     """
 
-    def __init__(self, message):
-        _ = True  # TODO: remove me but also shut pylint up
+    def __init__(self, message):  # pylint: disable=useless-parent-delegation
+
         super().__init__(message)

@@ -26,8 +26,7 @@ Todo:
 
 import sys
 
-from PyQt6.QtWidgets import QWidget, QApplication
-from elevenlabs import play
+from PyQt6.QtWidgets import QWidget, QApplication  # pylint: disable=no-name-in-module
 
 from my.classes.randomquoteclass import RandomQuoteSingleton as q
 from my.exceptions import StillAwaitingCachedValue
@@ -58,9 +57,9 @@ class FunWidget(QWidget):
 
         # show the login window
         self.show()
-        self.ui.btnQuit.clicked.connect(lambda: sys.exit())
-        self.ui.btnPlay.clicked.connect(lambda: self.playme())
-        self.ui.btnRandQuote.clicked.connect(lambda: self.repopulateWithRandomQuote())
+        self.ui.btnQuit.clicked.connect(sys.exit)  # lambda: sys.exit())
+        self.ui.btnPlay.clicked.connect(self.playme)  # lambda: self.playme())
+        self.ui.btnRandQuote.clicked.connect(self.repopulateWithRandomQuote)  # lambda: self.repopulateWithRandomQuote())
         self.show()
 
     def repopulateWithRandomQuote(self):
@@ -97,15 +96,17 @@ class FunWidget(QWidget):
             n/a
 
         """
-        play(self.tts.audio(text=self.ui.plainTextEdit.toPlainText(), voice=self.tts.random_name))
+        self.tts.play(self.tts.audio(text=self.ui.plainTextEdit.toPlainText(), voice=self.tts.random_name))
+
 
 #########################################################################################################
 
 
+
 if __name__ == '__main__':
+    from my.text2speech import Text2SpeechSingleton
     add_to_os_path_if_existent('/opt/homebrew/bin', strict=False)
     compile_all_uic_files('ui')
     app = QApplication(sys.argv)
-    from my.text2speech import Text2SpeechSingleton as tts
-    qwin = FunWidget(tts=tts)
+    qwin = FunWidget(tts=Text2SpeechSingleton)
     sys.exit(app.exec())
