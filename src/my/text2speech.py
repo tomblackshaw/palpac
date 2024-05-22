@@ -200,3 +200,61 @@ def speak_random_alarm(owner_of_clock, time_24h, time_minutes, voice=None, tts=T
         d = tts.audio(voice=voice, text=message)
     tts.play(d)
 
+
+def speak_totally_randomized_alarm_and_time(owner_of_clock):
+    time_24h = random.randint(0, 24)
+    time_minutes = random.randint(0, 60)
+    speak_random_alarm(owner_of_clock, time_24h, time_minutes)
+
+'''
+from my.text2speech import Text2SpeechSingleton as tts
+from my.tools import SelfCachingCall
+from elevenlabs import play
+prof_name= [r for r in s.voiceinfo if r.samples is not None][0].name
+play(tts.audio('Rachel', 'hello there'))
+play(tts.audio(tts.random_name, 'Hi there. This is a test.'))
+prof_audio = lambda text: s.audio(prof_name, text, advanced=True, model='eleven_multilingual_v2', stability=0.50, similarity_boost=0.01, style=0.10,use_speaker_boost=True)
+freya_audio = lambda text: s.audio('Freya', text, advanced=True, model='eleven_multilingual_v2', stability=0.30, similarity_boost=0.01, style=0.50,use_speaker_boost=True)
+play(tts.audio(voice="Freya", text="Word up, homie G skillet dawg. What's crack-a-lackin'?"))
+annoying_audio = lambda voice: s.audio(voice=voice, text="Like, OMG, you are totes late, Chuckles. JK, it's 7AM and POV your drip is straight fire. Or gay fire. Whatevs. Anyway, time to rise and shine, my short king sigma!",
+                advanced=True, model='eleven_multilingual_v2', stability=0.30, similarity_boost=0.01, style=0.90,use_speaker_boost=True)
+
+data_lst = [annoying_audio(au) for au in ('Freya', prof_name)]
+for d in data_lst:
+    play(d)
+
+dramatic_audio = lambda voice, text : s.audio(voice=voice, text=text, advanced=True, model='eleven_multilingual_v2', stability=0.70, similarity_boost=0.01, style=0.9,use_speaker_boost=True)
+def say_it_with_multiple_voices(voice_lst, text):
+    dramatic_audio = lambda voice, text : s.audio(voice=voice, text=text, advanced=True, model='eleven_multilingual_v2', stability=0.70, similarity_boost=0.01, style=0.9,use_speaker_boost=True)#  if voice == prof_name else False)
+    data_lst = [dramatic_audio(voice=r, text=text) for r in voice_lst]
+    for d in data_lst:
+        play(d)
+
+damn_it_janet = lambda text: say_it_with_multiple_voices(['Freya', prof_name], text)
+data_lst = [annoying_audio(au) for au in ('Freya', prof_name)]
+for d in data_lst:
+    play(d)
+
+for d in ['Freya', 'Rachel', prof_name, 'Jessie']:
+
+
+freya_say_it = lambda text : play(dramatic_audio('Freya', text)
+prof_say_it = lambda text : play(dramatic_audio(prof_audio, text)
+
+data_lst = [dramatic_audio(name, "Wake up, Chuckles!") for name in list(set([s.random_name,s.random_name,s.random_name,s.random_name,s.random_name,s.random_name]))]
+cachingcalls = [SelfCachingCall(5, play, d) for d in data_lst]
+for cc in cachingcalls: cc.join()
+
+freya_scc = SelfCachingCall(5, play, freya_data)
+rachel_scc = SelfCachingCall(5, play, rachel_data)
+prof_scc = SelfCachingCall(5, play, prof_data)
+
+prompts = (("Rachel", "Hey, %s, how's the weather today?" % prof_name), (prof_name, "The temperature is 80 degrees, there is a 10% chance of rain, wind is 5 miles her hour, excellent visibility. Freya? How's the traffic?"), ("Freya", "Traffic these nuts! I'm going to Target."))
+data_lst = [dramatic_audio(voice=voice, text=text) for voice, text in prompts]
+for d in data_lst:
+    play(d)
+
+simplesay = lambda voice, text: play(tts.audio(voice=voice, text=text, advanced=True, model='eleven_multilingual_v2', stability=0.70, similarity_boost=0.01, style=0.9,use_speaker_boost=True))
+
+
+'''
