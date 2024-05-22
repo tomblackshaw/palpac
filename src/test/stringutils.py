@@ -41,9 +41,9 @@ class TestConvert24hAndMinsToShorttime(unittest.TestCase):
         pass
 
     def testGoofy(self):
-        self.assertRaises(ValueError, convert_24h_and_mins_to_shorttime)
-        self.assertRaises(ValueError, convert_24h_and_mins_to_shorttime, None, None)
-        self.assertRaises(ValueError, convert_24h_and_mins_to_shorttime, 'Hi', 'there')
+        self.assertRaises(TypeError, convert_24h_and_mins_to_shorttime)
+        self.assertRaises(TypeError, convert_24h_and_mins_to_shorttime, None, None)
+        self.assertRaises(TypeError, convert_24h_and_mins_to_shorttime, 'Hi', 'there')
         self.assertRaises(ValueError, convert_24h_and_mins_to_shorttime, -1, -1)
         self.assertRaises(ValueError, convert_24h_and_mins_to_shorttime, 99, 99)
         self.assertRaises(ValueError, convert_24h_and_mins_to_shorttime, 0, 99)
@@ -51,18 +51,26 @@ class TestConvert24hAndMinsToShorttime(unittest.TestCase):
         self.assertRaises(ValueError, convert_24h_and_mins_to_shorttime, 24, 0)
         self.assertRaises(ValueError, convert_24h_and_mins_to_shorttime, 0, 60)
     def testDiff(self):
-        self.assertEqual(convert_24h_and_mins_to_shorttime(0, 0, -1), (23, 59))
-        self.assertEqual(convert_24h_and_mins_to_shorttime(23, 59, 1), (0, 0))
+        self.assertEqual(convert_24h_and_mins_to_shorttime(0, 0, -1), "11:59AM")
+        self.assertEqual(convert_24h_and_mins_to_shorttime(0, 0), "12 midnight")
+        self.assertEqual(convert_24h_and_mins_to_shorttime(12, 0), "12 noon")
+        self.assertEqual(convert_24h_and_mins_to_shorttime(23, 59, 1), "12 midnight")
+        self.assertEqual(convert_24h_and_mins_to_shorttime(0, 1, -1), "12 midnight")
+        self.assertEqual(convert_24h_and_mins_to_shorttime(12, 1, -1), "12 noon")
+        self.assertEqual(convert_24h_and_mins_to_shorttime(11, 59, 1), "12 noon")
         for diff in range(0,5):
-            for i in range(2,23):
-                for j in range(diff,60-diff):
-                    self.assertEqual(convert_24h_and_mins_to_shorttime(0, 0, diff), (i, j + diff))
-                    self.assertEqual(convert_24h_and_mins_to_shorttime(0, 0, -diff), (i, j - diff))
+            for h in range(0, 23):
+                for m in range(0, 60):
+                    s1 = convert_24h_and_mins_to_shorttime(h, m)
+                    s2 = convert_24h_and_mins_to_shorttime(h, m, diff)
 
         for i in range(0, 1000):
-            s = convert_24h_and_mins_to_shorttime(0, 60)
+            s = convert_24h_and_mins_to_shorttime(0, 59)
             diff = random.randint(0, 120) - 60
-            s = convert_24h_and_mins_to_shorttime(0, 60, diff)
+            s = convert_24h_and_mins_to_shorttime(0, 59, diff)
+        for hr in range(0,24):
+            for mn in range(0, 60):
+                s = convert_24h_and_mins_to_shorttime(hr, mn)
         del i, s
 
 
