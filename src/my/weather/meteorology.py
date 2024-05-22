@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""my.weather
+"""my.weather.meteorology
 
 Created on May 19, 2024
 
