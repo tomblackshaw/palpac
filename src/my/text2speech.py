@@ -155,24 +155,33 @@ Text2SpeechSingleton = _SpeakmymindClass()
 def generate_alarm_message(owner, time_24h, time_minutes, message_template):  # TODO: This should use string.template.
 
     '''
-    from my.text2speech import *
-    time_24h = 0
-    time_minutes = 1
-    owner = 'Chuckles'
-    message_template = alarm_messages_lst[0]
+from my.text2speech import *
+import random
+time_24h = random.randint(0,24)
+time_minutes = random.randint(0,60)
+owner = 'Chuckles'
+message_template = alarm_messages_lst[0]
     '''
+    if owner == '' or owner is None:
+        raise ValueError("Owner -- the name of the human who owns this alarm clock -- needs to be a non-empty string. You supplied a duff value.")
+    if type(time_24h) is not int or type(time_minutes) is not int or time_24h < 0 or time_24h >= 24 or time_minutes < 0 or time_minutes >= 60:
+        raise ValueError("You supplied a duff hour and/or minute.")
     shorttime = convert_24h_and_mins_to_shorttime(time_24h, time_minutes)
     one_minute_ago = convert_24h_and_mins_to_shorttime(time_24h, time_minutes, diff=-1)
     one_minute_later = convert_24h_and_mins_to_shorttime(time_24h, time_minutes, diff=1)
     hello_owner = random.choice(hello_owner_lst)
     morning_or_afternoon_or_evening = 'morning' if time_24h < 12 else 'afternoon' if time_24h < 18 else 'evening'
     newval = message_template
-    for i in range(0, 10):
-        oldval = string.Template(newval)
-        newval = oldval.substitute(hello_owner=hello_owner, owner=owner, shorttime=shorttime, one_minute_ago=one_minute_ago, one_minute_later=one_minute_later, morning_or_afternoon_or_evening=morning_or_afternoon_or_evening)
+    for _ in range(0, 5):
+        oldval = newval
+        ov_template= string.Template(oldval)
+        newval = ov_template.substitute(hello_owner=hello_owner, owner=owner, shorttime=shorttime, one_minute_ago=one_minute_ago, one_minute_later=one_minute_later, morning_or_afternoon_or_evening=morning_or_afternoon_or_evening)
+#        print("""{oldval} ==> {newval}""".format(oldval=oldval, newval=newval))
 # s = message_template.replace('${', '').replace('}', '').replace('hello_owner', hello_owner).replace('owner', owner
 #                         ).replace('shorttime', shorttime).replace('one_minute_ago', one_minute_ago
 #                         ).replace("one_minute_later", one_minute_later).replace("morning_or_afternoon_or_evenin", morning_or_afternoon_or_evening)
+    if '${' in newval:
+        raise KeyError("Unresolved variable in {newval}. Look for the string in braces and check your source code.".format(newval=newval))
     return newval
 
 
@@ -186,14 +195,10 @@ def generate_random_alarm_message(owner_of_clock, time_24h, time_minutes, voice=
 
 
 def speak_random_alarm(owner_of_clock, time_24h, time_minutes, voice=None, tts=Text2SpeechSingleton):
-    '''
-    speak_random_alarm(Text2SpeechSingleton, 'Freya')
-    '''
     if voice is None:
         voice = tts.random_name
     message = generate_random_alarm_message(owner_of_clock, time_24h, time_minutes, voice)
     prof_name = [r for r in tts.voiceinfo if r.samples is not None][0].name
-    print(message)
     if voice == prof_name:
         d = tts.audio(voice=voice, text=message, advanced=True, model='eleven_multilingual_v2', stability=0.30, similarity_boost=0.01, style=0.90, use_speaker_boost=True)
     else:
@@ -207,6 +212,10 @@ def speak_totally_randomized_alarm_and_time(owner_of_clock):
     speak_random_alarm(owner_of_clock, time_24h, time_minutes)
 
 '''
+isay
+
+
+
 from my.text2speech import Text2SpeechSingleton as tts
 from my.tools import SelfCachingCall
 from elevenlabs import play
