@@ -152,7 +152,7 @@ alarm_messages_lst = [
 """${hello_owner} It's ${shorttime}. The forecast is 100% chance of misery if you haven't charged your electronic devices.""",
 """${hello_owner} Crikey, it's ${shorttime} and there's a crocodile in your bed. Better run for cover! Preferably into a shower, a college class, or a grocery store. Lucky you!""",
 """${hello_owner} Don't cheat yourself. Treat yourself. It's ${shorttime}, time for you to hustle and bustle!""",
-"""${hello_owner} It's ${shorttime}. Get up, you short king! Time to stick out your ghee-att for the rizzler! There's a 100% chance of Ohio if you dip, and a 0% chance of skibbidee if you're the goat and get up.""",
+"""${hello_owner} It's ${shorttime}. Get up, you short boss! Time to stick out your ghee-att for the rizzler! There's a 100% chance of Ohio if you dip, and a 0% chance of skibbidee if you're the goat and get up.""",
 """${hello_owner} What up, G?. . . Don't make me grab my gat and bust caps up in this biznatch. It's ${shorttime}. . . Up you get!""",
 """${hello_owner} Just because it's ${shorttime}, that doesn't mean you need to get up. It's fine. Go back to sleep. I mean, you did set the alarm, but whatever.""",
 """${hello_owner} The time for sleeping ended at ${one_minute_ago}. The time for a dulting is now. It is ${shorttime}. Make a move.""",
@@ -168,10 +168,10 @@ alarm_messages_lst = [
 ]
 
 default_speaker_alarm_message_dct = {
-    "Freya": """${hello_owner} Like, OMG, you are totes late, ${owner}. JK, it's ${shorttime} and POV your drip is straight fire. Or gay fire. Whatevs. Anyway, time to rise and shine, my short stack sigma!""",
+    "Freya": """${hello_owner} Like, OMG, you are totes late, ${owner}. JK, it's ${shorttime} and POV your drip is straight fire. Or gay fire. Whatevs. Anyway, time to rise and shine, my short boss sigma!""",
     "Jessie": """${hello_owner} If you want your bed to outlast its warranty, get up! C'mon! It's ${shorttime} and time's a-wastin', {owner}!""",
     "Ethan": """${hello_owner} It pulls the bedsheets off its skin, or else it sleeps in late again!""",
-    "Drew":"""This just in — it is now ${shorttime} and ${owner} is sleeping through the alarm, again. Sources report that our short king has been up late, sticking out his ghee-at for the rizzler. More to come, after the skibbiddee.""",
+    "Drew":"""This just in — it is now ${shorttime} and ${owner} is sleeping through the alarm, again. Sources report that our short boss has been up late, sticking out his ghee-at for the rizzler. More to come, after the skibbiddee.""",
     "Giovanni":"""Good despicable morning! Hello ${owner}, my favorite minion! It's ${shorttime}. Today, we are going to blow up ... the bathroom!""",
     "Daniel":"""Oi, ${owner}, mate! It's ${shorttime} Time to have a red hot go, son! Go waltz your Matilda. Good on ya!""",
     }
