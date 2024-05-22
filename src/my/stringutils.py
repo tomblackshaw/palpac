@@ -151,15 +151,33 @@ def generate_random_string(length):
 
 
 def convert_24h_and_mins_to_shorttime(time_24h, time_minutes, diff=0):
-    # TODO: write me
-    if diff != 0:
-        time_minutes += diff
-        while time_minutes < 0:
-            time_minutes += 60
-            time_24h -= (diff // 60)
-        while time_minutes >= 60:
+    # TODO: write docs. Also, use datetime().
+    if type(time_24h) is not int:
+        raise TypeError("time_24h needs to be an integer, not a %s" % str(type(time_24h)))
+    if  type(time_minutes) is not int:
+        raise TypeError("time_minutes needs to be an integer, not a %s" % str(type(time_minutes)))
+    if  type(diff) is not int:
+        raise TypeError("diff needs to be an integer, not a %s" % str(type(diff)))
+    if not (0 <= time_24h <= 23):
+        raise ValueError("time_24h must be >=0 and <=23")
+    if not (0 <= time_minutes <= 59):
+        raise ValueError("time_minutes must be >=0 and <=59")
+    while diff > 0:
+        diff -= 1
+        time_minutes += 1
+        if time_minutes >= 60:
             time_minutes -= 60
-            time_24h += (diff // 60)
+            time_24h += 1
+            if time_24h >= 24:
+                time_24h -= 24
+    while diff < 0:
+        diff += 1
+        time_minutes -= 1
+        if time_minutes < 0:
+            time_minutes += 60
+            time_24h -= 1
+            if time_24h < 0:
+                time_24h += 24
 
     if time_minutes == 0:
         if time_24h == 0:
