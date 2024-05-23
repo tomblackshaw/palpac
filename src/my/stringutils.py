@@ -206,3 +206,65 @@ def convert_24h_and_mins_to_shorttime(time_24h, time_minutes, diff=0):
             return '%d:%02dAM' % (time_24h + 12, time_minutes)
         else:
             return '%d:%02dAM' % (time_24h - 12, time_minutes)
+
+
+def generate_alarm_message(owner, time_24h, time_minutes, message_template):
+    # TODO: Write me
+    '''
+from my.text2speech import *
+import random
+time_24h = random.randint(0,24)
+time_minutes = random.randint(0,60)
+owner = 'Chuckles'
+message_template = alarm_messages_lst[0]
+    '''
+    from my.consts import hello_owner_lst
+    if owner == '' or owner is None:
+        raise ValueError("Owner -- the name of the human who owns this alarm clock -- needs to be a non-empty string. You supplied a duff value.")
+    if type(time_24h) is not int or type(time_minutes) is not int or time_24h < 0 or time_24h >= 24 or time_minutes < 0 or time_minutes >= 60:
+        raise ValueError("You supplied a duff hour and/or minute.")
+    shorttime = convert_24h_and_mins_to_shorttime(time_24h, time_minutes)
+    one_minute_ago = convert_24h_and_mins_to_shorttime(time_24h, time_minutes, diff=-1)
+    one_minute_later = convert_24h_and_mins_to_shorttime(time_24h, time_minutes, diff=1)
+    hello_owner = random.choice(hello_owner_lst)
+    morning_or_afternoon_or_evening = 'morning' if time_24h < 12 else 'afternoon' if time_24h < 18 else 'evening'
+    newval = message_template
+    for _ in range(0, 5):
+        oldval = newval
+        ov_template = string.Template(oldval)
+        newval = ov_template.substitute(hello_owner=hello_owner, owner=owner, shorttime=shorttime, one_minute_ago=one_minute_ago, one_minute_later=one_minute_later, morning_or_afternoon_or_evening=morning_or_afternoon_or_evening)
+#        print("""{oldval} ==> {newval}""".format(oldval=oldval, newval=newval))
+# s = message_template.replace('${', '').replace('}', '').replace('hello_owner', hello_owner).replace('owner', owner
+#                         ).replace('shorttime', shorttime).replace('one_minute_ago', one_minute_ago
+#                         ).replace("one_minute_later", one_minute_later).replace("morning_or_afternoon_or_evenin", morning_or_afternoon_or_evening)
+    if '${' in newval:
+        raise KeyError("Unresolved variable in {newval}. Look for the string in braces and check your source code.".format(newval=newval))
+    return newval
+
+
+
+
+def generate_random_alarm_message(owner_of_clock, time_24h, time_minutes, voice=None):
+    """Example function with types documented in the docstring.
+
+    `PEP 484`_ type annotations are supported. If attribute, parameter, and
+    return types are annotated according to `PEP 484`_, they do not need to be
+    included in the docstring:
+
+    Args:
+        param1 (int): The first parameter.
+        param2 (str): The second parameter.
+
+    Returns:
+        bool: The return value. True for success, False otherwise.
+
+    TODO: Write me
+
+    """
+    if voice in default_speaker_alarm_message_dct.keys():
+        message_template = random.choice([default_speaker_alarm_message_dct[voice]] + alarm_messages_lst)
+    else:
+        message_template = random.choice(alarm_messages_lst)
+    message = generate_alarm_message(owner_of_clock, time_24h, time_minutes, message_template)
+    return message
+
