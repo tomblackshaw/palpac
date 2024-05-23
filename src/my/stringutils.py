@@ -23,6 +23,7 @@ import string
 
 import requests
 
+from my.consts import default_speaker_alarm_message_dct, alarm_messages_lst
 from my.exceptions import WebAPITimeoutError, WebAPIOutputError
 from my.tools import logit
 
