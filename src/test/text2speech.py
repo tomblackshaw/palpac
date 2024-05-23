@@ -119,10 +119,10 @@ class TestOne(unittest.TestCase):
         self.assertRaises(TypeError, myfuncV)
 
     def testFieldName(self):  # test field 'name', not 'fieldname'
-        all_possibilities = tts.all_names
+        all_possibilities = tts.all_voices
         for i in all_possibilities:
-            tts.name = i
-            self.assertEqual(tts.name, i)
+            tts.voice = i
+            self.assertEqual(tts.voice, i)
 
         def myfuncI():
             tts.voice = 'Foo'
