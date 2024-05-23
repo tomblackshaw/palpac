@@ -55,6 +55,7 @@ from my.stringutils import flatten, convert_24h_and_mins_to_shorttime
 
 
 def get_elevenlabs_clientclass(key_filename):
+    # TODO: Write docs
     try:
         api_key = open(key_filename, 'r', encoding="utf-8").read().strip(' \n')
     except FileNotFoundError as e:
@@ -64,57 +65,199 @@ def get_elevenlabs_clientclass(key_filename):
     return client
 
 
+
 @singleton
 class _SpeakmymindClass(object):
 
     def __init__(self):
+        # TODO: Write docs
         self.key_filename = '%s%s%s' % (os.path.expanduser('~'), os.sep, ELEVENLABS_KEY_BASENAME)
         self.client = get_elevenlabs_clientclass(self.key_filename)
-        self._all_voices_info = self.client.voices.get_all()
-        self._audio_dct = {}
+        self.__all_voices = self.client.voices.get_all().voices
+        self.__all_models = self.client.models.get_all()
+        self.__name = None
+        self.__advanced = False
+        self.__model = 'eleven_multilingual_v2'
+        self.__stability = 0.30
+        self.__similarity = 0.01
+        self.__style = 0.50
+        self.__boost = True
         super().__init__()
+        try:
+            self.name = [r for r in self.all_voices if r.samples is not None][0].name
+            self.advanced = True
+        except IndexError:
+            self.name = random.choice(self.all_names).name
 
     @property
-    def voiceinfo(self):
-        return self._all_voices_info.voices
+    def advanced(self):
+        # TODO: Add read/write locks
+        return self.__advanced
+
+    @advanced.setter
+    def advanced(self, x):
+        # TODO: Add read/write locks
+        if type(x) is not bool:
+            raise TypeError("When setting advanced=X, ensure X is a boolean.")
+        self.__advanced = x
+
+    @advanced.deleter
+    def advanced(self):
+        del self.__advanced
+
+    @property
+    def model(self):
+        # TODO: Add read/write locks
+        return self.__model
+
+    @model.setter
+    def model(self, x):
+        # TODO: Add read/write locks
+        if type(x) is not str:
+            raise TypeError("When setting advanced=X, ensure X is a string.")
+        if x not in [r.model_id for r in self.all_models]:
+            raise ValueError("model {model} is not a recognized model, according to the API".format(model=x))
+        self.__model = x
+
+    @model.deleter
+    def model(self):
+        del self.__model
+
+    @property
+    def stability(self):
+        # TODO: Add read/write locks
+        return self.__stability
+
+    @stability.setter
+    def stability(self, x):
+        # TODO: Add read/write locks
+        if type(x) is not float:
+            raise TypeError("When setting stability=X, ensure X is a float.")
+        self.__stability = x
+
+    @stability.deleter
+    def stability(self):
+        del self.__stability
+
+    @property
+    def similarity(self):
+        # TODO: Add read/write locks
+        return self.__similarity
+
+    @similarity.setter
+    def similarity(self, x):
+        # TODO: Add read/write locks
+        if type(x) is not float:
+            raise TypeError("When setting similarity=X, ensure X is a float.")
+        self.__similarity = x
+
+    @similarity.deleter
+    def similarity(self):
+        del self.__similarity
+
+    @property
+    def style(self):
+        # TODO: Add read/write locks
+        return self.__style
+
+    @style.setter
+    def style(self, x):
+        # TODO: Add read/write locks
+        if type(x) is not float:
+            raise TypeError("When setting style=X, ensure X is a float.")
+        self.__style = x
+
+    @style.deleter
+    def style(self):
+        del self.__style
+
+    @property
+    def boost(self):
+        # TODO: Add read/write locks
+        return self.__boost
+
+    @boost.setter
+    def boost(self, x):
+        # TODO: Add read/write locks
+        if type(x) is not bool:
+            raise TypeError("When setting boost=X, ensure X is a boolean.")
+        self.__boost = x
+
+    @boost.deleter
+    def boost(self):
+        del self.__boost
+
+    @property
+    def all_voices(self):
+        return self.__all_voices
+
+    @property
+    def all_models(self):
+        return self.__all_models
 
     @property
     def voice_labels(self):
-        return list(set(flatten([[k for k in r.labels.keys()] for r in self.voiceinfo])))
+        return list(set(flatten([[k for k in r.labels.keys()] for r in self.__all_voices])))
 
     @property
     def voice_categories(self):
-        return list(set([r.category for r in self.voiceinfo]))
+        return list(set([r.category for r in self.__all_voices]))
 
     @property
-    def voicenames(self):
-        return [r.name for r in self.voiceinfo]
+    def all_names(self):
+        return [r.name for r in self.__all_voices]
 
     @property
     def random_name(self):
-        return choice([r.name for r in self.voiceinfo])
+        return choice([r.name for r in self.__all_voices])
 
-    def get_id_of_name(self, a_name):
-        return [r for r in self.voiceinfo if r.name == a_name][0].voice_id
+    @property
+    def name(self):
+        # TODO: Add read/write locks
+        return self.__name
 
-    def get_name_of_id(self, an_id):
-        return [r for r in self.voiceinfo if r.voice_id == an_id][0].name
+    @name.setter
+    def name(self, x):
+        # TODO: Add read/write locks
+        if type(x) is not str:
+            raise TypeError("When setting name=X, ensure X is a boolean.")
+        try:
+            if x in [r.name for r in self.all_voices if r.samples is not None]:
+                self.advanced = True
+        except IndexError:
+            self.advanced = False  # print("Okay. This is not a professional voice. We do not need to use advanced settings.")
+        if x not in self.all_names:
+            raise ValueError("{name} is not a recognized voice name.".format(name=x))
+        self.__name = x
 
-    def audio(self, voice, text, getgenerator=False, advanced=False, model=None, similarity_boost=None, stability=None, style=None, use_speaker_boost=None):
-        if advanced is False:
-            audio = self.client.generate(text=text, voice=voice)
+    @name.deleter
+    def name(self):
+        del self.__name
+
+    def id_of_a_name(self, a_name):
+        return [r for r in self.all_voices if r.name == a_name][0].voice_id
+
+    def name_of_an_id(self, an_id):
+        return [r for r in self.all_voices if r.voice_id == an_id][0].name
+
+    def audio(self, text, getgenerator=False):
+        if self.advanced is False:
+            audio = self.client.generate(text=text, voice=self.name)
         else:
-            audio = self.client.generate(text=text, model=model, voice=Voice(
-                voice_id=self.get_id_of_name(voice),
-                similarity_boost=similarity_boost,
-                stability=stability,
-                style=style,
-                use_speaker_boost=use_speaker_boost))
+            audio = self.client.generate(text=text, model=self.model, voice=Voice(
+                voice_id=self.id_of_a_name(self.name),
+                similarity_boost=self.similarity,
+                stability=self.stability,
+                style=self.style,
+                use_speaker_boost=self.boost))
         return audio if getgenerator else b''.join(audio)
 
-    def play(self, d):
+    def play(self, data):
         from elevenlabs import play
-        play(d)
+        play(data)
+
+    def say(self, txt):
+        self.play(self.audio(text=txt))
 
 
 def play_dialogue_lst(tts, dialogue_lst, stability=0.5, similarity_boost=0.01, style=0.5):
@@ -202,7 +345,7 @@ def speak_random_alarm(owner_of_clock, time_24h, time_minutes, voice=None, tts=T
     if voice is None:
         voice = tts.random_name
     message = generate_random_alarm_message(owner_of_clock, time_24h, time_minutes, voice)
-    prof_name = [r for r in tts.voiceinfo if r.samples is not None][0].name
+    prof_name = [r for r in tts.names if r.samples is not None][0].name
     if voice == prof_name:
         d = tts.audio(voice=voice, text=message, advanced=True, model='eleven_multilingual_v2', stability=0.30, similarity_boost=0.01, style=0.90, use_speaker_boost=True)
     else:
