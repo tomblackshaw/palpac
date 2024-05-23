@@ -9,8 +9,8 @@ text2speech test
 import random
 import unittest
 
-
-from my.text2speech import generate_alarm_message, Text2SpeechSingleton as tts
+from my.stringutils import generate_alarm_message
+from my.text2speech import Text2SpeechSingleton as tts
 
 
 class TestOne(unittest.TestCase):

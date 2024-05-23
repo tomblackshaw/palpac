@@ -29,6 +29,7 @@ Attributes:
 """
 
 import random
+
 from my.classes.elevenwrapper import Text2SpeechSingleton
 from my.stringutils import generate_random_alarm_message
 
