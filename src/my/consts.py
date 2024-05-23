@@ -21,10 +21,11 @@ Todo:
     * For module TODOs
     * You have to also use ``sphinx.ext.todo`` extension
 
-.. _Google Python Style Guide:
-   http://google.github.io/styleguide/pyguide.html
+.. _Style Guide:
+    https://sphinxcontrib-napoleon.readthedocs.io/en/latest/example_google.html
 
 SOURCE: https://www.nodc.noaa.gov/archive/arc0021/0002199/1.1/data/0-data/HTML/WMO-CODE/WMO4677.HTM
+
 """
 
 WMO_code_warnings_dct = {
