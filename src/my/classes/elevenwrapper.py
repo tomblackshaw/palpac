@@ -270,12 +270,8 @@ class _Text2SpeechClass:
         return list(set([r.category for r in self.api_voices]))
 
     @property
-    def all_names(self):
-        return [r.name for r in self.api_voices]
-
-    @property
-    def random_name(self):
-        return choice([r.name for r in self.all_voices])
+    def random_voice(self):
+        return choice([r for r in self.all_voices])
 
     @property
     def voice(self):
@@ -293,7 +289,7 @@ class _Text2SpeechClass:
                 self.advanced = True
         except IndexError:
             self.advanced = False  # print("Okay. This is not a professional voice. We do not need to use advanced settings.")
-        if value not in self.all_names:
+        if value not in self.all_voices:
             raise ValueError("{name} is not a recognized voice name.".format(name=value))
         self.__voice_lock.acquire_write()
         self.__voice = value
