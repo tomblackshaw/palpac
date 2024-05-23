@@ -8,10 +8,13 @@ Created on May 20, 2024
 This module demonstrates documentation. Docstrings may extend over multiple lines. Sections are created
 with a section header and a colon followed by a block of indented text.
 
+
 Error
     StartupError
         PyQtStartupError
             PyQtUICompilerError
+        Text2SpeechStartupError
+            VoiceNotChosenYetError
     WebAPIError
         WebAPIOutputError
         WebAPITimeoutError
@@ -42,6 +45,20 @@ class StartupError(Error):
 
     def __init__(self, message):  # pylint: disable=useless-parent-delegation
         super().__init__(message)
+
+# class Text2SpeechStartupError(StartupError):
+#     """Class for all Text2Speech Startup Errors"""
+#
+#     def __init__(self, message):  # pylint: disable=useless-parent-delegation
+#         super().__init__(message)
+#
+#
+# class VoiceNotChosenYetError(Text2SpeechStartupError):
+#     """The programmer hasn't chosen a voice yet; use tts.voice=... to do that."""
+#
+#     def __init__(self, message):  # pylint: disable=useless-parent-delegation
+#
+#         super().__init__(message)
 
 
 class PyQtStartupError(StartupError):
