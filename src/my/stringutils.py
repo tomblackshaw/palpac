@@ -116,9 +116,6 @@ def get_random_zenquote(timeout=10):
         return quote
 
 
-__our_randomquote_caching_call = None
-
-
 def flatten(xss):
     return [x for xs in xss for x in xs]
 
