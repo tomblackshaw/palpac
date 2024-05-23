@@ -5,34 +5,14 @@ Created on May 19, 2024
 
 @author: Tom Blackshaw
 
-This module demonstrates documentation. Docstrings may extend over multiple lines. Sections are created
-with a section header and a colon followed by a block of indented text.
-
-Example:
-    Examples can be given using either the ``Example`` or ``Examples``
-    sections. Sections support any reStructuredText formatting, including
-    literal blocks::
-
-        $ python example_google.py
-
-Section breaks are created by resuming unindented text. Section breaks
-are also implicitly created anytime a new section starts.
+This module contains string utilities that I have written for this
+project.
 
 Attributes:
-    module_level_variable1 (int): Module level variables may be documented in
-        either the ``Attributes`` section of the module docstring, or in an
-        inline docstring immediately following the variable.
-
-        Either form is acceptable, but the two should not be mixed. Choose
-        one convention to document module level variables and be consistent
-        with it.
-
-Todo:
-    * For module TODOs
-    * You have to also use ``sphinx.ext.todo`` extension
+    n/a
 
 .. _Style Guide:
-    https://sphinxcontrib-napoleon.readthedocs.io/en/latest/example_google.html
+   https://sphinxcontrib-napoleon.readthedocs.io/en/latest/example_google.html
 
 """
 
@@ -63,8 +43,7 @@ def url_validator(url):
     Returns:
         bool: The return value. True for success, False otherwise.
 
-    .. _PEP 484:
-        https://www.python.org/dev/peps/pep-0484/
+        TODO: Write me
 
     """
     try:
@@ -144,6 +123,7 @@ def flatten(xss):
 
 
 def wind_direction_str(degrees):
+    # TODO: Write me
     degrees = degrees % 360
     winddirection_lst = ['North', 'North North East', 'Northeast', 'East Northeast', 'East', 'East Southeast', 'Southeast', 'South Southeast',
                          'South', 'South Southwest', 'Southwest', 'West Southwest', 'West', 'West Northwest', 'Northwest', 'North Northwest']
@@ -155,6 +135,7 @@ def wind_direction_str(degrees):
 
 
 def generate_random_string(length):
+    # TODO: Expand the multiline comments here
     """Generate a N-chars-long random alphanumeric string. Max length: 99999 chars. Purely arbitrary."""
     max_len = MAX_RANDGENSTR_LEN
     if type(length) is not int or length < 0 or length > max_len:
@@ -180,11 +161,10 @@ def convert_24h_and_mins_to_shorttime(time_24h, time_minutes, diff=0):
     Returns:
         bool: The return value. True for success, False otherwise.
 
-    .. _PEP 484:
-        https://www.python.org/dev/peps/pep-0484/
+    TODO: Write me.
+    TODO: Use datetime().
 
     """
-    # TODO: write docs. Also, use datetime().
     if type(time_24h) is not int:
         raise TypeError("time_24h needs to be an integer, not a %s" % str(type(time_24h)))
     if  type(time_minutes) is not int:

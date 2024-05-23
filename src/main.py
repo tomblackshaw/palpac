@@ -20,7 +20,7 @@ Todo:
     * You have to also use ``sphinx.ext.todo`` extension
 
 .. _Style Guide:
-    https://sphinxcontrib-napoleon.readthedocs.io/en/latest/example_google.html
+   https://sphinxcontrib-napoleon.readthedocs.io/en/latest/example_google.html
 
 """
 

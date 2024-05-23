@@ -5,34 +5,10 @@ Created on May 19, 2024
 
 @author: Tom Blackshaw
 
-This module demonstrates documentation. Docstrings may extend over multiple lines. Sections are created
-with a section header and a colon followed by a block of indented text.
-
-Example:
-    Examples can be given using either the ``Example`` or ``Examples``
-    sections. Sections support any reStructuredText formatting, including
-    literal blocks::
-
-        $ python example_google.py
-
-Section breaks are created by resuming unindented text. Section breaks
-are also implicitly created anytime a new section starts.
-
-Attributes:
-    module_level_variable1 (int): Module level variables may be documented in
-        either the ``Attributes`` section of the module docstring, or in an
-        inline docstring immediately following the variable.
-
-        Either form is acceptable, but the two should not be mixed. Choose
-        one convention to document module level variables and be consistent
-        with it.
-
-Todo:
-    * For module TODOs
-    * You have to also use ``sphinx.ext.todo`` extension
+This module contains miscellaneous tools.
 
 .. _Style Guide:
-    https://sphinxcontrib-napoleon.readthedocs.io/en/latest/example_google.html
+   https://sphinxcontrib-napoleon.readthedocs.io/en/latest/example_google.html
 
 """
 
@@ -62,21 +38,17 @@ def timeit(method):
 
 
 def logit(s, logfile_fname='/tmp/null.txt'):
-    """Example function with types documented in the docstring.
+    """Log the supplied text to the specified logfile.
 
-    `PEP 484`_ type annotations are supported. If attribute, parameter, and
-    return types are annotated according to `PEP 484`_, they do not need to be
-    included in the docstring:
+    Append the supplied text to the logfile whose pathname is supplied to this
+    very function. Add the date to the front of the string first.
 
     Args:
-        param1 (int): The first parameter.
-        param2 (str): The second parameter.
+        s (str): Text to be logged.
+        logfile_fname (str): Logfile pathname.
 
     Returns:
-        bool: The return value. True for success, False otherwise.
-
-    .. _PEP 484:
-        https://sphinxcontrib-napoleon.readthedocs.io/en/latest/example_google.html
+        n/a
 
     """
     datestr = "{:%B %d, %Y @ %H:%M:%S}".format(datetime.datetime.now())
@@ -90,21 +62,16 @@ def logit(s, logfile_fname='/tmp/null.txt'):
 
 
 def compile_all_uic_files(a_path):
-    """Example function with types documented in the docstring.
+    """Compile the UIC files in the supplied path.
 
-    `PEP 484`_ type annotations are supported. If attribute, parameter, and
-    return types are annotated according to `PEP 484`_, they do not need to be
-    included in the docstring:
+    Using the PyQt-supplied UIC file compiler, turn the path's every UIC file
+    into a set of importable Python modules/wrappers.
 
     Args:
-        param1 (int): The first parameter.
-        param2 (str): The second parameter.
+        a_path (str): Path to the directory.
 
     Returns:
-        bool: The return value. True for success, False otherwise.
-
-    .. _Style Guide:
-        https://sphinxcontrib-napoleon.readthedocs.io/en/latest/example_google.html
+        n/a
 
     """
     from os import listdir

@@ -9,23 +9,15 @@ This module facilitates my access to the Open Meteo online weather service.
 See See https://github.com/frenck/python-open-meteo for more information.
 
 Example:
-    lat,lng = get_lat_and_long()
-    w = get_weather()
-
-Section breaks are created by resuming unindented text. Section breaks
-are also implicitly created anytime a new section starts.
+    $ python3
+    >>> lat,lng = get_lat_and_long()
+    >>> w = get_weather()
 
 Attributes:
     n/a
 
-# TODO: Write me
-
-Todo:
-    * For module TODOs
-    * You have to also use ``sphinx.ext.todo`` extension
-
 .. _Style Guide:
-    https://sphinxcontrib-napoleon.readthedocs.io/en/latest/example_google.html
+   https://sphinxcontrib-napoleon.readthedocs.io/en/latest/example_google.html
 
 """
 

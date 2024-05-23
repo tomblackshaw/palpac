@@ -5,34 +5,23 @@ Created on May 21, 2024
 
 @author: Tom Blackshaw
 
-This module demonstrates documentation. Docstrings may extend over multiple lines. Sections are created
-with a section header and a colon followed by a block of indented text.
+This module wraps around the OpenMeteo weather API by providing a
+cached result of periodic call to that API.
 
 Example:
-    Examples can be given using either the ``Example`` or ``Examples``
-    sections. Sections support any reStructuredText formatting, including
-    literal blocks::
+    Like this::
 
-        $ python example_google.py
-
-Section breaks are created by resuming unindented text. Section breaks
-are also implicitly created anytime a new section starts.
+        $ python3
+        >>> from my.classes.weatherclass import WeatherSingleton as ws
+        >>> i = ws.weather
+        >>> print(i)
 
 Attributes:
-    module_level_variable1 (int): Module level variables may be documented in
-        either the ``Attributes`` section of the module docstring, or in an
-        inline docstring immediately following the variable.
-
-        Either form is acceptable, but the two should not be mixed. Choose
-        one convention to document module level variables and be consistent
-        with it.
-
-Todo:
-    * For module TODOs
-    * You have to also use ``sphinx.ext.todo`` extension
+    WeatherSingleton (_WeatherClass): Singleton to be imported for
+        retrieving some weather info. It is a singleton.
 
 .. _Style Guide:
-    https://sphinxcontrib-napoleon.readthedocs.io/en/latest/example_google.html
+   https://sphinxcontrib-napoleon.readthedocs.io/en/latest/example_google.html
 
 """
 
@@ -66,24 +55,6 @@ class _WeatherClass:
     """
 
     def __init__(self):
-        """Example of docstring on the __init__ method.
-
-        The __init__ method may be documented in either the class level
-        docstring, or as a docstring on the __init__ method itself.
-
-        Either form is acceptable, but the two should not be mixed. Choose one
-        convention to document the __init__ method and be consistent with it.
-
-        Note:
-            Do not include the `self` parameter in the ``Args`` section.
-
-        Args:
-            param1 (str): Description of `param1`.
-            param2 (:obj:`int`, optional): Description of `param2`. Multiple
-                lines are supported.
-            param3 (:obj:`list` of :obj:`str`): Description of `param3`.
-
-        """
         from my.weather.meteorology import get_weather
         self._our_weather_caching_call = SelfCachingCall(300, get_weather)
         super().__init__()

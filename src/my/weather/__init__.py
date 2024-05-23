@@ -25,12 +25,8 @@ are also implicitly created anytime a new section starts.
 Attributes:
     n/a
 
-Todo:
-    * For module TODOs
-    * You have to also use ``sphinx.ext.todo`` extension
-
 .. _Style Guide:
-    https://sphinxcontrib-napoleon.readthedocs.io/en/latest/example_google.html
+   https://sphinxcontrib-napoleon.readthedocs.io/en/latest/example_google.html
 
 """
 

@@ -5,35 +5,26 @@ Created on May 21, 2024
 
 @author: Tom Blackshaw
 
-TODO: WRITE ME
-This module demonstrates documentation. Docstrings may extend over multiple lines. Sections are created
-with a section header and a colon followed by a block of indented text.
+This module contains the functions and classes to do with getting one's
+hands on an inspirational quote from ZenQuotes, a website that provides
+random quotes for people who want to smile and think happy thoughts.
 
 Example:
-    Examples can be given using either the ``Example`` or ``Examples``
-    sections. Sections support any reStructuredText formatting, including
-    literal blocks::
+    Here is how to use it::
 
-        $ python example_google.py
+        $ python3
+        >>> from my.classes.randomquoteclass import RandomQuoteSingleton as q
+        >>> q.quote
 
 Section breaks are created by resuming unindented text. Section breaks
 are also implicitly created anytime a new section starts.
 
 Attributes:
-    module_level_variable1 (int): Module level variables may be documented in
-        either the ``Attributes`` section of the module docstring, or in an
-        inline docstring immediately following the variable.
-
-        Either form is acceptable, but the two should not be mixed. Choose
-        one convention to document module level variables and be consistent
-        with it.
-
-Todo:
-    * For module TODOs
-    * You have to also use ``sphinx.ext.todo`` extension
+    RandomQuoteSingleton (_RandomQuoteClass): Singleton to be imported for
+        retrieving a quote. It is a singleton.
 
 .. _Style Guide:
-    https://sphinxcontrib-napoleon.readthedocs.io/en/latest/example_google.html
+   https://sphinxcontrib-napoleon.readthedocs.io/en/latest/example_google.html
 
 """
 
@@ -44,20 +35,13 @@ from my.exceptions import StillAwaitingCachedValue, WebAPITimeoutError, WebAPIOu
 
 
 class _RandomQuoteClass:
-    # TODO: WRITE ME
-    """The summary line for a class docstring should fit on one line.
+    """Return a random quote when asked for one.
 
-    If the class has public attributes, they may be documented here
-    in an ``Attributes`` section and follow the same formatting as a
-    function's ``Args`` section. Alternatively, attributes may be documented
-    inline with the attribute's declaration (see __init__ method below).
-
-    Properties created with the ``@property`` decorator should be documented
-    in the property's getter method.
+    This class wraps around a SelfCachingCall class instance and provides
+    a cached quote from ZenQuotes when asked for one.
 
     Attributes:
-        attr1 (str): Description of `attr1`.
-        attr2 (:obj:`int`, optional): Description of `attr2`.
+        quote (str): Cached quote.
 
     """
     def __init__(self):
@@ -71,10 +55,10 @@ class _RandomQuoteClass:
 
     @property
     def quote(self):
-        # FIXME: these docs are non-standard
         """Obtain a (locally cached) uplifting quote from ZenQuote.
 
-        Using a locally cached copy of the most recent
+        Using a locally cached copy of the most recent quote, return an inspirational
+        quote from ZenQuote, the website of inspirational quotes.
 
         Returns:
             str: The resultant quote.
@@ -93,7 +77,7 @@ class _RandomQuoteClass:
             return the_quote
         except StillAwaitingCachedValue:
             time.sleep(1)
-            return self.quote  # FIXME: This is recursion. I don't like recursion.
+            return self.quote
         except TimeoutError as e:
             raise WebAPITimeoutError("The ZenQuotes website timed out") from e
         except WebAPIOutputError:
@@ -101,8 +85,3 @@ class _RandomQuoteClass:
 
 
 RandomQuoteSingleton = _RandomQuoteClass()
-
-'''
-from my.classes.randomquoteclass import RandomQuoteSingleton as q
-q.quote
-'''
