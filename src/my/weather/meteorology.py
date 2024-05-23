@@ -277,6 +277,9 @@ def do_a_weather_report(tts, myweather, speaker1, speaker2, testing=False, stabi
     Returns:
         n/a
 
+    Raises:
+        FIXME: Unknown.
+
     """
     prof_name = [r for r in tts.voiceinfo if r.samples is not None][0].name
     if speaker1 == speaker2:
