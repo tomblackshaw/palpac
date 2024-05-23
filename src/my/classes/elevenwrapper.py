@@ -299,8 +299,8 @@ class _Text2SpeechClass:
         self.__voice = value
         self.__voice_lock.release_write()
 
-    @name.deleter
-    def name(self):
+    @voice.deleter
+    def voice(self):
         del self.__voice
 
     def id_of_a_name(self, a_name):

@@ -125,10 +125,10 @@ class TestOne(unittest.TestCase):
             self.assertEqual(tts.name, i)
 
         def myfuncI():
-            tts.name = 'Foo'
+            tts.voice = 'Foo'
 
         def myfuncV():
-            tts.name = 12345
+            tts.voice = 12345
 
         self.assertRaises(ValueError, myfuncI)
         self.assertRaises(TypeError, myfuncV)
