@@ -14,7 +14,11 @@ Example:
     sections. Sections support any reStructuredText formatting, including
     literal blocks::
 
-        $ python example_google.py
+        $ python3
+        >>> from my.text2speech import Text2SpeechSingleton as tts
+        >>> s = "Hello there. There's a car in the bar, by the farm."
+        >>> tts.say(s)
+        >>> for i in range(0,10): tts.name = tts.random_name; audiodata = tts.audio(s); tts.play(audiodata)
 
 Section breaks are created by resuming unindented text. Section breaks
 are also implicitly created anytime a new section starts.
