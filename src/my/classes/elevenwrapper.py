@@ -300,14 +300,14 @@ class _Text2SpeechClass:
         del self.__voice
 
     def id_of_a_name(self, a_name):
-        return [r for r in self.all_voices if r.name == a_name][0].voice_id
+        return [r for r in self.api_voices if r.name == a_name][0].voice_id
 
     def name_of_an_id(self, an_id):
-        return [r for r in self.all_voices if r.voice_id == an_id][0].name
+        return [r for r in self.api_voices if r.voice_id == an_id][0].name
 
     def audio(self, text, getgenerator=False):
         if self.advanced is False:
-            audio = self.client.generate(text=text, voice=self.name)
+            audio = self.client.generate(text=text, voice=self.voice)
         else:
             audio = self.client.generate(text=text, model=self.model, voice=Voice(
                 voice_id=self.id_of_a_name(self.name),
