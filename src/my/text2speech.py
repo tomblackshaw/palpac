@@ -5,8 +5,7 @@ Created on May 19, 2024
 
 @author: Tom Blackshaw
 
-Wrapper for ElevenLabs API. This module demonstrates documentation as specified by the `Google Python
-Style Guide`_. Docstrings may extend over multiple lines. Sections are created
+Wrapper for ElevenLabs API. This module demonstrates documentation. Docstrings may extend over multiple lines. Sections are created
 with a section header and a colon followed by a block of indented text.
 
 Example:
@@ -55,6 +54,16 @@ from my.stringutils import flatten, convert_24h_and_mins_to_shorttime
 
 
 def get_elevenlabs_clientclass(key_filename):
+    """Example function with PEP 484 type annotations.
+
+    Args:
+        param1: The first parameter.
+        param2: The second parameter.
+
+    Returns:
+        The return value. True for success, False otherwise.
+
+    """
     # TODO: Write docs
     try:
         api_key = open(key_filename, 'r', encoding="utf-8").read().strip(' \n')
@@ -69,7 +78,38 @@ def get_elevenlabs_clientclass(key_filename):
 @singleton
 class _SpeakmymindClass(object):
 
+    If the class has public attributes, they may be documented here
+    in an ``Attributes`` section and follow the same formatting as a
+    function's ``Args`` section. Alternatively, attributes may be documented
+    inline with the attribute's declaration (see __init__ method below).
+
+    Properties created with the ``@property`` decorator should be documented
+    in the property's getter method.
+
+    Attributes:
+        attr1 (str): Description of `attr1`.
+        attr2 (:obj:`int`, optional): Description of `attr2`.
+
+    """
     def __init__(self):
+        """Example of docstring on the __init__ method.
+
+        The __init__ method may be documented in either the class level
+        docstring, or as a docstring on the __init__ method itself.
+
+        Either form is acceptable, but the two should not be mixed. Choose one
+        convention to document the __init__ method and be consistent with it.
+
+        Note:
+            Do not include the `self` parameter in the ``Args`` section.
+
+        Args:
+            param1 (str): Description of `param1`.
+            param2 (:obj:`int`, optional): Description of `param2`. Multiple
+                lines are supported.
+            param3 (:obj:`list` of :obj:`str`): Description of `param3`.
+
+        """
         # TODO: Write docs
         self.key_filename = '%s%s%s' % (os.path.expanduser('~'), os.sep, ELEVENLABS_KEY_BASENAME)
         self.client = get_elevenlabs_clientclass(self.key_filename)
@@ -333,6 +373,23 @@ message_template = alarm_messages_lst[0]
 
 
 def generate_random_alarm_message(owner_of_clock, time_24h, time_minutes, voice=None):
+    """Example function with types documented in the docstring.
+
+    `PEP 484`_ type annotations are supported. If attribute, parameter, and
+    return types are annotated according to `PEP 484`_, they do not need to be
+    included in the docstring:
+
+    Args:
+        param1 (int): The first parameter.
+        param2 (str): The second parameter.
+
+    Returns:
+        bool: The return value. True for success, False otherwise.
+
+    .. _PEP 484:
+        https://www.python.org/dev/peps/pep-0484/
+
+    """
     if voice in default_speaker_alarm_message_dct.keys():
         message_template = random.choice([default_speaker_alarm_message_dct[voice]] + alarm_messages_lst)
     else:
@@ -342,6 +399,23 @@ def generate_random_alarm_message(owner_of_clock, time_24h, time_minutes, voice=
 
 
 def speak_random_alarm(owner_of_clock, time_24h, time_minutes, voice=None, tts=Text2SpeechSingleton):
+    """Example function with types documented in the docstring.
+
+    `PEP 484`_ type annotations are supported. If attribute, parameter, and
+    return types are annotated according to `PEP 484`_, they do not need to be
+    included in the docstring:
+
+    Args:
+        param1 (int): The first parameter.
+        param2 (str): The second parameter.
+
+    Returns:
+        bool: The return value. True for success, False otherwise.
+
+    .. _PEP 484:
+        https://www.python.org/dev/peps/pep-0484/
+
+    """
     if voice is None:
         voice = tts.random_name
     message = generate_random_alarm_message(owner_of_clock, time_24h, time_minutes, voice)
@@ -353,6 +427,23 @@ def speak_random_alarm(owner_of_clock, time_24h, time_minutes, voice=None, tts=T
     tts.play(d)
 
 def speak_totally_randomized_alarm_and_time(owner_of_clock):
+    """Example function with types documented in the docstring.
+
+    `PEP 484`_ type annotations are supported. If attribute, parameter, and
+    return types are annotated according to `PEP 484`_, they do not need to be
+    included in the docstring:
+
+    Args:
+        param1 (int): The first parameter.
+        param2 (str): The second parameter.
+
+    Returns:
+        bool: The return value. True for success, False otherwise.
+
+    .. _PEP 484:
+        https://www.python.org/dev/peps/pep-0484/
+
+    """
     time_24h = random.randint(0, 24)
     time_minutes = random.randint(0, 60)
     speak_random_alarm(owner_of_clock, time_24h, time_minutes)

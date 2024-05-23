@@ -6,8 +6,7 @@ Created on May 21, 2024
 @author: Tom Blackshaw
 
 TODO: WRITE ME
-This module demonstrates documentation as specified by the `Google Python
-Style Guide`_. Docstrings may extend over multiple lines. Sections are created
+This module demonstrates documentation. Docstrings may extend over multiple lines. Sections are created
 with a section header and a colon followed by a block of indented text.
 
 Example:
@@ -33,8 +32,8 @@ Todo:
     * For module TODOs
     * You have to also use ``sphinx.ext.todo`` extension
 
-.. _Google Python Style Guide:
-   http://google.github.io/styleguide/pyguide.html
+.. _Style Guide:
+    https://sphinxcontrib-napoleon.readthedocs.io/en/latest/example_google.html
 
 """
 

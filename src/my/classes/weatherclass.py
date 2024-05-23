@@ -5,8 +5,7 @@ Created on May 21, 2024
 
 @author: Tom Blackshaw
 
-This module demonstrates documentation as specified by the `Google Python
-Style Guide`_. Docstrings may extend over multiple lines. Sections are created
+This module demonstrates documentation. Docstrings may extend over multiple lines. Sections are created
 with a section header and a colon followed by a block of indented text.
 
 Example:
@@ -32,8 +31,8 @@ Todo:
     * For module TODOs
     * You have to also use ``sphinx.ext.todo`` extension
 
-.. _Google Python Style Guide:
-   http://google.github.io/styleguide/pyguide.html
+.. _Style Guide:
+    https://sphinxcontrib-napoleon.readthedocs.io/en/latest/example_google.html
 
 """
 
@@ -67,12 +66,36 @@ class _WeatherClass(object):
     """
 
     def __init__(self):
+        """Example of docstring on the __init__ method.
+
+        The __init__ method may be documented in either the class level
+        docstring, or as a docstring on the __init__ method itself.
+
+        Either form is acceptable, but the two should not be mixed. Choose one
+        convention to document the __init__ method and be consistent with it.
+
+        Note:
+            Do not include the `self` parameter in the ``Args`` section.
+
+        Args:
+            param1 (str): Description of `param1`.
+            param2 (:obj:`int`, optional): Description of `param2`. Multiple
+                lines are supported.
+            param3 (:obj:`list` of :obj:`str`): Description of `param3`.
+
+        """
         from my.weather.meteorology import get_weather
         self._our_weather_caching_call = SelfCachingCall(300, get_weather)
         super().__init__()
 
     @property
     def weather(self):
+        """:obj:`list` of :obj:`str`: Properties with both a getter and setter
+        should only be documented in their getter method.
+
+        If the setter method contains notable behavior, it should be
+        mentioned here.
+        """
         try:
             return self._our_weather_caching_call.result
         except StillAwaitingCachedValue:

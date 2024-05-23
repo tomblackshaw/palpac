@@ -34,8 +34,8 @@ Todo:
     * For module TODOs
     * You have to also use ``sphinx.ext.todo`` extension
 
-.. _Google Python Style Guide:
-   http://google.github.io/styleguide/pyguide.html
+.. _Style Guide:
+    https://sphinxcontrib-napoleon.readthedocs.io/en/latest/example_google.html
 
 """
 
@@ -116,6 +116,19 @@ class SelfCachingCall(object):
         super().__init__()
 
     def _keep_updating(self):
+        """Run me, over and over, to keep cache populated.
+
+        Note:
+            This runs in the background. To end it, run
+                i.join() if 'i' the instance of this class.
+
+        Args:
+            n/a
+
+        Returns:
+            n/a
+
+        """
         time_left_before_update = 0
         while not self.__time_to_join:
             if time_left_before_update <= 0:
@@ -128,6 +141,15 @@ class SelfCachingCall(object):
 #        logit('No more soup for you')
 
     def update_me(self):
+        """Repopulate the cache. Wait for it to finish.
+
+        Args:
+            n/a
+
+        Returns:
+            n/a
+
+        """
         try:
             self.__update_lock.acquire_write()
             the_new_result = self.__func(*self.__args, **self.__kwargs)
@@ -146,6 +168,19 @@ class SelfCachingCall(object):
 
     @property
     def result(self):
+        """Return the result, or raise exception if appropriate.
+
+        If the result of the most recent caching attempt was an exception,
+        raise that exception. Otherwise, return the aforementioned result.
+
+        Args:
+            n/a
+
+        Returns:
+            Result, whatever it was;... or exception, if an exception
+                occurred during the call to the user-specific function.
+
+        """
         try:
             self.__result_and_error_lock.acquire_write()
             while True:
@@ -169,11 +204,13 @@ class SelfCachingCall(object):
             return retval
 
     def join(self):
+        """Join the thread and return."""
         self.__time_to_join = True
         self.__keepupdating_thread.join()
 
     @property
     def refreshfrequency(self):
+        """float: How often does the cache update?"""
         self.__refreshfreq_lock.acquire_read()
         retval = self.__refreshfrequency
         self.__refreshfreq_lock.release_read()
@@ -181,6 +218,7 @@ class SelfCachingCall(object):
 
     @refreshfrequency.setter
     def refreshfrequency(self, value):
+        """Set how often the cache updates."""
         self.__refreshfreq_lock.acquire_write()
         self.__refreshfrequency = value
         self.__refreshfreq_lock.release_write()
