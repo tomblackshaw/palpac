@@ -41,7 +41,6 @@ from my.consts import WMO_code_warnings_dct
 from my.exceptions import WebAPITimeoutError, WebAPIOutputError
 from my.globals import DEFAULT_LATLONG_URL, MAX_LATLONG_TIMEOUT
 from my.stringutils import wind_direction_str, url_validator
-from my.text2speech import play_dialogue_lst
 
 
 def get_lat_and_long(url=DEFAULT_LATLONG_URL, timeout=10):
@@ -295,5 +294,6 @@ def do_a_weather_report(tts, myweather, speaker1, speaker2, testing=False, stabi
     #         if voice == prof_name \
     #         else \
     #         s.audio(voice=voice, text=text)
+    from my.classes.elevenwrapper import play_dialogue_lst
     dialogue_lst = generate_weather_report_dialogue(myweather=myweather, speaker1=speaker1, speaker2=speaker2, testing=testing)
     play_dialogue_lst(tts=tts, dialogue_lst=dialogue_lst, stability=stability, similarity_boost=similarity_boost, style=style)
