@@ -114,8 +114,9 @@ class _SpeakmymindClass:
         # TODO: Write docs
         self.key_filename = '%s%s%s' % (os.path.expanduser('~'), os.sep, ELEVENLABS_KEY_BASENAME)
         self.client = get_elevenlabs_clientclass(self.key_filename)
-        self.__all_voices = self.client.voices.get_all().voices
-        self.__all_models = self.client.models.get_all()
+
+        self.__api_voices = self.client.voices.get_all().voices
+        self.__api_models = self.client.models.get_all()
         self.__name = None
         self.__advanced = False
         self.__model = 'eleven_multilingual_v2'
@@ -125,10 +126,20 @@ class _SpeakmymindClass:
         self.__boost = True
         super().__init__()
         try:
-            self.name = [r for r in self.all_voices if r.samples is not None][0].name
+            self.name = [r for r in self.api_voices if r.samples is not None][0].name
             self.advanced = True
         except IndexError:
             self.name = random.choice(self.all_names).name
+
+    @property
+    def api_models(self):
+        # TODO: Add read/write locks
+        return self.__api_models
+
+    @property
+    def api_voices(self):
+        # TODO: Add read/write locks
+        return self.__api_voices
 
     @property
     def advanced(self):
@@ -156,7 +167,7 @@ class _SpeakmymindClass:
         # TODO: Add read/write locks
         if type(x) is not str:
             raise TypeError("When setting advanced=X, ensure X is a string.")
-        if x not in [r.model_id for r in self.all_models]:
+        if x not in [r for r in self.all_models]:
             raise ValueError("model {model} is not a recognized model, according to the API".format(model=x))
         self.__model = x
 
@@ -230,27 +241,27 @@ class _SpeakmymindClass:
 
     @property
     def all_voices(self):
-        return self.__all_voices
+        return [r.name for r in self.api_voices]
 
     @property
     def all_models(self):
-        return self.__all_models
+        return [r.model_id for r in self.api_models]
 
     @property
-    def voice_labels(self):
-        return list(set(flatten([[k for k in r.labels.keys()] for r in self.__all_voices])))
+    def api_voicelabels(self):
+        return list(set(flatten([[k for k in r.labels.keys()] for r in self.api_voices])))
 
     @property
-    def voice_categories(self):
-        return list(set([r.category for r in self.__all_voices]))
+    def api_voicecategories(self):
+        return list(set([r.category for r in self.api_voices]))
 
     @property
     def all_names(self):
-        return [r.name for r in self.__all_voices]
+        return [r.name for r in self.api_voices]
 
     @property
     def random_name(self):
-        return choice([r.name for r in self.__all_voices])
+        return choice([r.name for r in self.all_voices])
 
     @property
     def name(self):
@@ -263,7 +274,7 @@ class _SpeakmymindClass:
         if type(x) is not str:
             raise TypeError("When setting name=X, ensure X is a boolean.")
         try:
-            if x in [r.name for r in self.all_voices if r.samples is not None]:
+            if x in [r.name for r in self.api_voices if r.samples is not None]:
                 self.advanced = True
         except IndexError:
             self.advanced = False  # print("Okay. This is not a professional voice. We do not need to use advanced settings.")
@@ -337,7 +348,7 @@ def play_dialogue_lst(tts, dialogue_lst, stability=0.5, similarity_boost=0.01, s
 # play(bytesresult)
 
 
-Text2SpeechSingleton = _SpeakmymindClass()
+Text2SpeechSingleton = _Text2SpeechClass()
 
 
 def generate_alarm_message(owner, time_24h, time_minutes, message_template):  # TODO: This should use string.template.
@@ -420,7 +431,7 @@ def speak_random_alarm(owner_of_clock, time_24h, time_minutes, voice=None, tts=T
     if voice is None:
         voice = tts.random_name
     message = generate_random_alarm_message(owner_of_clock, time_24h, time_minutes, voice)
-    prof_name = [r for r in tts.names if r.samples is not None][0].name
+    prof_name = [r for r in tts.api_voices if r.samples is not None][0].name
     if voice == prof_name:
         d = tts.audio(voice=voice, text=message, advanced=True, model='eleven_multilingual_v2', stability=0.30, similarity_boost=0.01, style=0.90, use_speaker_boost=True)
     else:

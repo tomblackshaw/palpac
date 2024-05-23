@@ -9,6 +9,7 @@ text2speech test
 import random
 import unittest
 
+
 from my.text2speech import generate_alarm_message, Text2SpeechSingleton as tts
 
 
@@ -48,7 +49,7 @@ class TestOne(unittest.TestCase):
             tts.advanced = i
             self.assertEqual(tts.advanced, i)
 
-        def myfunc(tts):
+        def myfunc():
             tts.advanced = 'Foo'
 
         self.assertRaises(TypeError, myfunc)
@@ -59,7 +60,7 @@ class TestOne(unittest.TestCase):
             tts.stability = x
             self.assertEqual(tts.stability, x)
 
-        def myfunc(tts):
+        def myfunc():
             tts.stability = 'Foo'
 
         self.assertRaises(TypeError, myfunc)
@@ -97,11 +98,13 @@ class TestOne(unittest.TestCase):
         self.assertRaises(TypeError, myfunc)
 
     def testGetModelsAndVoices(self):
-        x = tts.all_models
-        y = tts.all_voices
+        from elevenlabs.types.model import Model
+        from elevenlabs.types.voice import Voice
+        self.assertEqual(type(tts.api_models[0]), Model)
+        self.assertEqual(type(tts.api_voices[0]), Voice)
 
     def testFieldModel(self):
-        all_possibilities = [r.model_id for r in tts.all_models]
+        all_possibilities = [r.model_id for r in tts.api_models]
         for i in all_possibilities:
             tts.model = i
             self.assertEqual(tts.model, i)
