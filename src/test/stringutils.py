@@ -51,6 +51,7 @@ class TestConvert24hAndMinsToShorttime(unittest.TestCase):
         self.assertRaises(ValueError, convert_24h_and_mins_to_shorttime, 99, 0)
         self.assertRaises(ValueError, convert_24h_and_mins_to_shorttime, 24, 0)
         self.assertRaises(ValueError, convert_24h_and_mins_to_shorttime, 0, 60)
+
     def testDiff(self):
         self.assertEqual(convert_24h_and_mins_to_shorttime(0, 0, -1), "11:59AM")
         self.assertEqual(convert_24h_and_mins_to_shorttime(0, 0), "12 midnight")
@@ -64,7 +65,9 @@ class TestConvert24hAndMinsToShorttime(unittest.TestCase):
                 for m in range(0, 60):
                     s1 = convert_24h_and_mins_to_shorttime(h, m)
                     s2 = convert_24h_and_mins_to_shorttime(h, m, diff)
+        del s1, s2
 
+    def testMore(self):
         for i in range(0, 1000):
             s = convert_24h_and_mins_to_shorttime(0, 59)
             diff = random.randint(0, 120) - 60
