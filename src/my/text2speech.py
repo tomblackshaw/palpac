@@ -76,7 +76,8 @@ def get_elevenlabs_clientclass(key_filename):
 
 
 @singleton
-class _SpeakmymindClass(object):
+class _SpeakmymindClass:
+    """The summary line for a class docstring should fit on one line.
 
     If the class has public attributes, they may be documented here
     in an ``Attributes`` section and follow the same formatting as a

@@ -48,7 +48,7 @@ from my.exceptions import StillAwaitingCachedValue
 from my.tools import logit
 
 
-class SelfCachingCall(object):
+class SelfCachingCall:
     """Self-repeating call to function; saves result; caches it.
 
     SelfCachingCall() is a class instance that calls a specific function (with specified parameters)

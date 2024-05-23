@@ -43,7 +43,7 @@ from my.classes.selfcachingcall import SelfCachingCall
 from my.exceptions import StillAwaitingCachedValue, WebAPITimeoutError, WebAPIOutputError, WebAPIOverloadError
 
 
-class _RandomQuoteClass(object):
+class _RandomQuoteClass:
     # TODO: WRITE ME
     """The summary line for a class docstring should fit on one line.
 

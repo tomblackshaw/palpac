@@ -42,7 +42,7 @@ from my.exceptions import StillAwaitingCachedValue, WebAPITimeoutError, WebAPIOu
 
 
 @singleton
-class _WeatherClass(object):
+class _WeatherClass:
     """Returns the cached result of a call to get_weather().
 
     The programmer calls me. I return a recently cached result of a call
