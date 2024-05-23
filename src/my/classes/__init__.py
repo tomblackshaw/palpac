@@ -8,18 +8,17 @@ Created on May 19, 2024
 This module --- my.classes --- exists so that the programmer can keep all
 the subclasses and homemade classes in one place.
 
-This is a section break. Why is it here? I do not know. Perhaps I was
-planning to write something more meaningful.
+Functions:
+    singleton()
+
+Classes:
+    ReadWriteLock
 
 Attributes:
     n/a
 
-Todo:
-    * For module TODOs
-    * You have to also use ``sphinx.ext.todo`` extension
-
-.. _Google Python Style Guide:
-   http://google.github.io/styleguide/pyguide.html
+.. _Style Guide:
+   https://sphinxcontrib-napoleon.readthedocs.io/en/latest/example_google.html
 """
 
 from threading import Condition, Lock, Thread
@@ -41,7 +40,7 @@ def singleton(cls):
         cls (class): The class to be singleton-ized.
 
     Returns:
-        class: The singleton-ized class of cls.
+        class: The singleton-ized instance of cls.
 
     """
     instances = {}
@@ -54,7 +53,7 @@ def singleton(cls):
     return getinstance
 
 
-class ReadWriteLock(object):
+class ReadWriteLock:
     """A lock object that allows many read locks but only one write lock.
 
     This is a lock object that allows many simultaneous "read locks", but
@@ -63,7 +62,6 @@ class ReadWriteLock(object):
     be modified by only one thread.
 
     """
-
     def __init__(self):
         self._read_ready_lck = Lock()
         self._read_ready = Condition(self._read_ready_lck)
