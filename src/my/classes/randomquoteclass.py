@@ -61,7 +61,6 @@ class _RandomQuoteClass(object):
         attr2 (:obj:`int`, optional): Description of `attr2`.
 
     """
-
     def __init__(self):
         from my.stringutils import get_random_zenquote
         self._our_zenquote_caching_call = SelfCachingCall(60, get_random_zenquote)
@@ -88,7 +87,6 @@ class _RandomQuoteClass(object):
             StillAwaitingCachedValue: Still waiting for cache to be initialized.
 
         """
-
         try:
             the_quote = self._our_zenquote_caching_call.result
             if the_quote.lower().find('zenquotes.io') >= 0:
