@@ -29,7 +29,7 @@ import sys
 from PyQt6.QtWidgets import QWidget, QApplication  # pylint: disable=no-name-in-module
 
 from my.classes.randomquoteclass import RandomQuoteSingleton as q
-from my.exceptions import StillAwaitingCachedValue
+from my.exceptions import StillAwaitingCachedValue, WebAPITimeoutError, WebAPIOutputError
 from my.stringutils import add_to_os_path_if_existent
 from my.tools import compile_all_uic_files
 from ui.newform import Ui_Form
@@ -77,10 +77,14 @@ class FunWidget(QWidget):
         """
         try:
             txt = q.quote
-        except StillAwaitingCachedValue:
+        except StillAwaitingCachedValue:  # as e:
             txt = 'Unable to obtain quote: cache is not populated yet.'
-        except Exception as e:
-            txt = 'Unable to obtain quote: {e}'.format(e=str(e))
+        except WebAPITimeoutError:  # as e:
+            txt = 'I am sorry, but the ZenQuotes website did not get back to me in time.'
+        except WebAPIOutputError:  # as e:
+            txt = 'I am sorry, but the ZenQuotes website generated a weird output.'
+        except Exception as e:  # pylint: disable=broad-exception-caught
+            txt = 'Unknown exception raised: {e}'.format(e=str(e))
         self.ui.plainTextEdit.setPlainText(txt)
 
     def playme(self):
