@@ -12,7 +12,7 @@ Example:
     Here is one::
 
         $ python3
-        >>> from my.text2speech import Text2SpeechSingleton as tts
+        >>> from my.classes.elevenwrapper import Text2SpeechSingleton as tts
         >>> s = "Hello there. There's a car in the bar, by the farm."
         >>> tts.say(s)
         >>> for i in range(0,10): tts.name = tts.random_name; audiodata = tts.audio(s); tts.play(audiodata)
@@ -30,7 +30,7 @@ Attributes:
 
 from random import choice
 import os
-import random
+# import random
 
 from elevenlabs.client import ElevenLabs, Voice
 
@@ -104,12 +104,13 @@ class _Text2SpeechClass:
         self.__similarity = 0.01
         self.__style = 0.50
         self.__boost = True
-        super().__init__()
-        try:
-            self.name = [r for r in self.api_voices if r.samples is not None][0].name
+        professionals = [r for r in self.api_voices if r.samples is not None]
+        if professionals != []:
+            self.voice = professionals[0].name
             self.advanced = True
-        except IndexError:
-            self.name = random.choice(self.all_names).name
+        else:
+            self.voice = self.random_voice
+        super().__init__()
 
     @property
     def api_models(self):
@@ -310,7 +311,7 @@ class _Text2SpeechClass:
             audio = self.client.generate(text=text, voice=self.voice)
         else:
             audio = self.client.generate(text=text, model=self.model, voice=Voice(
-                voice_id=self.id_of_a_name(self.name),
+                voice_id=self.id_of_a_name(self.voice),
                 similarity_boost=self.similarity,
                 stability=self.stability,
                 style=self.style,

@@ -16,7 +16,7 @@ import datetime
 import os
 import time
 
-from my.exceptions import PyQtUICompilerError
+from my.classes.exceptions import PyQtUICompilerError
 
 
 def timeit(method):

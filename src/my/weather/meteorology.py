@@ -30,7 +30,7 @@ from open_meteo.models import DailyParameters, HourlyParameters
 from parse import parse
 
 from my.consts import WMO_code_warnings_dct
-from my.exceptions import WebAPITimeoutError, WebAPIOutputError
+from my.classes.exceptions import WebAPITimeoutError, WebAPIOutputError
 from my.globals import DEFAULT_LATLONG_URL, MAX_LATLONG_TIMEOUT
 from my.stringutils import wind_direction_str, url_validator
 

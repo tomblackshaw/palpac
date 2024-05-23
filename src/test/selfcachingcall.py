@@ -8,7 +8,7 @@ import time, os
 import unittest
 
 from my.classes.selfcachingcall import SelfCachingCall
-from my.exceptions import StillAwaitingCachedValue
+from my.classes.exceptions import StillAwaitingCachedValue
 
 
 class Test(unittest.TestCase):

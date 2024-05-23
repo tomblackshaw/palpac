@@ -40,7 +40,7 @@ from time import sleep
 import copy
 
 from my.classes import ReadWriteLock
-from my.exceptions import StillAwaitingCachedValue
+from my.classes.exceptions import StillAwaitingCachedValue
 from my.tools import logit
 
 

@@ -29,7 +29,7 @@ import sys
 from PyQt6.QtWidgets import QWidget, QApplication  # pylint: disable=no-name-in-module
 
 from my.classes.randomquoteclass import RandomQuoteSingleton as q
-from my.exceptions import StillAwaitingCachedValue, WebAPITimeoutError, WebAPIOutputError
+from my.classes.exceptions import StillAwaitingCachedValue, WebAPITimeoutError, WebAPIOutputError
 from my.stringutils import add_to_os_path_if_existent
 from my.tools import compile_all_uic_files
 from ui.newform import Ui_Form
@@ -100,8 +100,8 @@ class FunWidget(QWidget):
             n/a
 
         """
-        self.tts.play(self.tts.audio(text=self.ui.plainTextEdit.toPlainText(), voice=self.tts.random_name))
-
+        self.tts.voice = self.tts.random_voice
+        self.tts.play(self.tts.audio(text=self.ui.plainTextEdit.toPlainText()))
 
 #########################################################################################################
 

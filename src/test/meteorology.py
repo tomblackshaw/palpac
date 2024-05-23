@@ -6,7 +6,7 @@ Created on May 20, 2024
 '''
 import unittest
 
-from my.exceptions import WebAPIOutputError, WebAPITimeoutError
+from my.classes.exceptions import WebAPIOutputError, WebAPITimeoutError
 from my.globals import MAX_LATLONG_TIMEOUT, DEFAULT_LATLONG_URL
 from my.weather.meteorology import get_lat_and_long
 

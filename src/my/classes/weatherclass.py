@@ -27,7 +27,7 @@ Attributes:
 
 from my.classes import singleton
 from my.classes.selfcachingcall import SelfCachingCall
-from my.exceptions import StillAwaitingCachedValue, WebAPITimeoutError, WebAPIOutputError
+from my.classes.exceptions import StillAwaitingCachedValue, WebAPITimeoutError, WebAPIOutputError
 
 
 @singleton

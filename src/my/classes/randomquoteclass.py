@@ -31,7 +31,7 @@ Attributes:
 import time
 
 from my.classes.selfcachingcall import SelfCachingCall
-from my.exceptions import StillAwaitingCachedValue, WebAPITimeoutError, WebAPIOutputError, WebAPIOverloadError
+from my.classes.exceptions import StillAwaitingCachedValue, WebAPITimeoutError, WebAPIOutputError, WebAPIOverloadError
 
 
 class _RandomQuoteClass:
