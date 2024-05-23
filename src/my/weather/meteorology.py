@@ -18,12 +18,14 @@ are also implicitly created anytime a new section starts.
 Attributes:
     n/a
 
+# TODO: Write me
+
 Todo:
     * For module TODOs
     * You have to also use ``sphinx.ext.todo`` extension
 
-.. _Google Python Style Guide:
-   http://google.github.io/styleguide/pyguide.html
+.. _Style Guide:
+    https://sphinxcontrib-napoleon.readthedocs.io/en/latest/example_google.html
 
 """
 
@@ -159,9 +161,6 @@ def get_weather():
     return asyncio.run(main())
 
 
-
-
-
 def generate_weather_report_dialogue(myweather, speaker1, speaker2, testing=False):
     """Generate a dialogue from the weather.
 
@@ -286,9 +285,6 @@ def do_a_weather_report(tts, myweather, speaker1, speaker2, testing=False, stabi
 
     Returns:
         n/a
-
-    .. _PEP 484:
-        https://www.python.org/dev/peps/pep-0484/
 
     """
     prof_name = [r for r in tts.voiceinfo if r.samples is not None][0].name

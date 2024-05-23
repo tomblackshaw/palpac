@@ -5,8 +5,7 @@ Created on May 19, 2024
 
 @author: Tom Blackshaw
 
-This module demonstrates documentation as specified by the `Google Python
-Style Guide`_. Docstrings may extend over multiple lines. Sections are created
+This module demonstrates documentation. Docstrings may extend over multiple lines. Sections are created
 with a section header and a colon followed by a block of indented text.
 
 Example:
@@ -32,8 +31,8 @@ Todo:
     * For module TODOs
     * You have to also use ``sphinx.ext.todo`` extension
 
-.. _Google Python Style Guide:
-   http://google.github.io/styleguide/pyguide.html
+.. _Style Guide:
+    https://sphinxcontrib-napoleon.readthedocs.io/en/latest/example_google.html
 
 """
 
@@ -46,6 +45,7 @@ from my.exceptions import PyQtUICompilerError
 
 def timeit(method):
 
+    # TODO: Write me.
     def timed(*args, **kw):
         ts = time.time()
         result = method(*args, **kw)
@@ -62,6 +62,23 @@ def timeit(method):
 
 
 def logit(s, logfile_fname='/tmp/null.txt'):
+    """Example function with types documented in the docstring.
+
+    `PEP 484`_ type annotations are supported. If attribute, parameter, and
+    return types are annotated according to `PEP 484`_, they do not need to be
+    included in the docstring:
+
+    Args:
+        param1 (int): The first parameter.
+        param2 (str): The second parameter.
+
+    Returns:
+        bool: The return value. True for success, False otherwise.
+
+    .. _PEP 484:
+        https://sphinxcontrib-napoleon.readthedocs.io/en/latest/example_google.html
+
+    """
     datestr = "{:%B %d, %Y @ %H:%M:%S}".format(datetime.datetime.now())
     s = '%s  %s' % (datestr, s)
     try:
@@ -73,6 +90,23 @@ def logit(s, logfile_fname='/tmp/null.txt'):
 
 
 def compile_all_uic_files(a_path):
+    """Example function with types documented in the docstring.
+
+    `PEP 484`_ type annotations are supported. If attribute, parameter, and
+    return types are annotated according to `PEP 484`_, they do not need to be
+    included in the docstring:
+
+    Args:
+        param1 (int): The first parameter.
+        param2 (str): The second parameter.
+
+    Returns:
+        bool: The return value. True for success, False otherwise.
+
+    .. _Style Guide:
+        https://sphinxcontrib-napoleon.readthedocs.io/en/latest/example_google.html
+
+    """
     from os import listdir
     from os.path import isfile, join
     onlyfiles = [f for f in listdir(a_path) if isfile(join(a_path, f))]

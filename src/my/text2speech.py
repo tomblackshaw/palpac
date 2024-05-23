@@ -35,8 +35,8 @@ Todo:
     * For module TODOs
     * You have to also use ``sphinx.ext.todo`` extension
 
-.. _Google Python Style Guide:
-   http://google.github.io/styleguide/pyguide.html
+.. _Style Guide:
+    https://sphinxcontrib-napoleon.readthedocs.io/en/latest/example_google.html
 
 """
 
@@ -441,7 +441,7 @@ def speak_totally_randomized_alarm_and_time(owner_of_clock):
         bool: The return value. True for success, False otherwise.
 
     .. _PEP 484:
-        https://www.python.org/dev/peps/pep-0484/
+        https://sphinxcontrib-napoleon.readthedocs.io/en/latest/example_google.html
 
     """
     time_24h = random.randint(0, 24)
