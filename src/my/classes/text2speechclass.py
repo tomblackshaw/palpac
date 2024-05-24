@@ -320,13 +320,17 @@ class _Text2SpeechClass:
 
     def play(self, data):
         from elevenlabs import play
+        if type(data) is str:
+            raise ValueError("Please supply audio data, not a string, when calling me.")
         play(data)
 
     def say(self, txt):
+        if type(txt) is not str:
+            raise ValueError("Please supply a string, when calling me.")
         self.play(self.audio(text=txt))
 
 
-def play_dialogue_lst(tts, dialogue_lst, stability=0.5, similarity_boost=0.01, style=0.5):
+def play_dialogue_lst(tts, dialogue_lst):  # , stability=0.5, similarity_boost=0.01, style=0.5):
     """Recites dialogue.
 
     Using the Eleven Labs website's API, their Python module, and mpv/ffmpeg, I play
@@ -341,6 +345,11 @@ def play_dialogue_lst(tts, dialogue_lst, stability=0.5, similarity_boost=0.01, s
         similarity_boost: The similarity level (between 0.01 and 1.0 recommended).
         style: The similarity level (between 0.0 and 0.5 recommended).
 
+    Example:
+        $ python3
+        >>> from my.classes.elevenwrapper import play_dialogue_lst
+        >>> play_dialogue_lst(Text2SpeechSingleton, [('Jessie', 'Knock, knock'),('Freya', 'Get a warrant.')])
+
     Returns:
         n/a
 
@@ -349,12 +358,12 @@ def play_dialogue_lst(tts, dialogue_lst, stability=0.5, similarity_boost=0.01, s
 
     """
     from elevenlabs import play
-    speechgen = lambda voice, text: tts.audio(voice=voice, text=text, advanced=True, model='eleven_multilingual_v2', stability=stability, similarity_boost=similarity_boost, style=style, use_speaker_boost=True)
     data_to_play = []
     from my.tools import logit
     for (name, text) in dialogue_lst:
         logit("{name}: {text}".format(name=name, text=text))
-        data_to_play.append(speechgen(name, text))
+        tts.voice = name
+        data_to_play.append(tts.audio(text))
     for d in data_to_play:
         play(d)
 

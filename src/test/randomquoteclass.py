@@ -6,7 +6,7 @@ Created on May 21, 2024
 '''
 import time
 import unittest
-from my.classes.randomquoteclass import RandomQuoteSingleton as q
+from my.randomquotes import RandomQuoteSingleton as q
 
 
 class TestOne(unittest.TestCase):

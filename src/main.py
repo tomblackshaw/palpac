@@ -28,8 +28,8 @@ import sys
 
 from PyQt6.QtWidgets import QWidget, QApplication  # pylint: disable=no-name-in-module
 
-from my.classes.randomquoteclass import RandomQuoteSingleton as q
 from my.classes.exceptions import StillAwaitingCachedValue, WebAPITimeoutError, WebAPIOutputError
+from my.classes.randomquoteclass import RandomQuoteSingleton as q
 from my.stringutils import add_to_os_path_if_existent
 from my.tools import compile_all_uic_files
 from ui.newform import Ui_Form

@@ -161,7 +161,7 @@ alarm_messages_lst = [
 # """And now it's 7:02. Fantastic. Fan bloody tastic.""",
 # """Seriously? You pushed the snooze button for the 3rd time, ${owner}, and it's already 7:29. Who raised you?
 """Shrek is love. Shrek is life. ${owner} is late. ${hello_owner} It's ${shorttime} and you need to get up.""",
-"""Tardiness has all the professional appeal of ringworm. ${hello_owner} It's ${shorttime}, ${owner}. Get. Up. Now.""",
+"""Tardiness has all the professional appeal of ringworm. ${hello_owner} It's ${shorttime}, ${owner}. Get. Up. Now!""",
 ]
 
 default_speaker_alarm_message_dct = {

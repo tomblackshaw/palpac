@@ -30,8 +30,8 @@ Attributes:
 
 import time
 
-from my.classes.selfcachingcall import SelfCachingCall
 from my.classes.exceptions import StillAwaitingCachedValue, WebAPITimeoutError, WebAPIOutputError, WebAPIOverloadError
+from my.classes.selfcachingcall import SelfCachingCall
 
 
 class _RandomQuoteClass:
@@ -84,4 +84,3 @@ class _RandomQuoteClass:
             raise WebAPIOutputError("The ZenQuotes website returned an incomprehensible output") from e
 
 
-RandomQuoteSingleton = _RandomQuoteClass()

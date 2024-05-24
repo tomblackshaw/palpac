@@ -137,3 +137,11 @@ class TestOne(unittest.TestCase):
 if __name__ == "__main__":
     # import sys;sys.argv = ['', 'Test.testName']
     unittest.main()
+
+import speech_recognition as sr
+r = sr.Recognizer()
+with sr.AudioFile('/Users/mchobbit/Downloads/simpletest.flac') as source:
+    audio_data = r.record(source)
+    text = r.recognize_google(audio_data)
+    print(text)
+
