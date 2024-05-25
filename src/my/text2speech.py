@@ -63,8 +63,6 @@ def initialize_vosk():
     TODO: Write me
 
     """
-    # FIXME: write me
-    ''''''
     if not os.path.exists("model"):
         raise MissingVoskModelError("Vosk model folder is missing. Please go to https://alphacephei.com/vosk/models and download the appropriate model; rename the folder as 'model'; move it ")
     try:

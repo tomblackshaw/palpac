@@ -134,7 +134,7 @@ def wind_direction_str(degrees):
 
 def generate_random_string(length):
     # TODO: Expand the multiline comments here
-    """Generate a N-chars-long random alphanumeric string. Max length: 99999 chars. Purely arbitrary."""
+    "Generate a N-chars-long random alphanumeric string. Max length: 99999 chars. Purely arbitrary."
     max_len = MAX_RANDGENSTR_LEN
     if type(length) is not int or length < 0 or length > max_len:
         raise TypeError("Please specify a length of type integer between 0 and {max_len}".format(max_len=max_len))
