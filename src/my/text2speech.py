@@ -97,8 +97,8 @@ def get_first_prof_name(tts):
     """
     try:
         return [r for r in tts.api_voices if r.samples is not None][0].name
-    except (IndexError, KeyError, ValueError):
-        raise NoProfessionalVoicesError("There are no professional-grade voices available from your Eleven Labs account.")
+    except (IndexError, KeyError, ValueError) as e:
+        raise NoProfessionalVoicesError("There are no professional-grade voices available from your Eleven Labs account.") from e
 
 
 def speak_random_alarm(owner_of_clock, time_24h, time_minutes, voice=None, tts=Text2SpeechSingleton):
