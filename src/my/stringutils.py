@@ -23,8 +23,8 @@ import string
 
 import requests
 
-from my.consts import default_speaker_alarm_message_dct, alarm_messages_lst
 from my.classes.exceptions import WebAPITimeoutError, WebAPIOutputError
+from my.consts import default_speaker_alarm_message_dct, alarm_messages_lst
 from my.tools import logit
 
 MAX_RANDGENSTR_LEN = 99999  # used by generate_random_string()
