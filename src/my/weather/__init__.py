@@ -112,14 +112,19 @@ def get_lat_and_long(url=DEFAULT_LATLONG_URL, timeout=10):
         return(latitude, longitude)
 
 
-def get_weather():
+def get_weather(latitude=None, longitude=None):
     """Retrieve weather info from OpenMeteo.
 
     I call the OpenMeteo API to retrieve detailed information on my local
     weather. I do not process the result. I merely return it.
 
     Args:
-        n/a
+        latitude (float, optional): Latitude of the location.
+        longitude (float, optional): Longitude of the location.
+
+    Note:
+        If latitude and longitude are not supplied, I shall deduce them
+        on your behalf.
 
     Returns:
         open_meteo.models.Forecast: structure containing weather info. For
@@ -144,7 +149,14 @@ def get_weather():
             attempt to interrogate it.
 
     """
-    (latitude, longitude) = get_lat_and_long()
+    if [latitude, longitude].count(None) not in (0, 2):
+        raise ValueError("Please specify latitude *and* longitude... or neither of them. Don't specify just one of them, please.")
+    if latitude is None and longitude is None:
+        (latitude, longitude) = get_lat_and_long()
+    if type(latitude) not in (int, float) or type(longitude) not in (int, float):
+        raise TypeError("Latitude and/or longitude are the wrong type. Please check your code and try again.")
+    if latitude < -180 or longitude < -180 or latitude > 180 or longitude > 180:
+        raise ValueError("Latitude and/or longitude are too large/small. Please check your code and try again.")
     import asyncio
 
     async def main():
