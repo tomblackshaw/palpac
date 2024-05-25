@@ -121,7 +121,34 @@ def flatten(xss):
 
 
 def wind_direction_str(degrees):
-    # TODO: Write me
+    """Return the wind direction string, based on the degrees field.
+
+    The supplied number of degrees will be turned into a string that describes
+    the direction in human-readable form.
+
+    Examples:
+        $ python3
+        >>> from my.stringutils import wind_direction_str
+        >>> wind_direction_str(0)
+        'North'
+        >>> wind_direction_str(359)
+        'North Northwest'
+
+    Args:
+        degrees (int or float): The number of degrees.
+
+    Returns:
+        str: The human-readable descriptor of that number of degrees.
+
+    Raises:
+        TypeError: Type of parameter is wrong. It should be int or float.
+        ValueError: Parameter should be >=0 and <360.
+
+    """
+    if type(degrees) not in (int, float):
+        raise TypeError("Wind direction must be an integer or a float, not a {t}".format(t=str(type(degrees))))
+    if degrees < 0 or degrees >= 360:
+        raise ValueError("Wind direction must be between 0 and 360; {degrees} is not. Please correct this.".format(degrees))
     degrees = degrees % 360
     winddirection_lst = ['North', 'North North East', 'Northeast', 'East Northeast', 'East', 'East Southeast', 'Southeast', 'South Southeast',
                          'South', 'South Southwest', 'Southwest', 'West Southwest', 'West', 'West Northwest', 'Northwest', 'North Northwest']
@@ -129,15 +156,38 @@ def wind_direction_str(degrees):
     if 0 <= degrees_entry < len(winddirection_lst):
         return winddirection_lst[degrees_entry]
     else:
-        return "unknown"
+        raise ValueError()
 
 
 def generate_random_string(length):
-    # TODO: Expand the multiline comments here
-    "Generate a N-chars-long random alphanumeric string. Max length: 99999 chars. Purely arbitrary."
+    """Generate a N-chars-long random alphanumeric string.
+
+    Generate a random string, composed of digits and lowercase letters and digits.
+    The maximum length is MAX_RANDGENSTR_LEN characters. The limit is purely
+    arbitrary, as far as I know.
+
+    Note:
+        Although a zero-length random string would equal '', I choose to
+        raise an exception instead: no programmer will deliberately ask
+        for a zero-length random string.
+
+    Args:
+        length (int): The desired length of the random string. It must be
+            between 1 and MAX_RANDGENSTR_LEN, inclusive.
+
+    Returns:
+        str: The random string that I have generated.
+
+    Raises:
+        TypeError: The length field is of an invalid type.
+        ValueError: The value of length is an invalid parameter.
+
+    """
     max_len = MAX_RANDGENSTR_LEN
-    if type(length) is not int or length < 0 or length > max_len:
-        raise TypeError("Please specify a length of type integer between 0 and {max_len}".format(max_len=max_len))
+    if type(length) is not int:
+        raise TypeError("Please specify a length of type int, not {t}".format(t=type(length)))
+    if length <= 0 or length > max_len:
+        raise ValueError("Please specify a length of type integer between 1 and {max_len}".format(max_len=max_len))
     x = "".join(
         random.choice(string.ascii_uppercase + string.ascii_lowercase + string.digits)
         for _ in range(length)

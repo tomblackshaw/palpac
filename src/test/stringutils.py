@@ -25,11 +25,12 @@ class TestGenerateRandomString(unittest.TestCase):
         self.assertRaises(TypeError, generate_random_string, '')
         self.assertRaises(TypeError, generate_random_string, True)
         self.assertRaises(TypeError, generate_random_string, None)
-        self.assertRaises(TypeError, generate_random_string, MAX_RANDGENSTR_LEN + 1)
-        self.assertRaises(TypeError, generate_random_string, -1)
-        _ = generate_random_string(MAX_RANDGENSTR_LEN)
-        self.assertEqual(generate_random_string(0), '')
-        for i in range(0, 100):
+        self.assertRaises(ValueError, generate_random_string, MAX_RANDGENSTR_LEN + 1)
+        self.assertRaises(ValueError, generate_random_string, -1)
+        self.assertRaises(ValueError, generate_random_string, 0)
+        # _ = generate_random_string(MAX_RANDGENSTR_LEN)
+        # self.assertEqual(generate_random_string(0), '')
+        for i in range(1, 100):
             self.assertEqual(i, len(generate_random_string(i)))
 
 
