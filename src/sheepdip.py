@@ -220,7 +220,7 @@ def producer(queue, fname, r):
             pass  # print("Warning - {fname} not found. Cannot delete temp file.".format(fname=fname))
 
 
-def consumer(queue, tts):
+def consumer(queue):
     print('Consumer: Running')
     new_timestamp = datetime.datetime.now()
     while True:
