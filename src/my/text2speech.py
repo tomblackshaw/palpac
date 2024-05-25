@@ -28,7 +28,6 @@ Attributes:
 
 """
 
-import os
 import random
 
 from my.classes.exceptions import NoProfessionalVoicesError
