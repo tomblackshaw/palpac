@@ -7,7 +7,7 @@ Created on May 20, 2024
 import random
 import unittest
 
-from my.stringutils import generate_random_string, MAX_RANDGENSTR_LEN, convert_24h_and_mins_to_shorttime
+from my.stringutils import generate_random_string, MAX_RANDGENSTR_LEN, convert_24h_and_mins_to_shorttime, find_trigger_word_in_sentence
 
 
 class TestGenerateRandomString(unittest.TestCase):
@@ -77,6 +77,51 @@ class TestConvert24hAndMinsToShorttime(unittest.TestCase):
             for mn in range(0, 60):
                 s = convert_24h_and_mins_to_shorttime(hr, mn)
         del i, s
+
+
+class TestFindTriggerWordInSentence(unittest.TestCase):
+
+    def setUp(self):
+        pass
+
+    def tearDown(self):
+        pass
+
+    def testGoofy(self):
+        self.assertRaises(TypeError, find_trigger_word_in_sentence, None, None)
+        self.assertRaises(TypeError, find_trigger_word_in_sentence, None, 1)
+        self.assertRaises(TypeError, find_trigger_word_in_sentence, 1.2, None)
+        self.assertRaises(ValueError, find_trigger_word_in_sentence, " stuff with space either side", 'trigger')
+        self.assertRaises(ValueError, find_trigger_word_in_sentence, "stuff with space either side ", 'trigger')
+        self.assertRaises(ValueError, find_trigger_word_in_sentence, "stuff with space either side", ' trigger')
+        self.assertRaises(ValueError, find_trigger_word_in_sentence, "stuff with space either side", 'trigger ')
+        self.assertEqual(find_trigger_word_in_sentence('Small', 'Bigger'), -1)
+        self.assertEqual(find_trigger_word_in_sentence('', 'Small'), -1)
+        self.assertRaises(ValueError, find_trigger_word_in_sentence, "Sentence", "")
+        self.assertRaises(TypeError, find_trigger_word_in_sentence, 'Regular Sentence is here', 'is', 'foooo')
+        self.assertRaises(TypeError, find_trigger_word_in_sentence, 'Regular Sentence is here', 'is', None)
+        self.assertRaises(ValueError, find_trigger_word_in_sentence, 'Regular Sentence is here', 'is', -1)
+        self.assertRaises(ValueError, find_trigger_word_in_sentence, 'Regular Sentence is here', 'is', 0)
+
+    def testFirstNWords(self):
+        self.assertEqual(find_trigger_word_in_sentence('Regular Sentence is here', 'is', 2), -1)
+        self.assertEqual(find_trigger_word_in_sentence('Regular Sentence is here', 'is'), -1)
+        self.assertEqual(find_trigger_word_in_sentence('Regular Sentence is here', 'sentence'), 8)
+        self.assertEqual(find_trigger_word_in_sentence('Regular SENTENCE is here', 'sEnTence'), 8)
+        self.assertEqual(find_trigger_word_in_sentence('Regular Sentence is here', 'sEnTence'), 8)
+        self.assertEqual(find_trigger_word_in_sentence('Regular Sentence is here', 'egu'), -1)
+        self.assertEqual(find_trigger_word_in_sentence('Regular Sentence is here', 'ent'), -1)
+        self.assertEqual(find_trigger_word_in_sentence('Sentence is here', 'sentence'), 0)
+        self.assertEqual(find_trigger_word_in_sentence('SENTENCE is here', 'sEnTence'), 0)
+        self.assertEqual(find_trigger_word_in_sentence('Sentence is here', 'ent'), -1)
+        self.assertEqual(find_trigger_word_in_sentence('Sinner is here', 'is'), 7)
+        self.assertEqual(find_trigger_word_in_sentence('Sinner is here', 'here'), -1)
+        self.assertEqual(find_trigger_word_in_sentence('Sinner is here', 'here', 3), -1)
+        self.assertEqual(find_trigger_word_in_sentence('Sinner is here', 'here', 2), -1)
+        self.assertEqual(find_trigger_word_in_sentence('Sinner is here', 'here', 1), -1)
+        self.assertEqual(find_trigger_word_in_sentence('Sinner is', 'here'), -1)
+        self.assertEqual(find_trigger_word_in_sentence('Sinner is', 'sinner'), 0)
+        self.assertEqual(find_trigger_word_in_sentence('Sinner is', 'is'), 7)
 
 
 if __name__ == "__main__":

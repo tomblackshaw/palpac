@@ -318,3 +318,53 @@ def generate_random_alarm_message(owner_of_clock, time_24h, time_minutes, voice=
     message = generate_alarm_message(owner_of_clock, time_24h, time_minutes, message_template)
     return message
 
+
+def find_trigger_word_in_sentence(sentence, triggerword, scan_first_N_words=None):
+    """Find trigger word in sentence, if it's there.
+
+    Scan the supplied sentence (a string) for the supplied trigger word
+    (also a string). If the trigger word is the first or second word of
+    the sentence, return its position (an int). Otherwise, return -1.
+
+    Note:
+        If the sentence is an empty string (""), that is *not* grounds
+        to throw an exception. However, an empty triggerword ("")
+        *is* grounds for an exception.
+
+    Args:
+        sentence (str): The sentence to be scanned.
+        triggerword (str): The trigger word for which we are searching.
+        scan_first_N_words (int, optional): How many of the sentence's
+            words should we scan for the trigger word? The default
+            is 100: enough for most purposes.
+
+    Returns:
+        int: Location of the trigger word, if found. Otherwise, -1.
+
+    Raises:
+        TypeError: A supplied parameter isn't a string.
+        ValueError: A supplied parameter isn't a non-empty string,
+            or there are spaces at the start/end of the strings.
+
+    TODO: Write me
+
+    """
+    if type(sentence) != str or type(triggerword) != str:
+        raise TypeError("sentence and triggerword must be strings")
+    if scan_first_N_words is not None and type(scan_first_N_words) is not int:
+        raise TypeError("scan_first_N_words needs to be either None or a positive integer")
+    if scan_first_N_words <= 0:
+        raise ValueError("the scan_first_N_words parameter must be greater than zero")
+    sentence = sentence.lower()
+    triggerword = triggerword.lower()
+    if sentence != sentence.strip() or triggerword != triggerword.strip():
+        raise ValueError("sentence and triggerword must be strings WITHOUT spaces at start or end")
+    if triggerword == '':
+        raise ValueError("I need a triggerword that is at least one character long")
+    words_lst = sentence.split(' ')
+    noof_words = len(words_lst)
+    upperlimit = noof_words if scan_first_N_words is None else min(noof_words, scan_first_N_words)
+    for wordnum in range(0, upperlimit):
+        if words_lst[wordnum] == triggerword:
+            return sentence.index(' ' + triggerword) + 1 if wordnum > 0 else 0
+    return -1
