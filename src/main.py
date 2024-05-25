@@ -24,12 +24,11 @@ Todo:
 
 """
 
-import os
 import sys
 
 from PyQt6.QtWidgets import QWidget, QApplication  # pylint: disable=no-name-in-module
 
-from my.classes.exceptions import StillAwaitingCachedValue, WebAPITimeoutError, WebAPIOutputError, MissingVoskModelError
+from my.classes.exceptions import StillAwaitingCachedValue, WebAPITimeoutError, WebAPIOutputError
 from my.randomquotes import RandomQuoteSingleton as q
 from my.stringutils import add_to_os_path_if_existent
 from my.text2speech import initialize_vosk
@@ -90,7 +89,7 @@ class FunWidget(QWidget):
         self.ui.plainTextEdit.setPlainText(txt)
 
     def playme(self):
-        """Play the supplied text.
+        """Play the text from the plainTextEdit instance.
 
         Note:
             This uses self.tts, which is the singleton for talking to ElevenLabs.
