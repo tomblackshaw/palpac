@@ -28,14 +28,79 @@ Attributes:
 
 """
 
+import os
 import random
 
-from my.classes.text2speechclass import Text2SpeechSingleton
+from my.classes.exceptions import MissingVoskModelError, NoProfessionalVoicesError, CannotImportVoskError, CannotSetVoskLogLevelError
+from my.classes.text2speechclass import _Text2SpeechClass
 from my.stringutils import generate_random_alarm_message
+
+Text2SpeechSingleton = _Text2SpeechClass()
+
+
+def initialize_vosk():
+    """Initialize the Vosk speech recognition tools.
+
+    Check that the 'model' folder exists. This is where the relevant
+    speech recognition data files reside. They are up to 1GB in size,
+    which is why they are not distributed with the PALPAC packages.
+
+    Note:
+        Someone or something should download the relevant model from
+        https://alphacephei.com/vosk/models *before* using this
+        software.
+
+    Args:
+        n/a
+
+    Returns:
+        n/a
+
+    Raises:
+        NoProfessionalVoicesError: There is no professional-grade voice
+            available via the configured Eleven Labs account.
+
+    TODO: Write me
+
+    """
+    # FIXME: write me
+    ''''''
+    if not os.path.exists("model"):
+        raise MissingVoskModelError("Vosk model folder is missing. Please go to https://alphacephei.com/vosk/models and download the appropriate model; rename the folder as 'model'; move it ")
+    try:
+        import vosk
+    except ImportError as e:
+        raise CannotImportVoskError("Unable to perform initial importing of vosk Python library. Are you sure vosk is installed?") from e
+    try:
+        vosk.SetLogLevel(-1)
+    except Exception as e:
+        raise CannotSetVoskLogLevelError("Cannot set vosk's log level. Is vosk properly installed?") from e
 
 
 def get_first_prof_name(tts):
-    return [r for r in tts.api_voices if r.samples is not None][0].name
+    """Get the name of the first professional-grade voice.
+
+    On the programmer's Eleven Labs account, there may be a professional-
+    grade voice available (or there may not). If there is one, return its
+    name. If there are two or more, return the name of the first one. If
+    there are none, raise a NoProfessionalVoicesError exception.
+
+    Args:
+        tts (Text2SpeechSingleton): The singleton by which to access
+            the Eleven Labs API.
+
+    Returns:
+        str: The name of the first available professional-grade voice.
+
+    Raises:
+        NoProfessionalVoicesError: There is no professional-grade voice
+            available via the configured Eleven Labs account.
+
+    """
+    try:
+        return [r for r in tts.api_voices if r.samples is not None][0].name
+    except (IndexError, KeyError, ValueError):
+        raise NoProfessionalVoicesError("There are no professional-grade voices available from your Eleven Labs account.")
 
 
 def speak_random_alarm(owner_of_clock, time_24h, time_minutes, voice=None, tts=Text2SpeechSingleton):
@@ -86,3 +151,5 @@ def speak_totally_randomized_alarm_and_time(owner_of_clock):
     time_24h = random.randint(0, 24)
     time_minutes = random.randint(0, 60)
     speak_random_alarm(owner_of_clock, time_24h, time_minutes)
+
+

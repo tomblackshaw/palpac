@@ -11,6 +11,8 @@ with a section header and a colon followed by a block of indented text.
 
 Error
     StartupError
+        VoskStartupError
+            MissingVoskModelError
         PyQtStartupError
             PyQtUICompilerError
         Text2SpeechStartupError
@@ -20,6 +22,9 @@ Error
         WebAPITimeoutError
     CachingError
         StillAwaitingCachedValue
+    Text2SpeechError
+        VoiceNotFoundError
+            NoProfessionalVoicesError
 
 Example:
     n/a
@@ -59,6 +64,34 @@ class StartupError(Error):
 #     def __init__(self, message):  # pylint: disable=useless-parent-delegation
 #
 #         super().__init__(message)
+
+
+class VoskStartupError(StartupError):
+    """Class for all Vosk startup errors"""
+
+    def __init__(self, message):  # pylint: disable=useless-parent-delegation
+        super().__init__(message)
+
+
+class CannotImportVoskError(VoskStartupError):
+    """The 'import vosk' call failed"""
+
+    def __init__(self, message):  # pylint: disable=useless-parent-delegation
+        super().__init__(message)
+
+
+class CannotSetVoskLogLevelError(VoskStartupError):
+    """I cannot set Vosk's log level"""
+
+    def __init__(self, message):  # pylint: disable=useless-parent-delegation
+        super().__init__(message)
+
+
+class MissingVoskModelError(VoskStartupError):
+    """Model folder is missing; it should be saved to 'model' folder in src dir"""
+
+    def __init__(self, message):  # pylint: disable=useless-parent-delegation
+        super().__init__(message)
 
 
 class PyQtStartupError(StartupError):
@@ -153,3 +186,28 @@ class StillAwaitingCachedValue(CachingError):
     def __init__(self, message):  # pylint: disable=useless-parent-delegation
 
         super().__init__(message)
+
+
+class Text2SpeechError(Error):
+    """Class for all text2speech errors"""
+
+    def __init__(self, message):  # pylint: disable=useless-parent-delegation
+
+        super().__init__(message)
+
+
+class VoiceNotFoundError(Text2SpeechError):
+    """Class for all 'voice not found' errors"""
+
+    def __init__(self, message):  # pylint: disable=useless-parent-delegation
+
+        super().__init__(message)
+
+
+class NoProfessionalVoicesError(VoiceNotFoundError):
+    """Class for all 'there are no professional voices available' errors"""
+
+    def __init__(self, message):  # pylint: disable=useless-parent-delegation
+
+        super().__init__(message)
+

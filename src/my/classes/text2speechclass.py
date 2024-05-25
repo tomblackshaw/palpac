@@ -352,5 +352,3 @@ def play_dialogue_lst(tts, dialogue_lst):  # , stability=0.5, similarity_boost=0
     for d in data_to_play:
         play(d)
 
-
-Text2SpeechSingleton = _Text2SpeechClass()
