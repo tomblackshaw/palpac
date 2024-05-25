@@ -8,21 +8,6 @@ Created on May 19, 2024
 Module for interacting with the ElevenLabs text-to-speech API. There is a
 lot of cool stuff in here.
 
-Example:
-    Here is one::
-
-        $ python3
-        >>> from my.classes.elevenwrapper import Text2SpeechSingleton as tts
-        >>> s = "Hello there. There's a car in the bar, by the farm."
-        >>> tts.say(s)
-        >>> for i in range(0,10): tts.name = tts.random_name; audiodata = tts.audio(s); tts.play(audiodata)
-
-Section breaks are created by resuming unindented text. Section breaks
-are also implicitly created anytime a new section starts.
-
-Attributes:
-    Text2SpeechSingleton (_Text2SpeechClass): The singleton
-
 .. _Style Guide:
    https://sphinxcontrib-napoleon.readthedocs.io/en/latest/example_google.html
 
@@ -354,7 +339,7 @@ def play_dialogue_lst(tts, dialogue_lst):  # , stability=0.5, similarity_boost=0
         n/a
 
     Raises:
-        IOError: An error occurred accessing the smalltable.
+        unknown. FIXME: list the potential exceptions
 
     """
     from elevenlabs import play
