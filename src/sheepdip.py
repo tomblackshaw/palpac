@@ -307,28 +307,6 @@ def indefinitely_convert_all_audio(audio_queue, text_queue):
     while not G_stop:
         convert_all_audio_in_queue(audio_queue, text_queue)
 
-'''
-
-sentence = ''
-last_datestamp = datetime.datetime.now()
-while True:
-    try:
-        start_ds, end_ds, pause_in_milliseconds, t = text_queue.get_nowait()
-        text = eval(t)['text']
-        print("text=", text)
-        if (datetime.datetime.now()-last_datestamp).total_seconds() >= SLOWTALKER_TIMEOUT:
-            sentence = sentence.strip()
-            print("==>", sentence, "<==")
-#             sentences_queue.put(sentence)
-            sentence = ''
-            last_datestamp = end_ds
-    except Empty:
-        time.sleep(.1)
-    else:
-        sentence += text + ' '
-
-'''
-
 
 def main():
     import speech_recognition as sr
