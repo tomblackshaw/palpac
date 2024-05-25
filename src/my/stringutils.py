@@ -148,7 +148,7 @@ def wind_direction_str(degrees):
     if type(degrees) not in (int, float):
         raise TypeError("Wind direction must be an integer or a float, not a {t}".format(t=str(type(degrees))))
     if degrees < 0 or degrees >= 360:
-        raise ValueError("Wind direction must be between 0 and 360; {degrees} is not. Please correct this.".format(degrees))
+        raise ValueError("Wind direction must be between 0 and 360; {degrees} is not. Please correct this.".format(degrees=degrees))
     degrees = degrees % 360
     winddirection_lst = ['North', 'North North East', 'Northeast', 'East Northeast', 'East', 'East Southeast', 'Southeast', 'South Southeast',
                          'South', 'South Southwest', 'Southwest', 'West Southwest', 'West', 'West Northwest', 'Northwest', 'North Northwest']
