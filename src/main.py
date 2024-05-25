@@ -31,7 +31,6 @@ from PyQt6.QtWidgets import QWidget, QApplication  # pylint: disable=no-name-in-
 from my.classes.exceptions import StillAwaitingCachedValue, WebAPITimeoutError, WebAPIOutputError
 from my.randomquotes import RandomQuoteSingleton as q
 from my.stringutils import add_to_os_path_if_existent
-from my.text2speech import initialize_vosk
 from my.tools import compile_all_uic_files
 from ui.newform import Ui_Form
 
@@ -109,7 +108,6 @@ class FunWidget(QWidget):
 
 
 if __name__ == '__main__':
-    initialize_vosk()
     from my.text2speech import Text2SpeechSingleton
     add_to_os_path_if_existent('/opt/homebrew/bin', strict=False)
     compile_all_uic_files('ui')

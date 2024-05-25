@@ -31,48 +31,11 @@ Attributes:
 import os
 import random
 
-from my.classes.exceptions import MissingVoskModelError, NoProfessionalVoicesError, CannotImportVoskError, CannotSetVoskLogLevelError
+from my.classes.exceptions import NoProfessionalVoicesError
 from my.classes.text2speechclass import _Text2SpeechClass
 from my.stringutils import generate_random_alarm_message
 
 Text2SpeechSingleton = _Text2SpeechClass()
-
-
-def initialize_vosk():
-    """Initialize the Vosk speech recognition tools.
-
-    Check that the 'model' folder exists. This is where the relevant
-    speech recognition data files reside. They are up to 1GB in size,
-    which is why they are not distributed with the PALPAC packages.
-
-    Note:
-        Someone or something should download the relevant model from
-        https://alphacephei.com/vosk/models *before* using this
-        software.
-
-    Args:
-        n/a
-
-    Returns:
-        n/a
-
-    Raises:
-        NoProfessionalVoicesError: There is no professional-grade voice
-            available via the configured Eleven Labs account.
-
-    TODO: Write me
-
-    """
-    if not os.path.exists("model"):
-        raise MissingVoskModelError("Vosk model folder is missing. Please go to https://alphacephei.com/vosk/models and download the appropriate model; rename the folder as 'model'; move it ")
-    try:
-        import vosk
-    except ImportError as e:
-        raise CannotImportVoskError("Unable to perform initial importing of vosk Python library. Are you sure vosk is installed?") from e
-    try:
-        vosk.SetLogLevel(-1)
-    except Exception as e:
-        raise CannotSetVoskLogLevelError("Cannot set vosk's log level. Is vosk properly installed?") from e
 
 
 def get_first_prof_name(tts):

@@ -80,6 +80,13 @@ class CannotImportVoskError(VoskStartupError):
         super().__init__(message)
 
 
+class CannotImportLooseVersionError(VoskStartupError):  # TODO: elaborate on this
+    """The 'from distutils.version import LooseVersion' call failed"""
+
+    def __init__(self, message):  # pylint: disable=useless-parent-delegation
+        super().__init__(message)
+
+
 class CannotSetVoskLogLevelError(VoskStartupError):
     """I cannot set Vosk's log level"""
 
