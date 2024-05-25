@@ -32,6 +32,7 @@ from PyQt6.QtWidgets import QWidget, QApplication  # pylint: disable=no-name-in-
 from my.classes.exceptions import StillAwaitingCachedValue, WebAPITimeoutError, WebAPIOutputError, MissingVoskModelError
 from my.randomquotes import RandomQuoteSingleton as q
 from my.stringutils import add_to_os_path_if_existent
+from my.text2speech import initialize_vosk
 from my.tools import compile_all_uic_files
 from ui.newform import Ui_Form
 
