@@ -10,8 +10,7 @@ from open_meteo.models import Forecast, DailyForecast, CurrentWeather
 
 from my.classes.exceptions import WebAPIOutputError, WebAPITimeoutError
 from my.globals import MAX_LATLONG_TIMEOUT, DEFAULT_LATLONG_URL
-from my.weather import get_lat_and_long, _WeatherClass
-import my.weather
+from my.weather import get_lat_and_long
 
 
 class Test_get_lat_and_long(unittest.TestCase):
@@ -54,6 +53,15 @@ class TestWeather(unittest.TestCase):
         self.assertEqual(type(forecast), Forecast)
         self.assertEqual(type(forecast.daily), DailyForecast)
         self.assertEqual(type(forecast.current_weather), CurrentWeather)
+
+    def testGoofyGetWeatherValues(self):
+        from my.weather import get_weather
+        _ = get_weather()
+        self.assertRaises(ValueError, get_weather, None, 69)
+        self.assertRaises(ValueError, get_weather, 69, None)
+        self.assertRaises(ValueError, get_weather, 181, -181)
+        self.assertRaises(ValueError, get_weather, -181, 181)
+        self.assertRaises(TypeError, get_weather, "hi", "there")
 
 
 if __name__ == "__main__":
