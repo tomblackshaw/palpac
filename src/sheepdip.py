@@ -328,9 +328,9 @@ while True:
         sentence += text + ' '
 
 '''
+
+
 def main():
-    import vosk
-    vosk.SetLogLevel(-1)
     import speech_recognition as sr
     global G_stop
     from my.classes.text2speechclass import Text2SpeechSingleton as tts
