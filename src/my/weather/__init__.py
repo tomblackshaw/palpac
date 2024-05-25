@@ -328,7 +328,7 @@ def do_a_weather_report(tts, forecast, speaker1, speaker2, testing=False):  # , 
     #         if voice == prof_name \
     #         else \
     #         s.audio(voice=voice, text=text)
-    from my.classes.text2speechclass import play_dialogue_lst
+    from my.text2speech import play_dialogue_lst
     dialogue_lst = generate_weather_report_dialogue(forecast=forecast, speaker1=speaker1, speaker2=speaker2, testing=testing)
     play_dialogue_lst(tts=tts, dialogue_lst=dialogue_lst)
 

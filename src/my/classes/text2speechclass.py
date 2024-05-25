@@ -315,40 +315,4 @@ class _Text2SpeechClass:
         self.play(self.audio(text=txt))
 
 
-def play_dialogue_lst(tts, dialogue_lst):  # , stability=0.5, similarity_boost=0.01, style=0.5):
-    """Recites dialogue.
-
-    Using the Eleven Labs website's API, their Python module, and mpv/ffmpeg, I play
-    the supplied dialogue list. 'Do' the named voices, too. FYI, the API's key is
-    stored at ~/$ELEVENLABS_KEY_BASENAME.
-
-    Args:
-        tts: Text-to-speech singleton Text2SpeechSingleton.
-        dialogue_lst: List of dialogue tuples. The first item is the name of the voice
-            to be used. The second item is the text to be recited.
-        stability: The stability level (between 0.3 and 1.0 recommended).
-        similarity_boost: The similarity level (between 0.01 and 1.0 recommended).
-        style: The similarity level (between 0.0 and 0.5 recommended).
-
-    Example:
-        $ python3
-        >>> from my.classes.elevenwrapper import play_dialogue_lst
-        >>> play_dialogue_lst(Text2SpeechSingleton, [('Jessie', 'Knock, knock'),('Freya', 'Get a warrant.')])
-
-    Returns:
-        n/a
-
-    Raises:
-        unknown. FIXME: list the potential exceptions
-
-    """
-    from elevenlabs import play
-    data_to_play = []
-    from my.tools import logit
-    for (name, text) in dialogue_lst:
-        logit("{name}: {text}".format(name=name, text=text))
-        tts.voice = name
-        data_to_play.append(tts.audio(text))
-    for d in data_to_play:
-        play(d)
 
