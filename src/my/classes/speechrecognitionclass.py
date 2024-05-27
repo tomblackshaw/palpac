@@ -137,6 +137,12 @@ sr.get_flac_converter()        sr.recognize_api(              sr.TranscriptionFa
         self.__mute_lock.release_write()
 
     @property
+    def recognize(self, audio_data):
+        raw_txt_to_be_evald = self.recognizer.recognize_vosk(audio_data)
+        text = ast.literal_eval(raw_txt_to_be_evald)['text'].strip()
+        return text
+
+    @property
     def recognizer(self):
         return self.__recognizer
 
