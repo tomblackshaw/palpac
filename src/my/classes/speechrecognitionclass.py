@@ -1,8 +1,29 @@
-'''
+# -*- coding: utf-8 -*-
+"""Module that wraps around Python's SpeechRecognition class(es).
+
 Created on May 25, 2024
 
 @author: Tom Blackshaw
-'''
+
+This module contains (1) a class that wraps around Python's SpeechRecognition
+class(es), and (2) subroutines that support that class.
+
+Example:
+    Assuming a microphone is present, the library can be asked to record
+    output of the mic, turn it into text (without punctuation and
+    probably lowercase), and return it::
+
+        $ python3
+        >>> from my.speechrecognition import SpeechRecognitionSingleton as s2t
+        >>> audio_data = s2t.listen()
+        >>> text = s2t.recognize(audio_data)
+
+There are other properties and methods. This is the most important, but
+others exist.
+
+"""
+
+import ast
 import os
 import sys
 
@@ -22,13 +43,6 @@ def initialize_vosk():
         https://alphacephei.com/vosk/models *before* using this
         software.
 
-    Args:
-        n/a
-
-    Returns:
-        n/a
-
-    Raises:
         NoProfessionalVoicesError: There is no professional-grade voice
             available via the configured Eleven Labs account.
 
@@ -77,9 +91,6 @@ sr.get_flac_converter()        sr.recognize_api(              sr.TranscriptionFa
     '''
 
     def __init__(self):
-        '''
-        Constructor
-        '''
         self.__api = None
 #        self.__api_lock = ReadWriteLock()
         initialize_vosk()
