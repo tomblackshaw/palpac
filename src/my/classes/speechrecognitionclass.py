@@ -6,8 +6,8 @@ Created on May 25, 2024
 import os
 import sys
 
-from my.classes import singleton
-from my.classes.exceptions import MissingVoskModelError, CannotImportVoskError, CannotSetVoskLogLevelError, CannotImportLooseVersionError
+from my.classes import singleton, ReadWriteLock
+from my.classes.exceptions import MissingVoskModelError, CannotImportVoskError, CannotSetVoskLogLevelError, CannotImportLooseVersionError, MutedMicrophoneError
 
 
 def initialize_vosk():
@@ -62,6 +62,7 @@ class _SpeechRecognitionClass:
     '''
     classdocs
     # TODO: Write me
+    __api has these properties:
 sr.aifc                        sr.google                      sr.Recognizer()                sr.TranscriptionNotReady(
 sr.annotations                 sr.hashlib                     sr.recognizers                 sr.UnknownValueError(
 sr.audio                       sr.hmac                        sr.Request(                    sr.urlencode(
@@ -69,7 +70,7 @@ sr.AudioData(                  sr.HTTPError(                  sr.RequestError(  
 sr.AudioFile(                  sr.io                          sr.requests                    sr.urlopen(
 sr.audioop                     sr.json                        sr.subprocess                  sr.uuid
 sr.AudioSource()               sr.math                        sr.sys                         sr.WaitTimeoutError(
-sr.base64                      sr.Microphone(                 sr.tempfile                    sr.wave
+sr.base64                                                       sr.tempfile                    sr.wave
 sr.collections                 sr.os                          sr.threading                   sr.WavFile(
 sr.exceptions                  sr.PortableNamedTemporaryFile( sr.time                        sr.whisper
 sr.get_flac_converter()        sr.recognize_api(              sr.TranscriptionFailed(
@@ -82,10 +83,33 @@ sr.get_flac_converter()        sr.recognize_api(              sr.TranscriptionFa
         self.__api = None
 #        self.__api_lock = ReadWriteLock()
         initialize_vosk()
-        import speech_recognition as speech_recog_api
-        self.__api = speech_recog_api
-
+        import speech_recognition as speechrecognitionAPI
+        self.__api = speechrecognitionAPI
+        self.__pause_threshold_lock = ReadWriteLock()
+        self.__recognizer = self.api.Recognizer()
+        self.__timeout = 30.0
+        self.__timeout_lock = ReadWriteLock()
+        self.__max_recording_time = 10.0
+        self.__max_recording_time_lock = ReadWriteLock()
+        self.__always_adjust = True
+        self.__always_adjust_lock = ReadWriteLock()
+        self.__mute = False
+        self.__mute_lock = ReadWriteLock()
         super().__init__()
+
+    def adjust_for_ambient_noise(self):
+        with self.microphone as source:
+            self.recognizer.adjust_for_ambient_noise(source)
+
+    def listen(self):
+        if self.__mute:
+            raise MutedMicrophoneError("Microphone was muted. Please un-mute it with mute=False and try again.")
+        else:
+            with self.microphone as source:
+                if self.__always_adjust:
+                    self.recognizer.adjust_for_ambient_noise(source)  # Audio source must be entered before adjusting, see documentation for ``AudioSource`
+                audio = self.recognizer.listen(source, timeout=self.__timeout, phrase_time_limit=self.__max_recording_time)
+                return audio
 
     @property
     def api(self):
@@ -95,6 +119,81 @@ sr.get_flac_converter()        sr.recognize_api(              sr.TranscriptionFa
         return retval
 
     @property
-    def recognizer(self):
-        return self.api.Recognizer()
+    def mute(self):
+        self.__mute_lock.acquire_read()
+        retval = self.__mute
+        self.__mute_lock.release_write()
+        return retval
 
+    @mute.setter
+    def mute(self, value):
+        self.__mute_lock.acquire_write()
+        self.__mute = value
+        self.__mute_lock.release_write()
+
+    @property
+    def recognizer(self):
+        return self.__recognizer
+
+    @property
+    def microphone(self):
+        return self.api.Microphone()
+
+    @property
+    def timeout(self):
+        self.__timeout_lock.acquire_read()
+        retval = self.__timeout
+        self.__timeout_lock.release_write()
+        return retval
+
+    @timeout.setter
+    def timeout(self, value):
+        self.__timeout_lock.acquire_write()
+        self.__timeout = value
+        self.__timeout_lock.release_write()
+
+    @property
+    def always_adjust(self):
+        self.__always_adjust_lock.acquire_read()
+        retval = self.__always_adjust
+        self.__always_adjust_lock.release_write()
+        return retval
+
+    @always_adjust.setter
+    def always_adjust(self, value):
+        self.__always_adjust_lock.acquire_write()
+        self.__always_adjust = value
+        self.__always_adjust_lock.release_write()
+
+    @property
+    def pause_threshold(self):
+        self.__pause_threshold_lock.acquire_read()
+        retval = self.recognizer.pause_threshold
+        self.__pause_threshold_lock.release_read()
+        return retval
+
+    @pause_threshold.setter
+    def pause_threshold(self, value):
+        self.__pause_threshold_lock.acquire_write()
+        self.recognizer.pause_threshold = value
+        self.__pause_threshold_lock.release_write()
+
+    @property
+    def max_recording_time(self):
+        self.__max_recording_time_lock.acquire_read()
+        retval = self.__max_recording_time
+        self.__max_recording_time_lock.release_write()
+        return retval
+
+    @max_recording_time.setter
+    def max_recording_time(self, value):
+        self.__max_recording_time_lock.acquire_write()
+        self.__max_recording_time = value
+        self.__max_recording_time_lock.release_write()
+
+
+'''
+from my.speechrecognition import SpeechRecognitionSingleton as s2t
+s2t.pause_threshold
+
+'''
