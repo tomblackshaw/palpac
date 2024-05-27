@@ -6,7 +6,8 @@ Created on May 25, 2024
 
 # https://stackoverflow.com/questions/59810209/speech-recognition-is-too-slow
 # https://www.simplilearn.com/tutorials/python-tutorial/speech-recognition-in-python#:~:text=Open%20a%20Python%20interpreter%20or%20your%20preferred%20Python,following%20commands%3A%20import%20speech_recognition%20as%20sr%20print%20%28sr.__version__%29
-#
+# https://alphacephei.com/vosk/models
+
 # from _queue import Empty
 # from array import array
 # from queue import Queue
