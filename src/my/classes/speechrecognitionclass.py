@@ -108,8 +108,13 @@ sr.get_flac_converter()        sr.recognize_api(              sr.TranscriptionFa
             with self.microphone as source:
                 if self.__always_adjust:
                     self.recognizer.adjust_for_ambient_noise(source)  # Audio source must be entered before adjusting, see documentation for ``AudioSource`
-                audio = self.recognizer.listen(source, timeout=self.__timeout, phrase_time_limit=self.__max_recording_time)
-                return audio
+                try:
+                    audio = self.recognizer.listen(source, timeout=self.__timeout, phrase_time_limit=self.__max_recording_time)
+                    return audio
+                except WaitTimeoutError as e:
+                    raise MicrophoneTimeoutError("Mic timed out, waiting for sounds.") from e
+                else:
+                    raise e
 
     @property
     def api(self):
@@ -190,10 +195,3 @@ sr.get_flac_converter()        sr.recognize_api(              sr.TranscriptionFa
         self.__max_recording_time_lock.acquire_write()
         self.__max_recording_time = value
         self.__max_recording_time_lock.release_write()
-
-
-'''
-from my.speechrecognition import SpeechRecognitionSingleton as s2t
-s2t.pause_threshold
-
-'''
