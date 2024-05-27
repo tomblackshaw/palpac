@@ -86,3 +86,15 @@ def compile_all_uic_files(a_path):
             if 0 != os.system(cmd):
                 raise PyQtUICompilerError("{cmd} failed".format(cmd=cmd))
 
+
+def object_from_dictionary(dct):
+    '''Turn a dictionary into a simple object'''
+
+    class MySimpleObject:
+        pass
+
+    o = MySimpleObject()
+    for k in dct.keys():
+        setattr(o, k, dct[k])
+    return o
+
