@@ -56,6 +56,7 @@ class TestWeather(unittest.TestCase):
     def testGoofyGetWeatherValues(self):
         from my.weather import get_weather
 #        _ = get_weather()
+        self.assertRaises(TypeError, get_weather)
         self.assertRaises(ValueError, get_weather, None, 69)
         self.assertRaises(ValueError, get_weather, 69, None)
         self.assertRaises(ValueError, get_weather, 181, -181)

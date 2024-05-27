@@ -45,7 +45,7 @@ import urllib
 
 from bs4 import BeautifulSoup
 from open_meteo import OpenMeteo
-from open_meteo.models import DailyParameters, HourlyParameters
+from open_meteo.models import DailyParameters, HourlyParameters, Forecast
 from parse import parse
 import requests
 
@@ -142,64 +142,6 @@ def get_ipinfo(url='https://ipinfo.io', timeout=10):
     except Exception as e:
         raise WebAPIOutputError("The URL '%s' did not produce a JSON-compatible output. Please check the URL and try again." % url) from e
     return geo_json
-
-
-def DISABLED_get_lat_and_long_with_cqcounter(url='http://cqcounter.com/whois/my_ip_address.php', timeout=10):
-    """Gets my latitude and longitude.
-
-    By calling cqcounter.com's relevant URL, I deduce my current latitude
-    and longitude. I return it as a two-item tuple.
-
-    Args:
-        url (str, optional): An alternate URL for the PHP or other URL.
-        timeout (int, optional): How long to wait before timing out. Range
-            permitted: 0-MAX_LATLONG_TIMEOUT seconds.
-
-    Returns:
-        A two-item tuple of my latitude and longitude. For example:
-
-        (-69.43, -8.574132)
-
-        Returned values is always a tuple. Returned numbers are always
-        floats.
-
-    Raises:
-        ValueError: The URL or the timeout was invalid.
-        WebAPIOutputError: The URL's output gave an incomprehensible set
-            of lat/long values. This might be a result of a bad URL.
-
-    """
-    from my.tools import logit
-    if timeout <= 0 or timeout > MAX_LATLONG_TIMEOUT:
-        raise ValueError("{timeout} is a silly timeout value; please change it & try again".format(timeout=timeout))
-    if not url_validator(url):
-        raise ValueError("{url} is not a valid URL; please ensure that it begins with http at least".format(url=url))
-    try:
-        uf = urllib.request.urlopen(url, timeout=timeout)
-    except urllib.error.HTTPError as e:
-        raise WebAPIOutputError("{url} timed out while I was trying to get my latitude and longitude from it".format(url=url)) from e
-    except urllib.error.URLError as e:
-        if 'timed out' in str(e):
-            raise WebAPITimeoutError("{url} timed out; please try again later".format(url=url)) from e
-        else:
-            raise ValueError("{url} is not a valid URL, according to urllib; please fix it".format(url=url)) from e
-    except Exception as e:
-        raise WebAPIOutputError("{url} gave an unspecified error: {e}; please check the source code and try again".format(url=url, e=str(e))) from e
-    html = uf.read()
-    soup = BeautifulSoup(html, 'html.parser')
-    fmt_str = """{}°{}'{}" {}"""
-    try:
-        potlines_lst = [soup.find('td', string=field).find_next_sibling("td").text.strip() for field in ('IP Location', 'City', 'Latitude', 'Longitude', 'Distance')]
-        latitude_res = parse(fmt_str, [r for r in potlines_lst if 'N' in r or 'S' in r][-1])
-        longitude_res = parse(fmt_str, [r for r in potlines_lst if 'E' in r or 'W' in r][-1])
-        myconv = lambda incoming: (float(incoming[0]) + float(incoming[1]) / 60. + float(incoming[2]) / 3600.) * (1 if 'N' in incoming[3] or 'W' in incoming[3] else -1)
-        latitude = myconv(latitude_res)
-        longitude = myconv(longitude_res)
-    except (ValueError, AttributeError, IndexError) as e:
-        logit("potlines_lst = %s" % str(potlines_lst))
-        raise WebAPIOutputError("The URL '%s' did not produce meaningful lat/long values. Please check the URL and try again." % url) from e
-    else:
-        return(latitude, longitude)
 
 
 def get_weather(latitude, longitude):
@@ -307,11 +249,11 @@ def generate_weather_report_dialogue(forecast, speaker1, speaker2, testing=False
         Returned strings are always UTF-8.
 
     Raises:
-        FIXME: I do not know which exceptions may occur. Please add entries.
+        ValueError: Supplied parameter is defective.
 
     """
-    if forecast is None:
-        raise ValueError("Please specify a valid parameter for forecast. Usually, you supply the result of a call to get_weather().")
+    if type(forecast) is not Forecast:
+        raise TypeError("Please specify a parameter for forecast. Usually, you supply the result of a call to get_weather().")
     randgreeting = lambda: random.choice(["Look who it is", "Howdy", 'Hi', 'Hello', 'Sup', 'Hey', "How you doin'", 'What it do', 'Greetings', "G'day", 'Hi there', "What's up", "How's it going", "What's good"])
     randweatherhi = lambda: random.choice(["What's the weather like today?", "How's the weather?", "Weather-wise, where are we at?", "Let's talk weather.", "Tell us about today's weather.", "What will today's weather be like?"])
     randnudge = lambda: random.choice(["Have you anything to add?", "Anything else?", "Is there more?", "You seem tense.",
