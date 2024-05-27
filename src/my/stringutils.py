@@ -63,6 +63,10 @@ def url_validator(url):
         TypeError: The parameter is not a string.
 
     """
+    if type(url) is not str:
+        raise TypeError("{url} should have been a string. Please send a string next time.".format(url=str(url)))
+    if not url.startswith('http'):
+        return False
     try:
         result = urlparse(url)
         return all([result.scheme, result.netloc])
@@ -90,6 +94,8 @@ def add_to_os_path_if_existent(a_path, strict=True):
         ValueError: If `a_path` does not exist *and* `strict` is True.
 
     """
+    if type(a_path) is not str:
+        raise TypeError("{a_path} should have been a string. Please send a string next time.".format(a_path=str(a_path)))
     if not os.path.exists(a_path):
         if strict:
             raise ValueError("{a_path} does not exist. I refuse to add a nonexistent path to the PATH environmental variable".format(a_path=a_path))
@@ -364,7 +370,7 @@ def find_trigger_phrase_in_sentence(sentence, triggerphrase):
     TODO: Write me
 
     """
-    if type(sentence) != str or type(triggerphrase) != str:
+    if type(sentence) is not str or type(triggerphrase) is not str:
         raise TypeError("sentence and triggerphrase must be strings")
     if sentence == '':
         return -1

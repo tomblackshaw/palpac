@@ -9,8 +9,8 @@ import random
 import unittest
 
 from my.stringutils import generate_random_string, MAX_RANDGENSTR_LEN, convert_24h_and_mins_to_shorttime, find_trigger_phrase_in_sentence,\
-    generate_triggerphrase_permutations, trim_away_the_trigger_and_locate_the_command_if_there_is_one, scan_sentence_for_any_one_of_these_trigger_phrases
-
+    generate_triggerphrase_permutations, trim_away_the_trigger_and_locate_the_command_if_there_is_one, scan_sentence_for_any_one_of_these_trigger_phrases, \
+    url_validator
 
 G_triggers = ['doc', 'Dad', 'there', 'that', 'tad', 'thad', 'than', 'Dan', 'either doc', 'either Dad', 'either there', 'either that', 'either tad', 'either thad', 'either than', 'either Dan', 'hate doc', 'hate Dad', 'hate there', 'hate that', 'hate tad', 'hate thad', 'hate than', 'hate Dan', 'hey doc', 'hey Dad', 'hey there', 'hey that', 'hey tad', 'hey thad', 'hey than', 'hey Dan', 'hay doc', 'hay Dad', 'hay there', 'hay that', 'hay tad', 'hay thad', 'hay than', 'hay Dan', 'they doc', 'they Dad', 'they there', 'they that', 'they tad', 'they thad', 'they than', 'they Dan', 'a doc', 'a Dad', 'a there', 'a that', 'a tad', 'a thad', 'a than', 'a Dan', 'heh doc', 'heh Dad', 'heh there', 'heh that', 'heh tad', 'heh thad', 'heh than', 'heh Dan', 'eight doc', 'eight Dad', 'eight there', 'eight that', 'eight tad', 'eight thad', 'eight than', 'eight Dan', 'i doc', 'i Dad', 'i there', 'i that', 'i tad', 'i thad', 'i than', 'i Dan', 'Freya doc', 'Freya Dad', 'Freya there', 'Freya that', 'Freya tad', 'Freya thad', 'Freya than', 'Freya Dan', 'up doc', 'up Dad', 'up there', 'up that', 'up tad', 'up thad', 'up than', 'up Dan', 'great doc', 'great Dad', 'great there', 'great that', 'great tad', 'great thad', 'great than', 'great Dan', 'the doc', 'the Dad', 'the there', 'the that', 'the tad', 'the thad', 'the than', 'the Dan']
 
@@ -232,6 +232,25 @@ class TestTrimAwayTheTriggerAndLocateTheCommandIfThereIsOne(unittest.TestCase):
         s2 = s1[scan_sentence_for_any_one_of_these_trigger_phrases(s1, phrases):]
         self.assertEqual(s2, "a dead")
         self.assertEqual(original_sentence[trim_away_the_trigger_and_locate_the_command_if_there_is_one(original_sentence, phrases):], "a dead")
+
+
+class TestURLValidator(unittest.TestCase):
+
+    def setUp(self):
+        pass
+
+    def tearDown(self):
+        pass
+
+    def testGoofy(self):
+        self.assertRaises(TypeError, url_validator)
+        self.assertRaises(TypeError, url_validator, None)
+        self.assertRaises(TypeError, url_validator, 1)
+        self.assertRaises(TypeError, url_validator, [1, 2, 3])
+        self.assertEqual(False, url_validator('qqqq://123'))
+        self.assertEqual(False, url_validator(''))
+        self.assertEqual(True, url_validator('https://microsoft.com'))
+
 
 if __name__ == "__main__":
     # import sys;sys.argv = ['', 'Test.testName']
