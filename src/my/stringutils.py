@@ -30,6 +30,23 @@ from my.tools import logit
 MAX_RANDGENSTR_LEN = 99999  # used by generate_random_string()
 
 
+def generate_triggerphrase_permutations(listA, listB):
+    if type(listA) not in (tuple, list) or type(listB) not in (tuple, list):
+        raise TypeError("Both parameters must be either lists or tuples")
+    if [] != list(set([type(r) for r in listA if type(r) is not str])) or [] != list(set([type(r) for r in listB if type(r) is not str])):
+        raise TypeError("All values within the lists (the parameters) must be strings")
+    if [] != list(set([type(r) for r in listA if type(r) is not str or r == ''])) or [] != list(set([type(r) for r in listB if type(r) is not str or r == ''])):
+        raise ValueError("All values within the lists (the parameters) must be NON-EMPTY strings")
+    if listA in ([], ()) or listB in ([], ()):
+        raise ValueError("Both lists must be non-empty")
+    lst = []
+    for wordA in listA:
+        for wordB in listB:
+            s = wordA + ' ' + wordB
+            lst.append(s)
+    return lst
+
+
 def url_validator(url):
     """Example function with types documented in the docstring.
 
