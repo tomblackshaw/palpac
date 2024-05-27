@@ -66,18 +66,14 @@ def get_first_prof_name(tts):
 def speak_random_alarm(owner_name, time_24h, time_minutes, voice=None, tts=Text2SpeechSingleton):
     """Speak an alarm warning.
 
-    `PEP 484`_ type annotations are supported. If attribute, parameter, and
-    return types are annotated according to `PEP 484`_, they do not need to be
-    included in the docstring:
+    In the specified voice, to the specified owner of the alarm clock, speak an alarm
+    to alert the alarm clock user that a specific time has come.
 
     Args:
-        param1 (int): The first parameter.
-        param2 (str): The second parameter.
-
-    Returns:
-        bool: The return value. True for success, False otherwise.
-
-    TODO: Write me
+        owner_name (str): First name of the owner of the alarm clock.
+        time_24h (int): The time that has come (hours).
+        time_minutes (int): The time that has come (minutes).
+        voice (str): The name of the voice that I am to use.
 
     """
     if voice is None:
@@ -92,22 +88,7 @@ def speak_random_alarm(owner_name, time_24h, time_minutes, voice=None, tts=Text2
 
 
 def speak_totally_randomized_alarm_and_time(owner_of_clock):
-    """Example function with types documented in the docstring.
-
-    `PEP 484`_ type annotations are supported. If attribute, parameter, and
-    return types are annotated according to `PEP 484`_, they do not need to be
-    included in the docstring:
-
-    Args:
-        param1 (int): The first parameter.
-        param2 (str): The second parameter.
-
-    Returns:
-        bool: The return value. True for success, False otherwise.
-
-    TODO: Write me
-
-    """
+    """It does what it says on the tin."""
     time_24h = random.randint(0, 24)
     time_minutes = random.randint(0, 60)
     speak_random_alarm(owner_of_clock, time_24h, time_minutes)
