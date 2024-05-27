@@ -215,20 +215,21 @@ def generate_random_string(length):
 
 
 def convert_24h_and_mins_to_shorttime(time_24h, time_minutes, diff=0):
-    """Example function with types documented in the docstring.
-
-    `PEP 484`_ type annotations are supported. If attribute, parameter, and
-    return types are annotated according to `PEP 484`_, they do not need to be
-    included in the docstring:
+    """Convert the supplied time to a human-readable & pronounceable string.
 
     Args:
-        param1 (int): The first parameter.
-        param2 (str): The second parameter.
+        time_24h (int): The time that has come (hours).
+        time_minutes (int): The time that has come (minutes).
+        diff (int): How many minutes before/after the specified time
+            should I calculate?
 
     Returns:
-        bool: The return value. True for success, False otherwise.
+        str: Resultant simple time string.
 
-    TODO: Write me.
+    Raises:
+        TypeError: The supplied parameters are of the wrong type.
+        ValueError: The parameters are outside the valid range.
+
     TODO: Use datetime().
 
     """
@@ -278,14 +279,36 @@ def convert_24h_and_mins_to_shorttime(time_24h, time_minutes, diff=0):
 
 
 def generate_alarm_message(owner, time_24h, time_minutes, message_template):
+    """Generate the text of an alarm message.
+
+    Using the specified time and template, generate a human-readable,
+    pronounceable string containing a simple but pleasant alarm message.
+
+    Example:
+        $ python3
+        >>> from my.consts import alarm_messages_lst
+        >>> from my.stringutils import generate_alarm_message
+        >>> message_template = alarm_messages_lst[0]
+        >>> msg = generate_alarm_message('Chuckles', 12, 30, message_template)
+
+    Args:
+        time_24h (int): The time that has come (hours).
+        time_minutes (int): The time that has come (minutes).
+        voice (str): The name of the voice that I am to use.
+        message_template (str): Template to be populated by the
+            values from the parameters.
+
+    Returns:
+        str: The resultant alarm message.
+
+    Raises:
+        TypeError: The length field is of an invalid type.
+        ValueError: The value of length is an invalid parameter.
+
+    """
     # TODO: Write me
     '''
-from my.text2speech import *
-import random
-time_24h = random.randint(0,24)
-time_minutes = random.randint(0,60)
-owner = 'Chuckles'
-message_template = alarm_messages_lst[0]
+
     '''
     from my.consts import hello_owner_lst
     if owner == '' or owner is None:
