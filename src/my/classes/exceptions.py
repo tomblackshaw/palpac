@@ -25,6 +25,11 @@ Error
     Text2SpeechError
         VoiceNotFoundError
             NoProfessionalVoicesError
+    Speech2TextError
+        RecognitionError
+            MicrophoneError
+                MutedMicrophoneError
+            UnknownCommandError
 
 Example:
     n/a
@@ -213,6 +218,46 @@ class VoiceNotFoundError(Text2SpeechError):
 
 class NoProfessionalVoicesError(VoiceNotFoundError):
     """Class for all 'there are no professional voices available' errors"""
+
+    def __init__(self, message):  # pylint: disable=useless-parent-delegation
+
+        super().__init__(message)
+
+
+class Speech2TextError(Error):
+    """Class for all speechrecognitionclass errors"""
+
+    def __init__(self, message):  # pylint: disable=useless-parent-delegation
+
+        super().__init__(message)
+
+
+class RecognitionError(Speech2TextError):
+    """Class for all my custom speech recognition errors"""
+
+    def __init__(self, message):  # pylint: disable=useless-parent-delegation
+
+        super().__init__(message)
+
+
+class MicrophoneError(RecognitionError):
+    """Class for all my custom microphone errors"""
+
+    def __init__(self, message):  # pylint: disable=useless-parent-delegation
+
+        super().__init__(message)
+
+
+class MutedMicrophoneError(MicrophoneError):
+    """Class for all my muted microphone errors"""
+
+    def __init__(self, message):  # pylint: disable=useless-parent-delegation
+
+        super().__init__(message)
+
+
+class UnknownCommandError(RecognitionError):
+    """Class for all my 'unknown command' errors"""
 
     def __init__(self, message):  # pylint: disable=useless-parent-delegation
 
