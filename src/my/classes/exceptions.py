@@ -28,6 +28,7 @@ Error
     Speech2TextError
         RecognitionError
             MicrophoneError
+                MicrophoneTimeoutError
                 MutedMicrophoneError
             UnknownCommandError
 
@@ -242,6 +243,14 @@ class RecognitionError(Speech2TextError):
 
 class MicrophoneError(RecognitionError):
     """Class for all my custom microphone errors"""
+
+    def __init__(self, message):  # pylint: disable=useless-parent-delegation
+
+        super().__init__(message)
+
+
+class MicrophoneTimeoutError(MicrophoneError):
+    """Class for all my timed-out microphone errors"""
 
     def __init__(self, message):  # pylint: disable=useless-parent-delegation
 
