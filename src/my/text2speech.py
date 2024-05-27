@@ -63,8 +63,8 @@ def get_first_prof_name(tts):
         raise NoProfessionalVoicesError("There are no professional-grade voices available from your Eleven Labs account.") from e
 
 
-def speak_random_alarm(owner_of_clock, time_24h, time_minutes, voice=None, tts=Text2SpeechSingleton):
-    """Example function with types documented in the docstring.
+def speak_random_alarm(owner_name, time_24h, time_minutes, voice=None, tts=Text2SpeechSingleton):
+    """Speak an alarm warning.
 
     `PEP 484`_ type annotations are supported. If attribute, parameter, and
     return types are annotated according to `PEP 484`_, they do not need to be
@@ -82,7 +82,7 @@ def speak_random_alarm(owner_of_clock, time_24h, time_minutes, voice=None, tts=T
     """
     if voice is None:
         voice = tts.random_name
-    message = generate_random_alarm_message(owner_of_clock, time_24h, time_minutes, voice)
+    message = generate_random_alarm_message(owner_name, time_24h, time_minutes, voice)
     prof_name = get_first_prof_name(tts)  # [r for r in tts.api_voices if r.samples is not None][0].name
     if voice == prof_name:
         d = tts.audio(voice=voice, text=message, advanced=True, model='eleven_multilingual_v2', stability=0.30, similarity_boost=0.01, style=0.90, use_speaker_boost=True)
