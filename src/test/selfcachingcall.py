@@ -8,8 +8,8 @@ Created on May 21, 2024
 import time, os
 import unittest
 
-from my.classes.selfcachingcall import SelfCachingCall
 from my.classes.exceptions import StillAwaitingCachedValue
+from my.classes.selfcachingcall import SelfCachingCall
 
 
 class Test(unittest.TestCase):
