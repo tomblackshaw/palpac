@@ -13,15 +13,15 @@ import os
 import sys
 import time
 
-from my.classes.exceptions import StillAwaitingCachedValue, MutedMicrophoneError
+from my.classes.exceptions import StillAwaitingCachedValue, MutedMicrophoneError, UnknownCommandError
 from my.classes.selfcachingcall import SelfCachingCall
 from my.stringutils import find_trigger_phrase_in_sentence, scan_sentence_for_any_one_of_these_trigger_phrases, generate_triggerphrase_permutations, \
     trim_away_the_trigger_and_locate_the_command_if_there_is_one
 from my.tools import logit
 from my.weather import WeatherSingleton as ws, generate_short_and_long_weather_forecast_messages, generate_weather_audio
 
-words_that_sound_like_hey = 'either hate hey hay they a heh eight i Freya up great the there'
-words_that_sound_like_dad = 'doc Dad there that tad thad than Dan dove'
+words_that_sound_like_hey = 'either hate hey hay they a heh eight i Freya up great the there edit'
+words_that_sound_like_dad = 'doc Dad there that tad thad than Dan dove dog'
 G_trigger_phrases = words_that_sound_like_dad.split(' ') + generate_triggerphrase_permutations(
     words_that_sound_like_hey.split(' '),
     words_that_sound_like_dad.split(' '))
@@ -60,7 +60,7 @@ def process_text(tts, text):
         tts.play(G_goodbye)
         G_stop = True
     else:
-        print("I'm sorry, I don't understand that command >>{text}<<".format(text=text))
+        raise UnknownCommandError("I'm sorry, I don't understand that command >>{text}<<".format(text=text))
 #        tts.say(text)
 #        tts.play(G_dowhatnow)
 
@@ -111,19 +111,15 @@ def indefinitely_convert_all_audio(s2t, audio_queue, text_queue):
             text_queue.put(text)
 
 
-def empty_queues(audio_queue, text_queue):
+def empty_queue(q):
     for _ in range(0, 10):
         try:
-            audio_queue.get_nowait()
-        except Empty:
-            pass
-        try:
-            text_queue.get_nowait()
+            q.get_nowait()
         except Empty:
             pass
 
 
-def indefinitely_turn_text_into_commands(text_queue, commands_queue, triggerphrases, goading_call, max_words_in_cache=20, max_secs_for_goading=3):
+def indefinitely_turn_text_into_commands(s2t, text_queue, triggerphrases, goading_call, process_command_func, max_words_in_cache=20, max_secs_for_goading=3):
     global G_stop
     sentence = ''
     demand_triggerphrase = True
@@ -142,7 +138,7 @@ def indefinitely_turn_text_into_commands(text_queue, commands_queue, triggerphra
         else:
             cutoff_point = trim_away_the_trigger_and_locate_the_command_if_there_is_one(sentence, triggerphrases)
             if cutoff_point >= len(sentence):
-                print(">>{sentence}<< After removing the trigger phrase(s), I find no command.".format(sentence=sentence))
+#                 print(">>{sentence}<< After removing the trigger phrase(s), I find no command.".format(sentence=sentence))
                 goading_call()  # So, goad them into saying more! (...but we don't need the trigger phrase, next time they talk)
                 datestamp_of_last_goading = datetime.datetime.now()
                 demand_triggerphrase = False
@@ -150,36 +146,25 @@ def indefinitely_turn_text_into_commands(text_queue, commands_queue, triggerphra
             elif cutoff_point >= 0 or demand_triggerphrase is False:
                 if cutoff_point >= 0:
                     command = sentence[cutoff_point:]
-                    print(">>{sentence}<< Command found: >>{command}<<".format(sentence=sentence, command=command))
+#                    print(">>{sentence}<< Command found: >>{command}<<".format(sentence=sentence, command=command))
                 else:
                     command = sentence
-                    print(">>{sentence}<< I couldn't find a trigger phrase. That doesn't matter, though: I was already primed for a command.".format(sentence=sentence))
-                commands_queue.put(command)
-                demand_triggerphrase = True
+#                    print(">>{sentence}<< I couldn't find a trigger phrase. That doesn't matter, though: I was already primed for a command.".format(sentence=sentence))
+                s2t.mute = True
+                try:
+                    process_command_func(command)
+                    demand_triggerphrase = True
+                except UnknownCommandError:
+                    print("Failed to execute >>{command}<< (unknown command).")
+                    if demand_triggerphrase is False:
+                        print("Just in case there's a less insane command on the way, I'll wait a little while longer before reinstituting my demand for a triggerphrase.")
                 sentence = ''
+                empty_queue(text_queue)
+                s2t.mute = False
             else:
                 print("Sentence >>{sentence}<< ...ignored (for now)".format(sentence=sentence))
                 time.sleep(.1)
 
-            # if cutoff_point >= 0:
-            #     if sentence == '':  # The user said the trigger words & nothing else.
-            #         sentence = sentence[cutoff_point:]
-            #         goading_call()  # So, goad them into saying more! (...but we don't need the trigger phrase, next time they talk)
-            #         demand_triggerphrase = False
-            #     else:
-            #         print("Adding command that was found after the trigger words: {sentence}".format(sentence=sentence))
-            #         commands_queue.put(sentence)
-            #         sentence = ''
-            #         demand_triggerphrase = True
-            # else:
-            #     if demand_triggerphrase is False:
-            #         print("Adding command heard, as no trigger words were needed: {sentence}".format(sentence=sentence))
-            #         commands_queue.put(sentence)
-            #         sentence = ''
-            #         demand_triggerphrase = True
-            #     else:
-            #         print("Ignoring (for now): {sentence}".format(sentence=sentence))
-            #         time.sleep(.5)
 
 
 def main():
@@ -204,31 +189,15 @@ def main():
     s2t.pause_threshold = 0.5
     audio_queue = Queue()  # FIXME: Add a limit. Add exception-catching for when we accidentally overload the queue, too.
     text_queue = Queue()
-    commands_queue = Queue()
     audio_thread = Thread(target=indefinitely_capture_snatches_of_audio_from_microphone, args=(s2t, audio_queue,))
     audio_thread.start()
     convertsounds_thread = Thread(target=indefinitely_convert_all_audio, args=(s2t, audio_queue, text_queue,))
     convertsounds_thread.start()
-    sentences_thread = Thread(target=indefinitely_turn_text_into_commands, args=(text_queue, commands_queue, G_trigger_phrases, lambda: tts.play(G_yes)))
-    sentences_thread.start()
     print("Press CTRL-C to quit.")
-    while G_stop is False:
-        try:
-            sentence = commands_queue.get_nowait()
-        except Empty:
-            time.sleep(.1)
-            continue
-        print("Processing the command >>{sentence}<<".format(sentence=sentence))
-        s2t.mute = True
-        process_text(tts, sentence)
-        print("Done. Emptying queues...")
-        empty_queues(audio_queue, text_queue)
-        s2t.mute = False
-        if G_stop:
-            print("Done. Trying to quit.")
-        else:
-            print("Done. Waiting for next command.")
-    sentences_thread.join()
+    indefinitely_turn_text_into_commands(s2t=s2t, text_queue=text_queue,
+                                         triggerphrases=G_trigger_phrases,
+                                         goading_call=lambda: tts.play(G_yes),
+                                         process_command_func=lambda txt: process_text(tts, txt))
     convertsounds_thread.join()
     audio_thread.join()
 
