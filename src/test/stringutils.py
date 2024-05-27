@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
-'''
+"""test.stringutils
+
 Created on May 20, 2024
 
 @author: Tom Blackshaw
-'''
+"""
 import random
 import unittest
 

@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
-'''
+""""test.randomquotesclass
+
 Created on May 21, 2024
 
 @author: Tom Blackshaw
-'''
+"""
 import time
 import unittest
 from my.randomquotes import RandomQuoteSingleton as q

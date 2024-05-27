@@ -48,20 +48,19 @@ def generate_triggerphrase_permutations(listA, listB):
 
 
 def url_validator(url):
-    """Example function with types documented in the docstring.
+    """Validate URL.
 
-    `PEP 484`_ type annotations are supported. If attribute, parameter, and
-    return types are annotated according to `PEP 484`_, they do not need to be
-    included in the docstring:
+    Examine the supplied string. If it is a valid URL, return True. Otherwise,
+    return False.
 
     Args:
-        param1 (int): The first parameter.
-        param2 (str): The second parameter.
+        url (str): The URL to evaluate.
 
     Returns:
-        bool: The return value. True for success, False otherwise.
+        bool: Is it a valid URL? True for yes. False for no.
 
-        TODO: Write me
+    Raises:
+        TypeError: The parameter is not a string.
 
     """
     try:
@@ -86,9 +85,6 @@ def add_to_os_path_if_existent(a_path, strict=True):
             If True *and* path 'a_path' does not exist, raise an exception.
             If False, merely write a warning w/ logit() and do not add
             the path to PATH.
-
-    Returns:
-        n/a
 
     Raises:
         ValueError: If `a_path` does not exist *and* `strict` is True.

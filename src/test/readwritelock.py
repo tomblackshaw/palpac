@@ -1,8 +1,10 @@
-'''
-Created on May 23, 2024
+# -*- coding: utf-8 -*-
+"""test.readwritelock
+
+Created on May 21, 2024
 
 @author: Tom Blackshaw
-'''
+"""
 import unittest
 # from my.classes import ReadWriteLock
 
