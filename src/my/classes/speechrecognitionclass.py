@@ -28,7 +28,8 @@ import os
 import sys
 
 from my.classes import singleton, ReadWriteLock
-from my.classes.exceptions import MissingVoskModelError, CannotImportVoskError, CannotSetVoskLogLevelError, CannotImportLooseVersionError, MutedMicrophoneError
+from my.classes.exceptions import MissingVoskModelError, CannotImportVoskError, CannotSetVoskLogLevelError, CannotImportLooseVersionError, MutedMicrophoneError, \
+    MicrophoneTimeoutError
 
 
 def initialize_vosk():
