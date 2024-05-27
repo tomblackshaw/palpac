@@ -375,8 +375,8 @@ def find_trigger_phrase_in_sentence(sentence, triggerphrase):
     sentence = sentence.lower()
     triggerphrase = triggerphrase.lower()
     if sentence != sentence.strip() or triggerphrase != triggerphrase.strip():
-        print("Sentence: ==>{sentence}<==".format(sentence=sentence))
-        print("Triggerp: ==>{triggerp}<==".format(triggerp=triggerphrase))
+#        print("Sentence: ==>{sentence}<==".format(sentence=sentence))
+#        print("Triggerp: ==>{triggerp}<==".format(triggerp=triggerphrase))
         raise ValueError("sentence and triggerphrase must be strings WITHOUT spaces at start or end")
     if triggerphrase == '':
         raise ValueError("I need a triggerphrase that is at least one character long")
