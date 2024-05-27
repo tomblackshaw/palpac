@@ -1,24 +1,41 @@
-'''
-Created on May 24, 2024
+# -*- coding: utf-8 -*-
+""" sheepdip
+
+Created on May 21, 2024
 
 @author: Tom Blackshaw
-'''
+
+
+
+EXAMPLE
+
+from sheepdip import *
+from ast import literal_eval
+from my.speechrecognition import SpeechRecognitionSingleton as s2t
+
+See https://realpython.com/python-speech-recognition/
+google_text =s2t.recognizer.recognize_google(audio_data)
+dct = s2t.recognizer.recognize_google(audio_data, show_all=True)
+            text_queue.put((start_datestamp, finish_datestamp, interpause_in_microseconds, text))
+
+
+
+"""
 
 from _queue import Empty
 from queue import Queue
 from threading import Thread
-import ast
 import datetime
 import os
 import sys
 import time
 
-from my.classes.exceptions import StillAwaitingCachedValue, MutedMicrophoneError, UnknownCommandError
+from my.classes.exceptions import StillAwaitingCachedValue, MutedMicrophoneError, UnknownCommandError, MicrophoneTimeoutError
 from my.classes.selfcachingcall import SelfCachingCall
 from my.stringutils import find_trigger_phrase_in_sentence, scan_sentence_for_any_one_of_these_trigger_phrases, generate_triggerphrase_permutations, \
     trim_away_the_trigger_and_locate_the_command_if_there_is_one
 from my.tools import logit
-from my.weather import WeatherSingleton as ws, generate_short_and_long_weather_forecast_messages, generate_weather_audio
+from my.weather import generate_weather_audio
 
 words_that_sound_like_hey = 'either hate hey hay they a heh eight i Freya up great the there edit'
 words_that_sound_like_dad = 'doc Dad there that tad thad than Dan dove dog'
@@ -66,13 +83,12 @@ def process_text(tts, text):
 
 
 def capture_a_snatch_of_audio_from_microphone(s2t):
-    from speech_recognition.exceptions import WaitTimeoutError
     while not G_stop:
         time.sleep(.1)
         try:
             audio = s2t.listen()
             return audio
-        except WaitTimeoutError:
+        except MicrophoneTimeoutError:
             print("Timed out, waiting for audio. Waiting again...")
         except MutedMicrophoneError:
             print("The mic was muted, probably by another thread in my app. Waiting again...")
@@ -87,27 +103,23 @@ def indefinitely_capture_snatches_of_audio_from_microphone(s2t, audio_queue):
 
 def get_all_from_queue(text_queue):
     outtxt = ''
-    while True:
+    while not G_stop:
         try:
-            text = text_queue.get_nowait()
-            if ' : ' in text and '{' in text:
-                text = ast.literal_eval(text)['text'].strip()
-                outtxt = (outtxt + ' ' + text).strip()
-                break
+            outtxt = text_queue.get_nowait()
+            break
         except Empty:
             time.sleep(.1)
     return outtxt
 
 
 def indefinitely_convert_all_audio(s2t, audio_queue, text_queue):
-    r = s2t.recognizer
     while not G_stop:
         try:
             audio_data = audio_queue.get_nowait()
         except Empty:
             time.sleep(.1)
         else:
-            text = r.recognize_vosk(audio_data)
+            text = s2t.recognize(audio_data)
             text_queue.put(text)
 
 
@@ -188,7 +200,7 @@ def main():
     s2t.max_recording_time = 3
     s2t.pause_threshold = 0.5
     audio_queue = Queue()  # FIXME: Add a limit. Add exception-catching for when we accidentally overload the queue, too.
-    text_queue = Queue()
+    text_queue = Queue()  # FIXME: Make thread-safe, if not already. See https://superfastpython.com/thread-queue/
     audio_thread = Thread(target=indefinitely_capture_snatches_of_audio_from_microphone, args=(s2t, audio_queue,))
     audio_thread.start()
     convertsounds_thread = Thread(target=indefinitely_convert_all_audio, args=(s2t, audio_queue, text_queue,))
@@ -205,21 +217,4 @@ def main():
 if __name__ == '__main__':
     main()
 
-'''
-from sheepdip import *
-from ast import literal_eval
-from my.speechrecognition import SpeechRecognitionSingleton as s2t
-while True:
-    audio_data = capture_a_snatch_of_audio_from_microphone(s2t)
-    vosk_text = ast.literal_eval(s2t.recognizer.recognize_vosk(audio_data))['text'].strip()
-    print(vosk_text)
-
-
-google_text =s2t.recognizer.recognize_google(audio_data)
-dct = s2t.recognizer.recognize_google(audio_data, show_all=True)
-            text_queue.put((start_datestamp, finish_datestamp, interpause_in_microseconds, text))
-
-
-
-'''
 
