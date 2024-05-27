@@ -70,7 +70,6 @@ class _Text2SpeechClass:
     def __init__(self):
         self.key_filename = '%s%s%s' % (os.path.expanduser('~'), os.sep, ELEVENLABS_KEY_BASENAME)
         self.client = get_elevenlabs_clientclass(self.key_filename)
-
         self.__api_models_lock = ReadWriteLock()
         self.__api_voices_lock = ReadWriteLock()
         self.__voice_lock = ReadWriteLock()
