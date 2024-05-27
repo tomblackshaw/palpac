@@ -336,27 +336,29 @@ def generate_random_alarm_message(owner_of_clock, time_24h, time_minutes, voice=
     return message
 
 
-def find_trigger_word_in_sentence(sentence, triggerword, scan_first_N_words=None):
-    """Find trigger word in sentence, if it's there.
+def find_trigger_phrase_in_sentence(sentence, triggerphrase):
+    """Find trigger phrase in sentence, if it's there.
 
-    Scan the supplied sentence (a string) for the supplied trigger word
-    (also a string). If the trigger word is the first or second word of
-    the sentence, return its position (an int). Otherwise, return -1.
+    Scan the supplied sentence (a string) for the supplied trigger phrase
+    (also a string). If the trigger phrase starts at the first or second word
+    of the sentence, return its position (an int). Otherwise, return -1.
 
     Note:
         If the sentence is an empty string (""), that is *not* grounds
-        to throw an exception. However, an empty triggerword ("")
+        to throw an exception. However, an empty triggerphrase ("")
         *is* grounds for an exception.
+
+    Example:
+        $ python3
+        >>> from my.stringutils import find_trigger_phrase_in_sentence
+        >>> find_trigger_phrase_in_sentence("
 
     Args:
         sentence (str): The sentence to be scanned.
-        triggerword (str): The trigger word for which we are searching.
-        scan_first_N_words (int, optional): How many of the sentence's
-            words should we scan for the trigger word? The default
-            is 100: enough for most purposes.
+        triggerphrase (str): The trigger word for which we are searching.
 
     Returns:
-        int: Location of the trigger word, if found. Otherwise, -1.
+        int: Location of the trigger phrase, if found. Otherwise, -1.
 
     Raises:
         TypeError: A supplied parameter isn't a string.
@@ -366,22 +368,58 @@ def find_trigger_word_in_sentence(sentence, triggerword, scan_first_N_words=None
     TODO: Write me
 
     """
-    if type(sentence) != str or type(triggerword) != str:
-        raise TypeError("sentence and triggerword must be strings")
-    if scan_first_N_words is not None and type(scan_first_N_words) is not int:
-        raise TypeError("scan_first_N_words needs to be either None or a positive integer")
-    if scan_first_N_words <= 0:
-        raise ValueError("the scan_first_N_words parameter must be greater than zero")
+    if type(sentence) != str or type(triggerphrase) != str:
+        raise TypeError("sentence and triggerphrase must be strings")
+    if sentence == '':
+        return -1
     sentence = sentence.lower()
-    triggerword = triggerword.lower()
-    if sentence != sentence.strip() or triggerword != triggerword.strip():
-        raise ValueError("sentence and triggerword must be strings WITHOUT spaces at start or end")
-    if triggerword == '':
-        raise ValueError("I need a triggerword that is at least one character long")
-    words_lst = sentence.split(' ')
-    noof_words = len(words_lst)
-    upperlimit = noof_words if scan_first_N_words is None else min(noof_words, scan_first_N_words)
-    for wordnum in range(0, upperlimit):
-        if words_lst[wordnum] == triggerword:
-            return sentence.index(' ' + triggerword) + 1 if wordnum > 0 else 0
+    triggerphrase = triggerphrase.lower()
+    if sentence != sentence.strip() or triggerphrase != triggerphrase.strip():
+        print("Sentence: ==>{sentence}<==".format(sentence=sentence))
+        print("Triggerp: ==>{triggerp}<==".format(triggerp=triggerphrase))
+        raise ValueError("sentence and triggerphrase must be strings WITHOUT spaces at start or end")
+    if triggerphrase == '':
+        raise ValueError("I need a triggerphrase that is at least one character long")
+    i = sentence.find(triggerphrase)
+    if i >= 0:
+#        print("Found triggerphrase in sentence")
+        if i == 0 or sentence[i - 1] == ' ':
+#            print("Triggerphrase begins at the start of the sentence *or* in front of a space")
+            j = i + len(triggerphrase)
+            if j >= len(sentence) or sentence[j] == ' ':
+#                print("Triggerphrase ends at the end of the sentence *or* at a space")
+                return i
+    # words_lst = sentence.split(' ')
+    # noof_words = len(words_lst)
+    # upperlimit = noof_words if scan_first_N_words is None else min(noof_words, scan_first_N_words)
+    # for wordnum in range(0, upperlimit):
+    #     if words_lst[wordnum] == triggerphrase:
+    #         return sentence.index(' ' + triggerphrase) + 1 if wordnum > 0 else 0
     return -1
+
+
+def scan_sentence_for_any_one_of_these_trigger_phrases(sentence, triggerphrases):
+    if sentence == '':
+        return -1
+    for tp in triggerphrases:
+        cutoff_point = find_trigger_phrase_in_sentence(sentence, tp)
+        if cutoff_point >= 0:
+            cutoff_point += len(tp)
+            return min(cutoff_point + 1, len(sentence))  # to allow for a trailing space
+    return -1
+
+
+def trim_away_the_trigger_and_locate_the_command_if_there_is_one(sentence, triggerphrases):
+    cutoff_point = scan_sentence_for_any_one_of_these_trigger_phrases(sentence, triggerphrases)
+    limiter = 16
+    if cutoff_point >= 0:
+        while True:
+            another_cup = cutoff_point + scan_sentence_for_any_one_of_these_trigger_phrases(sentence[cutoff_point:cutoff_point + limiter].rstrip(), triggerphrases)
+#            print("another cup =", another_cup)
+            if another_cup >= cutoff_point:
+#                print("Why'd you say it twice?", sentence[cutoff_point:], "...becomes...", sentence[cutoff_point + another_cup:])
+                cutoff_point = another_cup
+            else:
+                break
+    return cutoff_point
+
