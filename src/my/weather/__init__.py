@@ -542,14 +542,11 @@ class _WeatherClass:
 WeatherSingleton = _WeatherClass()
 
 
-def speak_a_weather_report(tts, owner_name, latitude=None, longitude=None, testing=False):
-    if latitude is None or longitude is None:
-        latitude, longitude = get_latitude_and_longitude()
-    forecast = get_weather(latitude, longitude)
-    shorter_msg, longer_msg = generate_short_and_long_weather_forecast_messages(forecast, owner_name, testing)
-    data = tts.audio(text=shorter_msg)
-    del longer_msg
-    tts.play(data)
+def generate_weather_audio(tts, owner_name, latitude=None, longitude=None, testing=False):
+    """Generate the audio for a weather report.
+
+    Obtain a weather report from get_weather(latitude_longitude). Speak it out loud. If
+    testing, use random figures.
 
 
 def generate_weather_audio(tts, owner_name, latitude=None, longitude=None, testing=False):
