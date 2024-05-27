@@ -118,12 +118,6 @@ class SelfCachingCall:
             This runs in the background. To end it, run
                 i.join() if 'i' the instance of this class.
 
-        Args:
-            n/a
-
-        Returns:
-            n/a
-
         """
         time_left_before_update = 0
         while not self.__time_to_join:
@@ -137,15 +131,7 @@ class SelfCachingCall:
 #        logit('No more soup for you')
 
     def update_me(self):
-        """Repopulate the cache. Wait for it to finish.
-
-        Args:
-            n/a
-
-        Returns:
-            n/a
-
-        """
+        """Repopulate the cache. Wait for it to finish."""
         try:
             self.__update_lock.acquire_write()
             the_new_result = self.__func(*self.__args, **self.__kwargs)
@@ -168,9 +154,6 @@ class SelfCachingCall:
 
         If the result of the most recent caching attempt was an exception,
         raise that exception. Otherwise, return the aforementioned result.
-
-        Args:
-            n/a
 
         Returns:
             Result, whatever it was;... or exception, if an exception
