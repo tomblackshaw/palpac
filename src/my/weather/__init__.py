@@ -10,8 +10,8 @@ See See https://github.com/frenck/python-open-meteo for more information.
 
 Example:
     $ python3
-    >>> lat,lng = get_lat_and_long()
-    >>> w = get_weather()
+    >>> lat,lng = get_latitude_and_longitude()
+    >>> w = get_weather(lat,lng)
 
 Example:
     $ python3
@@ -39,6 +39,7 @@ Attributes:
    https://sphinxcontrib-napoleon.readthedocs.io/en/latest/example_google.html
 
 """
+import json
 import random
 import urllib
 
@@ -46,17 +47,104 @@ from bs4 import BeautifulSoup
 from open_meteo import OpenMeteo
 from open_meteo.models import DailyParameters, HourlyParameters
 from parse import parse
+import requests
 
-from my.classes import singleton
+from my.classes import singleton, ReadWriteLock
 from my.classes.exceptions import StillAwaitingCachedValue, WebAPITimeoutError, WebAPIOutputError
 from my.classes.selfcachingcall import SelfCachingCall
 from my.consts import WMO_code_warnings_dct
-from my.globals import DEFAULT_LATLONG_URL, MAX_LATLONG_TIMEOUT
+from my.globals import  MAX_LATLONG_TIMEOUT
 from my.stringutils import wind_direction_str, url_validator
 from my.text2speech import get_first_prof_name
+from my.tools import object_from_dictionary
 
 
-def get_lat_and_long(url=DEFAULT_LATLONG_URL, timeout=10):
+def get_latitude_and_longitude(url='https://ipinfo.io', timeout=10):
+    """Gets my latitude and longitude.
+
+    By calling ipinfo.io's relevant URL, I deduce my current latitude
+    and longitude. I return it as a two-item tuple.
+
+    Args:
+        url (str, optional): An alternate URL for the PHP or other URL.
+        timeout (int, optional): How long to wait before timing out. Range
+            permitted: 0-MAX_LATLONG_TIMEOUT seconds.
+
+    Returns:
+        A two-item tuple of my latitude and longitude. For example:
+
+        (-69.43, -8.574132)
+
+        Returned value is always a tuple. Returned numbers are always
+        floats.
+
+    Raises:
+        ValueError: The URL or the timeout was invalid.
+        WebAPIOutputError: The URL's output gave an incomprehensible set
+            of lat/long values. This might be a result of a bad URL.
+
+    """
+    if url_validator(url) is False:
+        raise ValueError("Please specify a valid URL for url parameter. {url} is not a valid URL.".format(url=url))
+    try:
+        loc = get_ipinfo(url, timeout)['loc']
+    except Exception as e:
+        raise WebAPIOutputError("The URL '%s' did not produce a JSON-compatible output. Please check the URL and try again." % url) from e
+    try:
+        lati_str, longi_str = loc.split(',')
+        latitude = float(lati_str)
+        longitude = float(longi_str)
+    except:
+        raise WebAPIOutputError("The URL '%s' gave loc='%s', not meaningful lat/long values. Please check the URL and try again." % (url, str(loc))) from e
+    return(latitude, longitude)
+
+
+
+def get_ipinfo(url='https://ipinfo.io', timeout=10):
+    """Gets my IP address, latitude, longitude, city, state, timezone, etc.
+
+    By calling ipinfo.io's relevant URL, I deduce the aforementioned
+    information.
+
+    Args:
+        url (str, optional): An alternate URL for the PHP or other URL.
+        timeout (int, optional): How long to wait before timing out. Range
+            permitted: 0-MAX_LATLONG_TIMEOUT seconds.
+
+    Returns:
+        A dictionary. For example:
+            {'ip': '191.96.106.211',
+            'city': 'Los Angeles',
+            'region': 'California',
+            'country': 'US',
+            'loc': '34.0522,-118.2437',
+            'org': 'AS174 Cogent Communications',
+            'postal': '90009',
+            'timezone': 'America/Los_Angeles',
+            'readme': 'https://ipinfo.io/missingauth'}
+
+    Raises:
+        ValueError: The URL or the timeout was invalid.
+        WebAPIOutputError: The URL's output gave an incomprehensible set
+            of lat/long values. This might be a result of a bad URL.
+
+    """
+    if timeout <= 0 or timeout > MAX_LATLONG_TIMEOUT:
+        raise ValueError("{timeout} is a silly timeout value; please change it & try again".format(timeout=timeout))
+    if not url_validator(url):
+        raise ValueError("{url} is not a valid URL; please ensure that it begins with http at least".format(url=url))
+    try:
+        geo_req = requests.get(url, timeout=timeout)
+    except Exception as e:
+        raise WebAPITimeoutError("{url} timed out while I was trying to get ip info from it".format(url=url)) from e
+    try:
+        geo_json = json.loads(geo_req.text)
+    except Exception as e:
+        raise WebAPIOutputError("The URL '%s' did not produce a JSON-compatible output. Please check the URL and try again." % url) from e
+    return geo_json
+
+
+def DISABLED_get_lat_and_long_with_cqcounter(url='http://cqcounter.com/whois/my_ip_address.php', timeout=10):
     """Gets my latitude and longitude.
 
     By calling cqcounter.com's relevant URL, I deduce my current latitude
@@ -81,6 +169,7 @@ def get_lat_and_long(url=DEFAULT_LATLONG_URL, timeout=10):
             of lat/long values. This might be a result of a bad URL.
 
     """
+    from my.tools import logit
     if timeout <= 0 or timeout > MAX_LATLONG_TIMEOUT:
         raise ValueError("{timeout} is a silly timeout value; please change it & try again".format(timeout=timeout))
     if not url_validator(url):
@@ -107,20 +196,21 @@ def get_lat_and_long(url=DEFAULT_LATLONG_URL, timeout=10):
         latitude = myconv(latitude_res)
         longitude = myconv(longitude_res)
     except (ValueError, AttributeError, IndexError) as e:
+        logit("potlines_lst = %s" % str(potlines_lst))
         raise WebAPIOutputError("The URL '%s' did not produce meaningful lat/long values. Please check the URL and try again." % url) from e
     else:
         return(latitude, longitude)
 
 
-def get_weather(latitude=None, longitude=None):
+def get_weather(latitude, longitude):
     """Retrieve weather info from OpenMeteo.
 
     I call the OpenMeteo API to retrieve detailed information on my local
     weather. I do not process the result. I merely return it.
 
     Args:
-        latitude (float, optional): Latitude of the location.
-        longitude (float, optional): Longitude of the location.
+        latitude (float): Latitude of the location.
+        longitude (float): Longitude of the location.
 
     Note:
         If latitude and longitude are not supplied, I shall deduce them
@@ -151,8 +241,8 @@ def get_weather(latitude=None, longitude=None):
     """
     if [latitude, longitude].count(None) not in (0, 2):
         raise ValueError("Please specify latitude *and* longitude... or neither of them. Don't specify just one of them, please.")
-    if latitude is None and longitude is None:
-        (latitude, longitude) = get_lat_and_long()
+    # if latitude is None and longitude is None:
+    #     (latitude, longitude) = get_latitude_and_longitude()
     if type(latitude) not in (int, float) or type(longitude) not in (int, float):
         raise TypeError("Latitude and/or longitude are the wrong type. Please check your code and try again.")
     if latitude < -180 or longitude < -180 or latitude > 180 or longitude > 180:
@@ -341,9 +431,8 @@ def generate_short_and_long_weather_forecast_messages(forecast, owner_name, test
     other, longer - containing meaningful information about the weather.
 
     Args:
-        forecast (open_meteo.models.Forecast): a structure containing weather
-            info for the latitude and longitude passed to get_weather() or
-            from WeatherSingleton.forecast
+        forecast (open_meteo.models.Forecast): a structure containing weather info
+            and forecast. This structure was generated by get_weather(lat, long).
         owner_name (str): Who owns the alarm clock?
         speaker1 (str): The name of the Eleven Labs voice to be used for speaker#1.
         speaker2 (str): The name of the Eleven Labs voice to be used for speaker#2.
@@ -437,18 +526,18 @@ class _WeatherClass:
     """Returns the cached result of a call to get_weather().
 
     The programmer calls me. I return a recently cached result of a call
-    to get_weather_SUB(), courtesy of a self-caching class. I return
-    the same as get_weather_SUB() returns, albeit cached.
+    to get_weather(), courtesy of a self-caching class. I return
+    the same as get_weather() returns, albeit cached.
 
     Args:
         n/a
 
     Returns:
-        See get_weather_SUB().
+        See get_weather().
 
     Raises:
         StillAwaitingCachedValue: The self-caching instance of
-            get_weather_SUB() hasn't returned a value yet. I am still
+            get_weather() hasn't returned a value yet. I am still
             waiting for a response to its first call to openmeteo.
         WebAPIOutputError: The openmeteo website gave an illegible
             response to our request for weather data.
@@ -457,17 +546,43 @@ class _WeatherClass:
     """
 
     def __init__(self):
-        self._our_weather_caching_call = SelfCachingCall(300, get_weather)
+        self.__latitude, self.__longitude = get_latitude_and_longitude()
+        self.__longitude_lock = ReadWriteLock()
+        self.__latitude_lock = ReadWriteLock()
+        self._our_weather_caching_call = SelfCachingCall(300, self.force_update)
         super().__init__()
+
+    def force_update(self):
+        return get_weather(self.latitude, self.longitude)
+
+    @property
+    def longitude(self):
+        self.__longitude_lock.acquire_read()
+        retval = self.__longitude
+        self.__longitude_lock.release_read()
+        return retval
+
+    @longitude.setter
+    def longitude(self, value):
+        self.__longitude_lock.acquire_write()
+        self.__longitude = value
+        self.__longitude_lock.release_write()
+
+    @property
+    def latitude(self):
+        self.__latitude_lock.acquire_read()
+        retval = self.__latitude
+        self.__latitude_lock.release_read()
+        return retval
+
+    @latitude.setter
+    def latitude(self, value):
+        self.__latitude_lock.acquire_write()
+        self.__latitude = value
+        self.__latitude_lock.release_write()
 
     @property
     def forecast(self):
-        """:obj:`list` of :obj:`str`: Properties with both a getter and setter
-        should only be documented in their getter method.
-
-        If the setter method contains notable behavior, it should be
-        mentioned here.
-        """
         try:
             return self._our_weather_caching_call.result
         except StillAwaitingCachedValue:
@@ -480,3 +595,25 @@ class _WeatherClass:
 
 
 WeatherSingleton = _WeatherClass()
+
+
+def speak_a_weather_report(tts, owner_name, latitude=None, longitude=None, testing=False):
+    if latitude is None or longitude is None:
+        latitude, longitude = get_latitude_and_longitude()
+    forecast = get_weather(latitude, longitude)
+    shorter_msg, longer_msg = generate_short_and_long_weather_forecast_messages(forecast, owner_name, testing)
+    data = tts.audio(text=shorter_msg)
+    del longer_msg
+    tts.play(data)
+
+
+def generate_weather_audio(tts, owner_name, latitude=None, longitude=None, testing=False):
+    if latitude is None or longitude is None:
+        latitude, longitude = get_latitude_and_longitude()
+    forecast = get_weather(latitude, longitude)
+    shorter_msg, longer_msg = generate_short_and_long_weather_forecast_messages(forecast, owner_name, testing)
+    shorter_audio = tts.audio(text=shorter_msg)
+    longer_audio = tts.audio(text=longer_msg)
+    return {'shorter msg': shorter_msg, 'shorter audio':shorter_audio, 'longer msg': longer_msg, 'longer audio':longer_audio}
+
+
