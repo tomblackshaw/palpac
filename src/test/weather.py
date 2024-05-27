@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
-'''test.weather
+""""test.weather
 
 Created on May 20, 2024
 
 @author: Tom Blackshaw
-'''
+"""
 import unittest
 
 from open_meteo.models import Forecast, DailyForecast, CurrentWeather
