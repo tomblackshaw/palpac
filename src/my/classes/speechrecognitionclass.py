@@ -44,10 +44,16 @@ def initialize_vosk():
         https://alphacephei.com/vosk/models *before* using this
         software.
 
+    Raises:
         NoProfessionalVoicesError: There is no professional-grade voice
             available via the configured Eleven Labs account.
-
-    TODO: Write me
+        MissingVoskModelError: The programmer has not saved the speech
+            recognition model to the 'model' folder in our source
+            directory.
+        CannotImportVoskError: Unable to import Vosk module.
+        CannotSetVoskLogLevelError: Cannot silence Vosk's logs.
+        CannotImportLooseVersionError: Failed to get distutils to
+            work *and* failed to get its ersatz to work.
 
     """
     if not os.path.exists("model"):
@@ -74,22 +80,29 @@ def initialize_vosk():
 
 @singleton
 class _SpeechRecognitionClass:
-    '''
-    classdocs
-    # TODO: Write me
-    __api has these properties:
-sr.aifc                        sr.google                      sr.Recognizer()                sr.TranscriptionNotReady(
-sr.annotations                 sr.hashlib                     sr.recognizers                 sr.UnknownValueError(
-sr.audio                       sr.hmac                        sr.Request(                    sr.urlencode(
-sr.AudioData(                  sr.HTTPError(                  sr.RequestError(               sr.URLError(
-sr.AudioFile(                  sr.io                          sr.requests                    sr.urlopen(
-sr.audioop                     sr.json                        sr.subprocess                  sr.uuid
-sr.AudioSource()               sr.math                        sr.sys                         sr.WaitTimeoutError(
-sr.base64                                                       sr.tempfile                    sr.wave
-sr.collections                 sr.os                          sr.threading                   sr.WavFile(
-sr.exceptions                  sr.PortableNamedTemporaryFile( sr.time                        sr.whisper
-sr.get_flac_converter()        sr.recognize_api(              sr.TranscriptionFailed(
-    '''
+    """Class that wraps around the Python SpeechRecognition class(es).
+
+    This class wraps around the Python SpeechRecognition class(es) and
+    other classes directly related to that.
+
+    This class also has attributes and methods that are from other
+    submodules, exposing them for easier use by the programmer.
+
+    Attributes:
+        api (speech_recognition): Import of the standard API from
+            Python's SpeechRecognition main class.
+        pause_threshold_lock (float): How long should the mic-
+            listener wait after the last sound, before returning?
+            For example, 0.8 would mean waiting for 0.8 seconds.
+        recognizer (Recognizer): Instance of Recognizer class
+            from the SpeechRecognition main class.
+        timeout (float): How long to wait for audio to begin,
+            before timing out and raising an exception.
+        mute (bool): Has the microphone been software-muted by
+            me? True if yes; False if no. If True, I'll respond
+            with an exception if the programmer tries to listen().
+
+    """
 
     def __init__(self):
         self.__api = None
@@ -110,10 +123,24 @@ sr.get_flac_converter()        sr.recognize_api(              sr.TranscriptionFa
         super().__init__()
 
     def adjust_for_ambient_noise(self):
+        """Adjust the mic to ignore ambient noise."""
         with self.microphone as source:
             self.recognizer.adjust_for_ambient_noise(source)
 
     def listen(self):
+        """Listen to mic for audio snatch.
+
+        Returns:
+            AudioData: Resultand autio data.
+
+        Raises:
+            MutedMicrophoneError: The mic has been software-muted.
+                Therefore, we shall not retrieve audio from it.
+            MicrophoneTimeoutError: The mic timed out, waiting
+                for sounds to be captured by the mic.
+
+        """
+        from speech_recognition.exceptions import WaitTimeoutError
         if self.__mute:
             raise MutedMicrophoneError("Microphone was muted. Please un-mute it with mute=False and try again.")
         else:
