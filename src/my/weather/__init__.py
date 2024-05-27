@@ -249,11 +249,14 @@ def generate_weather_report_dialogue(forecast, speaker1, speaker2, testing=False
         Returned strings are always UTF-8.
 
     Raises:
-        ValueError: Supplied parameter is defective.
+        TypeError: Supplied parameters are of the wrong type.
+        ValueError: Supplied parameters are defective.
 
     """
     if type(forecast) is not Forecast:
         raise TypeError("Please specify a parameter for forecast. Usually, you supply the result of a call to get_weather().")
+    if type(speaker1) is not str or type(speaker2) is not str:
+        raise TypeError("speaker1 and speaker2 must be strings.")
     randgreeting = lambda: random.choice(["Look who it is", "Howdy", 'Hi', 'Hello', 'Sup', 'Hey', "How you doin'", 'What it do', 'Greetings', "G'day", 'Hi there', "What's up", "How's it going", "What's good"])
     randweatherhi = lambda: random.choice(["What's the weather like today?", "How's the weather?", "Weather-wise, where are we at?", "Let's talk weather.", "Tell us about today's weather.", "What will today's weather be like?"])
     randnudge = lambda: random.choice(["Have you anything to add?", "Anything else?", "Is there more?", "You seem tense.",
