@@ -38,6 +38,10 @@ def get_elevenlabs_clientclass(key_filename):
         client (elevenlabs.client.ElevenLabs): The client with which
             we communicate with the Eleven Labs API.
 
+    Raises:
+        FileNotFoundError: The specified file, which should contain
+            the API key, does not exist.
+
     """
     try:
         api_key = open(key_filename, 'r', encoding="utf-8").read().strip(' \n')
@@ -50,23 +54,40 @@ def get_elevenlabs_clientclass(key_filename):
 
 @singleton
 class _Text2SpeechClass:
-    """The summary line for a class docstring should fit on one line.
+    """Class that wraps around the Eleven Labs client class.
 
-    If the class has public attributes, they may be documented here
-    in an ``Attributes`` section and follow the same formatting as a
-    function's ``Args`` section. Alternatively, attributes may be documented
-    inline with the attribute's declaration (see __init__ method below).
+    Eleven Labs is a company that provides excellent text-to-speech
+    services via a subscription-based API. The _Text2SpeechClass wraps
+    around the Python-based API that it supplies.
 
     Properties created with the ``@property`` decorator should be documented
     in the property's getter method.
 
     Attributes:
-        attr1 (str): Description of `attr1`.
-        attr2 (:obj:`int`, optional): Description of `attr2`.
+        api_models (list[str]): Human-readable list of available speech
+            synthesis models. Some are better suited to English or American
+            accents; some, to Indian- or Chinese-language voices, for
+            instance.
+        api_voices (list[str]): Human-readable list of available voices.
+            Each voice has its own accent, cadence, etc.
+        voice (str): The currently chosen voice for any speech produced.
+        model (str): The currently chosen model for any speech produced.
+        stability (float): How accurately should the produced speech resemble
+            the original speaker's source material? 0.0=none; 1.0=identical;
+            anything less than 0.3 is unwise.
+        similarity (float): How much randomness or variation should there be,
+            between each result from Eleven Labs' API? 0.0=none; 1.0=gonzo.
+        style (float): How much flair and/or scenery-chewing should there be?
+            0.0=none; 1.0=gonzo; more than 0.5 is unwise.
+        boost (bool): Should Eleven Labs try super-duper hard to make the
+            speaker sound authentic? True if yes; False if no.
 
-    TODO: Write me
+    Note:
+        The default voice is chosen at random from all available voices.
+        However, if one or more *professional* voices are available, a
+        *professional* voice is chosen at random from only that group.
+
     """
-
     def __init__(self):
         self.key_filename = '%s%s%s' % (os.path.expanduser('~'), os.sep, ELEVENLABS_KEY_BASENAME)
         self.client = get_elevenlabs_clientclass(self.key_filename)
