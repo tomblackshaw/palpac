@@ -348,12 +348,6 @@ def do_a_weather_report(tts, forecast, speaker1, speaker2, testing=False):  # , 
         style (float): How much unnecessary drama should be in the voice?
             Keep the value below 0.5 for best results.
 
-    Returns:
-        n/a
-
-    Raises:
-        FIXME: Unknown.
-
     """
     prof_name = get_first_prof_name(tts)  # [r for r in tts.voice if r.samples is not None][0].name
     if speaker1 == speaker2:
@@ -548,8 +542,21 @@ def generate_weather_audio(tts, owner_name, latitude=None, longitude=None, testi
     Obtain a weather report from get_weather(latitude_longitude). Speak it out loud. If
     testing, use random figures.
 
+    Args:
+        tts (TextToSpeechSingleton): The text-to-speech singleton.
+        owner_name (str): The name of the owner of the alarm clock.
+        latitude (float): The latitude of our location.
+        longitude (float): The longitude of our location.
+        testing (bool, optional): If True, randomize the weather
+            data. If False, don't.
 
-def generate_weather_audio(tts, owner_name, latitude=None, longitude=None, testing=False):
+    Returns:
+        dct: {'shorter msg':str,
+              'shorter audio':AudioData,
+              'longer msg':str,
+              'longer audio':AudioData}
+
+    """
     if latitude is None or longitude is None:
         latitude, longitude = get_latitude_and_longitude()
     forecast = get_weather(latitude, longitude)
