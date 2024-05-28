@@ -13,6 +13,7 @@ Error
     StartupError
         VoskStartupError
             MissingVoskModelError
+            MissingVoskAPIKeyError
         PyQtStartupError
             PyQtUICompilerError
         Text2SpeechStartupError
@@ -74,6 +75,13 @@ class StartupError(Error):
 
 class VoskStartupError(StartupError):
     """Class for all Vosk startup errors"""
+
+    def __init__(self, message):  # pylint: disable=useless-parent-delegation
+        super().__init__(message)
+
+
+class MissingVoskAPIKeyError(VoskStartupError):
+    """Vosk API key is missing"""
 
     def __init__(self, message):  # pylint: disable=useless-parent-delegation
         super().__init__(message)
