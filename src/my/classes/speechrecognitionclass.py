@@ -22,10 +22,11 @@ There are other properties and methods. This is the most important, but
 others exist.
 
 """
-
 import ast
 import os
 import sys
+
+from speech_recognition import Microphone, AudioSource
 
 from my.classes import singleton, ReadWriteLock
 from my.classes.exceptions import MissingVoskModelError, CannotImportVoskError, CannotSetVoskLogLevelError, \
