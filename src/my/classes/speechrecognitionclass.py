@@ -240,3 +240,4 @@ class _SpeechRecognitionClass:
         self.__max_recording_time_lock.acquire_write()
         self.__max_recording_time = value
         self.__max_recording_time_lock.release_write()
+
