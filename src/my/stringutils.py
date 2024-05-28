@@ -448,3 +448,69 @@ def trim_away_the_trigger_and_locate_the_command_if_there_is_one(sentence, trigg
                 break
     return cutoff_point
 
+
+def text2time(incoming_time_text):
+    dct = {'midnight':(0, 0), 'noon':(12, 0), 'midday':(12, 0), 'twelve noon':(12, 0), 'twelve midnight':(0, 0), 'twelve midnight':(0, 0)}
+    if incoming_time_text in dct.keys():
+        return dct[incoming_time_text]
+    pot_values_lst = ['0', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten',
+                             'eleven', 'twelve', 'thirteen', 'fourteen', 'fifteen', 'sixteen', 'seventeen', 'eighteen', 'nineteen', 'twenty', 'twenty one', 'twenty two', 'twenty three', 'twenty four']
+    sortedbylength_pot_values = ['twenty three', 'twenty four', 'twenty one', 'twenty two', 'seventeen', 'thirteen', 'fourteen', 'eighteen', 'nineteen', 'fifteen', 'sixteen', 'eleven', 'twelve', 'twenty', 'three', 'seven', 'eight', 'four', 'five', 'nine', 'one', 'two', 'six', 'ten', '0']
+    tens_lst = ["", "", "twenty", "thirty", "forty", "fifty", "sixty", "seventy", "eighty", "ninety"]
+    txt = (' ' + incoming_time_text + ' '
+           ).replace(' twenty four hundred ', ' zero hundred '
+           ).replace(' oh ', ' 0 ').replace(' zero ', ' 0 ').replace(' hundred hours ', ' hundred ').replace(' hundred ', ' 00 '
+           )
+
+    am_or_pm = ''
+    if txt[-3:] in ('am ', 'pm '):
+        am_or_pm = txt[-3:-1]
+        txt = txt[:-3]
+
+    hr_mn_split = -1
+    for s in sortedbylength_pot_values:
+        hr_mn_split = txt.find(s + ' ')
+        if s != '' and hr_mn_split in (0, 1):
+            hrs_str = txt[:hr_mn_split+len(s)] + ' '
+            mns_str = ' ' + txt[hr_mn_split+len(s)+1:]
+            break
+    if hr_mn_split < 0:
+        raise ValueError( "Unable to decode {incoming_time_text}. I made it as far as {txt} and failed to find the hour string.".format(incoming_time_text=incoming_time_text,txt=txt))
+
+    for i in range(0, len(pot_values_lst)):
+        hrs_str = hrs_str.replace(' {t} '.format(t=pot_values_lst[i]), ' {i} '.format(i=i))
+        mns_str = mns_str.replace(' {t} '.format(t=pot_values_lst[i]), ' {i} '.format(i=i))
+
+    for i in range(0, len(tens_lst)):
+        mns_str = mns_str.replace(' {t} '.format(t=tens_lst[i]), ' {i} '.format(i=i * 10))
+
+    hrs_str = hrs_str.strip().replace('0 ', '')
+    mns_str = mns_str.strip().replace('0 ', '')
+    try:
+        hrs = 0 if hrs_str == '' else int(hrs_str.replace(' ', ''))
+        mns = 0 if mns_str == '' else int(mns_str.replace(' ', ''))
+    except ValueError as e:
+        raise ValueError("Unable to decode {incoming_time_text}. I made it as far as {txt} ==> {hrs_str}:{mns_str} and I failed to decode the hr&mn.".format(
+                                    incoming_time_text=incoming_time_text, txt=txt, hrs_str=hrs_str, mns_str=mns_str)) from e
+    #
+    # our_int = int(txt)
+    # if our_int >= 24 and our_int < 100:
+    #     raise ValueError("Unable to decode {incoming_time_text}. I made it as far as {txt} but I can't figure out how many hours we want.".format(incoming_time_text=incoming_time_text, txt=txt))
+    #
+    # our_int = (our_int % 2400)
+    # if our_int < 24:
+    #     our_hours = our_int
+    #     our_minutes = 0
+    # else:
+    #     assert(our_int >= 100)
+    #     our_hours = our_int // 100
+    #     our_minutes = our_int % 100
+    if am_or_pm == 'pm' and hrs < 12:
+        hrs += 12
+    if am_or_pm == 'am' and hrs == 12:
+        hrs -= 12
+    if hrs >= 24 or mns >= 60:
+        raise ValueError("Unable to decode {incoming_time_text}. I made it as far as {txt} but hours={hours} and minutes={minutes}...? Really?".format(
+            incoming_time_text=incoming_time_text, txt=txt, hours=hrs, minutes=mns))
+    return (hrs, mns)
+
