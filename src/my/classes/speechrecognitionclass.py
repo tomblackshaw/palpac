@@ -122,7 +122,7 @@ class _SpeechRecognitionClass:
         self.__mute_lock = ReadWriteLock()
         super().__init__()
 
-    def adjust_for_ambient_noise(self):
+    def adjust_mic(self):
         """Adjust the mic to ignore ambient noise."""
         with self.microphone as source:
             self.recognizer.adjust_for_ambient_noise(source)
@@ -145,8 +145,8 @@ class _SpeechRecognitionClass:
             raise MutedMicrophoneError("Microphone was muted. Please un-mute it with mute=False and try again.")
         else:
             with self.microphone as source:
-                if self.__always_adjust:
-                    self.recognizer.adjust_for_ambient_noise(source)  # Audio source must be entered before adjusting, see documentation for ``AudioSource`
+                if self.__always_adjust:  # Audio source must be entered before adjusting, see documentation for ``AudioSource``
+                    self.recognizer.adjust_for_ambient_noise(source)  # TODO: replace with self.adjust_mic();
                 try:
                     audio = self.recognizer.listen(source, timeout=self.__timeout, phrase_time_limit=self.__max_recording_time)
                     return audio

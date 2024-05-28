@@ -15,15 +15,16 @@ lot of cool stuff in here.
 
 from random import choice
 import os
-# import random
 
 from elevenlabs.client import ElevenLabs, Voice
 
 from my.classes import singleton, ReadWriteLock
+from my.classes.exceptions import MissingVoskAPIKeyError
 from my.globals import ELEVENLABS_KEY_BASENAME
 from my.stringutils import flatten
 
 
+# import random
 def get_elevenlabs_clientclass(key_filename):
     """Retrieve the API class instance for interacting with the API.
 
@@ -39,14 +40,14 @@ def get_elevenlabs_clientclass(key_filename):
             we communicate with the Eleven Labs API.
 
     Raises:
-        FileNotFoundError: The specified file, which should contain
+        MissingVoskAPIKeyError: The specified file, which should contain
             the API key, does not exist.
 
     """
     try:
         api_key = open(key_filename, 'r', encoding="utf-8").read().strip(' \n')
     except FileNotFoundError as e:
-        raise FileNotFoundError ("Please save the Eleven Labs API key to %s and re-run this script." % key_filename) from e
+        raise MissingVoskAPIKeyError ("Please save the Eleven Labs API key to {key_filename} and try again.".format(key_filename=key_filename)) from e
     client = ElevenLabs(
         api_key=api_key)
     return client
