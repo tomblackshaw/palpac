@@ -18,6 +18,8 @@ Error
             PyQtUICompilerError
         Text2SpeechStartupError
             VoiceNotChosenYetError
+        VersionError
+            PythonVersionError
     WebAPIError
         WebAPIOutputError
         WebAPITimeoutError
@@ -73,6 +75,13 @@ class StartupError(Error):
 #         super().__init__(message)
 
 
+class MainAppStartupError(StartupError):
+    """Class for all main app startup errors"""
+
+    def __init__(self, message):  # pylint: disable=useless-parent-delegation
+        super().__init__(message)
+
+
 class VoskStartupError(StartupError):
     """Class for all Vosk startup errors"""
 
@@ -96,6 +105,20 @@ class CannotImportVoskError(VoskStartupError):
 
 class CannotImportLooseVersionError(VoskStartupError):  # TODO: elaborate on this
     """The 'from distutils.version import LooseVersion' call failed"""
+
+    def __init__(self, message):  # pylint: disable=useless-parent-delegation
+        super().__init__(message)
+
+
+class VersionError(StartupError):
+    """Class for all main app startup errors"""
+
+    def __init__(self, message):  # pylint: disable=useless-parent-delegation
+        super().__init__(message)
+
+
+class PythonVersionError(VersionError):
+    """Class for all main app startup errors"""
 
     def __init__(self, message):  # pylint: disable=useless-parent-delegation
         super().__init__(message)
@@ -235,6 +258,14 @@ class NoProfessionalVoicesError(VoiceNotFoundError):
 
 class Speech2TextError(Error):
     """Class for all speechrecognitionclass errors"""
+
+    def __init__(self, message):  # pylint: disable=useless-parent-delegation
+
+        super().__init__(message)
+
+
+class ElevenLabsDownError(Speech2TextError):
+    """Class for all my custom speech recognition errors"""
 
     def __init__(self, message):  # pylint: disable=useless-parent-delegation
 

@@ -15,7 +15,7 @@ Example:
         >>> from my.text2speech import Text2SpeechSingleton as tts
         >>> s = "Hello there. There's a car in the bar, by the farm."
         >>> tts.say(s)
-        >>> for i in range(0,10): tts.name = tts.random_name; audiodata = tts.audio(s); tts.play(audiodata)
+        >>> for i in range(0,10): tts.name = tts.random_voice; audiodata = tts.audio(s); tts.play(audiodata)
 
 Section breaks are created by resuming unindented text. Section breaks
 are also implicitly created anytime a new section starts.
@@ -26,15 +26,21 @@ Attributes:
 .. _Style Guide:
    https://sphinxcontrib-napoleon.readthedocs.io/en/latest/example_google.html
 
+
 """
 
+import os
 import random
+import sys
 
 from my.classes.exceptions import NoProfessionalVoicesError
-from my.classes.text2speechclass import _Text2SpeechClass
 from my.stringutils import generate_random_alarm_message
 
-Text2SpeechSingleton = _Text2SpeechClass()
+try:
+    from my.classes.text2speechclass import _Text2SpeechClass
+    Text2SpeechSingleton = _Text2SpeechClass()
+except ModuleNotFoundError:
+    Text2SpeechSingleton = None  # compatibility w/ Python 3.8
 
 
 def get_first_prof_name(tts):
@@ -77,13 +83,15 @@ def speak_random_alarm(owner_name, time_24h, time_minutes, voice=None, tts=Text2
 
     """
     if voice is None:
-        voice = tts.random_name
+        voice = tts.random_voice
+#    tts.voice = voice
+#    del voice
     message = generate_random_alarm_message(owner_name, time_24h, time_minutes, voice)
     prof_name = get_first_prof_name(tts)  # [r for r in tts.api_voices if r.samples is not None][0].name
     if voice == prof_name:
-        d = tts.audio(voice=voice, text=message, advanced=True, model='eleven_multilingual_v2', stability=0.30, similarity_boost=0.01, style=0.90, use_speaker_boost=True)
+        d = tts.audio(text=message, advanced=True, model='eleven_multilingual_v2', stability=0.30, similarity_boost=0.01, style=0.90, use_speaker_boost=True)
     else:
-        d = tts.audio(voice=voice, text=message)
+        d = tts.audio(text=message)
     tts.play(d)
 
 
@@ -111,8 +119,8 @@ def play_dialogue_lst(tts, dialogue_lst):  # , stability=0.5, similarity_boost=0
 
     Example:
         $ python3
-        >>> from my.text2speech import play_dialogue_lst
-        >>> play_dialogue_lst(Text2SpeechSingleton, [('Jessie', 'Knock, knock'),('Freya', 'Get a warrant.')])
+        >>> from my.text2speech import play_dialogue_lst, Text2SpeechSingleton as tts
+        >>> play_dialogue_lst(tts, [('Jessie', 'Knock, knock'),('Freya', 'Get a warrant.')])
 
     Returns:
         n/a
@@ -121,14 +129,35 @@ def play_dialogue_lst(tts, dialogue_lst):  # , stability=0.5, similarity_boost=0
         unknown. FIXME: list the potential exceptions
 
     """
-    from elevenlabs import play
     data_to_play = []
     from my.tools import logit
     for (name, text) in dialogue_lst:
         logit("{name}: {text}".format(name=name, text=text))
         tts.voice = name
         data_to_play.append(tts.audio(text))
-    for d in data_to_play:
-        play(d)
+    tts.play(data_to_play)
+    # for d in data_to_play:
+    #     tts.play(d)
 
+
+def phrase_audio(voice, text):
+    outfile = 'audio/cache/{voice}/{text}.mp3'.format(voice=voice, text=text.lower().replace(' ', '_'))
+    if not os.path.exists(outfile):
+        print("Generating speech audio (spoken by {voice}) for '{text}'".format(voice=voice, text=text))
+        try:
+            os.mkdir(os.path.dirname(outfile))
+        except FileExistsError:
+            pass
+        vers = sys.version_info
+        major_ver, minor_ver = vers[:2]
+        if major_ver < 3 or minor_ver < 11:
+            os.system('''./cachespeech.sh "{voice}" "{text}" "{outfile}"'''.format(voice=voice, text=text, outfile=outfile))
+        else:
+            with open(outfile, 'wb') as f:
+                old_v = Text2SpeechSingleton.voice
+                Text2SpeechSingleton.voice = voice
+                f.write(Text2SpeechSingleton.audio(text))
+                Text2SpeechSingleton.voice = old_v
+    with open(outfile, 'rb') as f:
+        return f.read()
 

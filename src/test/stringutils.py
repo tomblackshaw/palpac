@@ -58,13 +58,15 @@ class TestConvert24hAndMinsToShorttime(unittest.TestCase):
         self.assertRaises(ValueError, convert_24h_and_mins_to_shorttime, 0, 60)
 
     def testDiff(self):
-        self.assertEqual(convert_24h_and_mins_to_shorttime(0, 0, -1), "11:59AM")
+        self.assertEqual(convert_24h_and_mins_to_shorttime(0, 0, -1), "11:59PM")
         self.assertEqual(convert_24h_and_mins_to_shorttime(0, 0), "12 midnight")
         self.assertEqual(convert_24h_and_mins_to_shorttime(12, 0), "12 noon")
         self.assertEqual(convert_24h_and_mins_to_shorttime(23, 59, 1), "12 midnight")
         self.assertEqual(convert_24h_and_mins_to_shorttime(0, 1, -1), "12 midnight")
         self.assertEqual(convert_24h_and_mins_to_shorttime(12, 1, -1), "12 noon")
         self.assertEqual(convert_24h_and_mins_to_shorttime(11, 59, 1), "12 noon")
+        self.assertEqual(convert_24h_and_mins_to_shorttime(7, 0), "7AM")
+        self.assertEqual(convert_24h_and_mins_to_shorttime(19, 0), "7PM")
         for diff in range(0,5):
             for h in range(0, 23):
                 for m in range(0, 60):
@@ -81,6 +83,10 @@ class TestConvert24hAndMinsToShorttime(unittest.TestCase):
             for mn in range(0, 60):
                 s = convert_24h_and_mins_to_shorttime(hr, mn)
         del i, s
+
+    def testWeirdOnes(self):
+        self.assertEqual(convert_24h_and_mins_to_shorttime(11, 5), "11:05AM")
+        self.assertEqual(convert_24h_and_mins_to_shorttime(23, 5), "11:05PM")
 
 
 class TestFindTriggerWordInSentence(unittest.TestCase):

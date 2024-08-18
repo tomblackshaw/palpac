@@ -24,11 +24,12 @@ Todo:
 
 """
 
+import os
 import sys
 
-from PyQt6.QtWidgets import QWidget, QApplication  # pylint: disable=no-name-in-module
+from PyQt5.QtWidgets import QWidget, QApplication  # pylint: disable=no-name-in-module
 
-from my.classes.exceptions import StillAwaitingCachedValue, WebAPITimeoutError, WebAPIOutputError
+from my.classes.exceptions import StillAwaitingCachedValue, WebAPITimeoutError, WebAPIOutputError, PyQtStartupError, StartupError, MainAppStartupError
 from my.randomquotes import RandomQuoteSingleton as q
 from my.stringutils import add_to_os_path_if_existent
 from my.tools import compile_all_uic_files
@@ -101,16 +102,23 @@ class FunWidget(QWidget):
 
         """
         self.tts.voice = self.tts.random_voice
-        self.tts.play(self.tts.audio(text=self.ui.plainTextEdit.toPlainText()))
+        self.tts.say(self.ui.plainTextEdit.toPlainText())
+#        self.tts.play(self.tts.audio(text=self.ui.plainTextEdit.toPlainText()))
 
 #########################################################################################################
 
 
 
 if __name__ == '__main__':
+    for binname in ('mpv', 'pyuic6'):
+        if 0 != os.system('which {binname} > /dev/null'.format(binname=binname)):
+            raise MainAppStartupError("{binname} is missing. Please install it.".format(binname=binname))
     from my.text2speech import Text2SpeechSingleton
+    os.system('''amixer set "Master" 80%''')
+    os.system("mpv audio/startup.mp3 &")
     add_to_os_path_if_existent('/opt/homebrew/bin', strict=False)
     compile_all_uic_files('ui')
     app = QApplication(sys.argv)
     qwin = FunWidget(tts=Text2SpeechSingleton)
+    qwin.showMaximized()
     sys.exit(app.exec())

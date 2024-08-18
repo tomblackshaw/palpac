@@ -9,6 +9,13 @@ Created on May 21, 2024
 
 EXAMPLE
 
+from my.text2speech import Text2SpeechSingleton as tts
+from my.stringutils import generate_random_alarm_message
+import datetime
+import random
+tts.voice = random.choice(tts.all_voices)
+tts.say(generate_random_alarm_message('Charles Rabson', datetime.datetime.now().hour, datetime.datetime.now().minute)) # , justforthisvoice=tts.voice))
+
 from ast import literal_eval
 from my.speechrecognition import SpeechRecognitionSingleton as s2t
 s2t.always_adjust = True
@@ -29,8 +36,37 @@ audio = s2t.listen()
 s2t.recognize(audio)
 from my.text2speech import Text2SpeechSingleton as tts
 tts.voice = 'Freya'
+tts.say("1, 2, 3, 4, 5.")
+
 tts.say("In the beginning was the word, and the word was with God, and the word was God.")
+
+import os
+os.system('''for i in $(wpctl status | grep HDMI | tr ' ' '\n' | tr '.' '\n' | grep -x "[0-9]*"); do  wpctl set-volume $i 100% 2> /dev/null; done''')
+from my.text2speech import Text2SpeechSingleton as tts
+from elevenlabs import stream, play
+tts.voice = 'Freya'
+#data = tts.audio("Hello world.", stream=True)
+
+audio_stream = tts.client.generate(
+  text="Your text here",
+  voice="Freya",
+  optimize_streaming_latency=1,  # Adjust as needed
+  output_format="mp3_44100_128",  # Adjust as needed
+  voice_settings={
+    "similarity_boost": 1.0,  # Adjust as needed
+    "stability": 1.0,  # Adjust as needed
+    "style": 1,  # Adjust as needed
+    "use_speaker_boost": True  # Adjust as needed
+  }
+)
+
+
+
+stream(audio_stream)
 """
+
+
+
 
 from _queue import Empty
 from queue import Queue
@@ -46,7 +82,7 @@ from my.classes.selfcachingcall import SelfCachingCall
 from my.stringutils import find_trigger_phrase_in_sentence, scan_sentence_for_any_one_of_these_trigger_phrases, generate_triggerphrase_permutations, \
     trim_away_the_trigger_and_locate_the_command_if_there_is_one, text2time
 from my.tools import logit
-from my.weather import generate_weather_audio
+# from my.weather import generate_weather_audio
 
 words_that_sound_like_hey = 'he uh oh hayden either hate hey hay they a heh eight i Freya up great the there edit'
 words_that_sound_like_dad = 'doc Dad there that tad thad than Dan dove dog the'
@@ -217,12 +253,13 @@ def handle_alarm_command(tts, text):
 
 
 def main():
+    os.system('''for i in $(wpctl status | grep HDMI | tr ' ' '\n' | tr '.' '\n' | grep -x "[0-9]*"); do  wpctl set-volume $i 100% 2> /dev/null; done''')
     print("Initializing the sheepdip")
     from my.speechrecognition import SpeechRecognitionSingleton as s2t
     global G_stop, G_yes
     from my.text2speech import Text2SpeechSingleton as tts
     global G_sorry_audio, G_fu2, G_watch, G_dowhatnow, G_our_cached_weather_report_messages, G_goodbye
-    tts.voice = "Freya"
+    tts.voice = "Sarah"
     owner_name = 'Chuckles'
     G_sorry_audio = tts.audio("Sorry, I'm still waiting for the weather forecast. Please try again later.")
     G_fu2 = tts.audio("Screw you too {owner_name}! I'm over here, working my ass off, and you know what, you're not even worth it.".format(owner_name=owner_name))
@@ -231,7 +268,7 @@ def main():
     G_dowhatnow = tts.audio("I'm sorry. I don't understand.")
     G_yes = tts.audio("Yes?")  # May I help you {owner_name}?".format(owner_name=owner_name))
     G_goodbye = tts.audio("Toodles! Goodbye {owner_name}".format(owner_name=owner_name))
-    G_our_cached_weather_report_messages = SelfCachingCall(180, generate_weather_audio, tts, owner_name)
+#    G_our_cached_weather_report_messages = SelfCachingCall(180, generate_weather_audio, tts, owner_name)
     G_stop = False
     s2t.always_adjust = True
     s2t.max_recording_time = 5

@@ -20,14 +20,13 @@ Example:
     >>> print(i)
 
 Example:
-    from my.text2speech import Text2SpeechSingleton as tts
-    from my.weather import WeatherSingleton as w, do_a_weather_report
-    import random
-    prof_name= get_first_prof_name(tts) # [r for r in tts.voiceinfo if r.samples is not None][0].name
-    do_a_weather_report(tts=tts, testing=True, myforecast=w.forecast,
-                speaker1 = prof_name,
-                speaker2 = "Freya",
-                stability=0.10, similarity_boost=0.01, style=0.9)
+from my.text2speech import Text2SpeechSingleton as tts, get_first_prof_name
+from my.weather import WeatherSingleton as w, do_a_weather_report
+import random
+prof_name= 'Jessie' # get_first_prof_name(tts) # [r for r in tts.api_voices if r.samples is not None][0].name
+do_a_weather_report(tts=tts, testing=True, forecast=w.forecast,
+            speaker1 = prof_name,
+            speaker2 = "Emily")
 
 Section breaks are created by resuming unindented text. Section breaks
 are also implicitly created anytime a new section starts.
@@ -286,7 +285,7 @@ def generate_weather_report_dialogue(forecast, speaker1, speaker2, testing=False
     if forecast_rainfall_hours < 1 or chance_of_rain < 0.01:
         rain_txt = "It probably won't rain today."
     else:
-        rain_txt = "There's a {rainpc} percent chance of rain.".format(rainpc=int(chance_of_rain * 100))
+        rain_txt = "There's a {rainpc} percent chance of rain.".format(rainpc=int(chance_of_rain))
         rain_txt = "There's a {rainpc} percent chance of rain, with {rainH} out of the next 24 hours producing a total of {rainQ} {rainunit} of rainfall.".format(
                                     rainpc=int(chance_of_rain * 100),
                                     rainH=int(forecast_rainfall_hours),

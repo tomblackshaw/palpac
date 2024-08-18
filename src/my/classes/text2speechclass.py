@@ -11,17 +11,45 @@ lot of cool stuff in here.
 .. _Style Guide:
    https://sphinxcontrib-napoleon.readthedocs.io/en/latest/example_google.html
 
-"""
+import os
+os.system('''for i in $(wpctl status | grep HDMI | tr ' ' '\n' | tr '.' '\n' | grep -x "[0-9]*"); do  wpctl set-volume $i 100% 2> /dev/null; done''')
+from my.text2speech import Text2SpeechSingleton as tts
+tts.voice = 'Freya'
+tts.say("Hello, world", stream=True)
 
+data1 = tts.audio("Hello")
+data2 = tts.audio("World")
+
+from pydub import AudioSegment
+
+with open('/tmp/data1.mp3', 'wb') as f:
+    f.write(data1)
+
+with open('/tmp/data2.mp3', 'wb') as f:
+    f.write(data2)
+
+
+sound1 = AudioSegment.from_mp3("/tmp/1.mp3")
+sound2 = AudioSegment.from_mp3("/tmp/2.mp3")
+combined = sound1 + sound2
+file_handle = combined.export("/tmp/out.mp3", format="mp3")
+
+"""
 from random import choice
 import os
 
 from elevenlabs.client import ElevenLabs, Voice
 
+from pydub import AudioSegment
+from pydub.audio_segment import AudioSegment
+
 from my.classes import singleton, ReadWriteLock
-from my.classes.exceptions import MissingVoskAPIKeyError
+from my.classes.exceptions import MissingVoskAPIKeyError, CachingError, ElevenLabsDownError
 from my.globals import ELEVENLABS_KEY_BASENAME
-from my.stringutils import flatten
+from my.stringutils import flatten, generate_random_string
+
+DEFAULT_SILENCE_THRESHOLD = -50.0
+SNIPPY_SILENCE_THRESHOLD = -30.0
 
 
 # import random
@@ -51,6 +79,83 @@ def get_elevenlabs_clientclass(key_filename):
     client = ElevenLabs(
         api_key=api_key)
     return client
+
+
+def detect_leading_silence(sound, silence_threshold=DEFAULT_SILENCE_THRESHOLD, chunk_size=10):
+    '''
+    sound is a pydub.AudioSegment
+    silence_threshold in dB
+    chunk_size in ms
+
+    iterate over chunks until you find the first one with sound
+    '''
+    trim_ms = 0  # ms
+
+    assert chunk_size > 0  # to avoid infinite loop
+    while sound[trim_ms:trim_ms + chunk_size].dBFS < silence_threshold and trim_ms < len(sound):
+        trim_ms += chunk_size
+
+    return trim_ms
+
+'''
+sound = AudioSegment.from_file("/path/to/file.wav", format="wav")
+
+start_trim = detect_leading_silence(sound)
+end_trim = detect_leading_silence(sound.reverse())
+
+duration = len(sound)
+trimmed_sound = sound[start_trim:duration-end_trim]
+'''
+
+
+def convert_audio_recordings_list_into_an_mp3_file(data, exportfile, trim_level=0):
+    """Convert a list of audio data into an MP3 file.
+
+    Write the supplied list of data (probably MP3 to individual files.
+    Use the pydub library to combine them into a single MP3. Save it
+    to the specified pathname.
+
+    Args:
+        data (list[bytes()]): The list of MP3 data. I say 'list' because
+            this is a *list* of several bytes, not several *bytes*. To
+            access MP3 data #0, read data[0]. That's the first MP3 file.
+            The second is data[1]. You get the picture, I hope.
+        trim_level (int): If 0, don't trim. If 1, trim. If 2, trim aggressively.
+        exportfile (str): The pathname of the output file.
+
+    Returns:
+        n/a
+
+    Raises:
+        Unknown.
+
+    """
+    sounds = None
+    filenames = ''
+    for d in data:
+        fname = '/tmp/{rnd}'.format(rnd=generate_random_string(32))
+        filenames += ' {fname}'.format(fname=fname)
+        with open(fname, 'wb') as f:
+            f.write(d)
+        untrimmed_audio = AudioSegment.from_mp3(fname)
+        trimmed_aud = untrimmed_audio if trim_level == 0 else trim_my_audio(untrimmed_audio, trim_level)
+        if sounds is None:
+            sounds = trimmed_aud
+        else:
+            sounds += trimmed_aud
+    sounds.export(exportfile, format='mp3')
+    for fname in filenames.strip(' ').split(' '):
+        assert(fname[0] == '/')
+        os.unlink(fname)
+
+
+def trim_my_audio(untrimmed_audio, trim_level):
+    silence_threshold = SNIPPY_SILENCE_THRESHOLD if trim_level > 1 else DEFAULT_SILENCE_THRESHOLD
+    start_trim = detect_leading_silence(untrimmed_audio, silence_threshold=silence_threshold)
+    end_trim = detect_leading_silence(untrimmed_audio.reverse(), silence_threshold=silence_threshold)
+    duration = len(untrimmed_audio)
+    trimmed_aud = untrimmed_audio[start_trim:duration - end_trim]
+    return trimmed_aud
 
 
 @singleton
@@ -312,28 +417,62 @@ class _Text2SpeechClass:
     def name_of_an_id(self, an_id):
         return [r for r in self.api_voices if r.voice_id == an_id][0].name
 
-    def audio(self, text, getgenerator=False):
+    def audio(self, text, getgenerator=False, stream=False):
         if self.advanced is False:
-            audio = self.client.generate(text=text, voice=self.voice)
+            audio = self.client.generate(text=text, voice=self.voice, stream=stream)
         else:
             audio = self.client.generate(text=text, model=self.model, voice=Voice(
                 voice_id=self.id_of_a_name(self.voice),
                 similarity_boost=self.similarity,
                 stability=self.stability,
                 style=self.style,
-                use_speaker_boost=self.boost))
-        return audio if getgenerator else b''.join(audio)
+                use_speaker_boost=self.boost),
+                stream=stream)
+#        print("audio({text}) --- voice={voice}".format(text=text, voice=self.voice))
+        from httpx._exceptions import ConnectError
+        try:
+            return audio if getgenerator else b''.join(audio)
+        except ConnectError:
+            raise ElevenLabsDownError("Unable to access the ElevenLabs engine. Check your Internet connection.")
 
-    def play(self, data):
-        from elevenlabs import play
+    def play(self, data, force_mpv=True, trim_level=0):
         if type(data) is str:
             raise ValueError("Please supply audio data, not a string, when calling me.")
-        play(data)
+        if type(data) not in (list, tuple):
+            data = [data]
+        if force_mpv is True:
+            exportfile = '/tmp/{rnd}'.format(rnd=generate_random_string(32))
+            convert_audio_recordings_list_into_an_mp3_file(data, exportfile, trim_level=trim_level)
+            os.system('mpv {exportfile}'.format(exportfile=exportfile))
+            os.unlink(exportfile)
+        else:
+            from elevenlabs import play
+            for d in data:
+                play(d)
 
-    def say(self, txt):
+    def stream(self, data):
+        from elevenlabs import stream
+        if type(data) is str:
+            raise ValueError("Please supply audio data, not a string, when calling me.")
+        stream(data)
+
+    def say(self, txt, stream=False):
         if type(txt) is not str:
             raise ValueError("Please supply a string, when calling me.")
-        self.play(self.audio(text=txt))
-
-
+        elif stream is False:
+            self.play(self.audio(text=txt))
+        else:
+            audio_stream = self.client.generate(
+                    text=txt,
+                    voice=self.voice,
+                    optimize_streaming_latency=1,  # Adjust as needed
+                    output_format="mp3_44100_128",  # Adjust as needed
+                    voice_settings={
+                    "similarity_boost": self.similarity,
+                    "stability": self.stability,
+                    "style": self.style,
+                    "use_speaker_boost": self.boost
+                  }
+                )
+            self.stream(audio_stream)
 

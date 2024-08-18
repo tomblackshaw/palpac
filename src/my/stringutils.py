@@ -263,8 +263,8 @@ def convert_24h_and_mins_to_shorttime(time_24h, time_minutes, diff=0):
     if time_minutes == 0:
         if time_24h == 0:
             return '%d midnight' % (time_24h + 12)
-        if time_24h < 12:
-            return '%dAM' % (time_24h + 12)
+        elif time_24h < 12:
+            return '%dAM' % (time_24h)
         elif time_24h == 12:
             return '%d noon' % time_24h
         elif time_24h < 24:
@@ -273,9 +273,9 @@ def convert_24h_and_mins_to_shorttime(time_24h, time_minutes, diff=0):
             return '%d hours (how is that possible)' % time_24h
     else:
         if time_24h < 12:
-            return '%d:%02dAM' % (time_24h + 12, time_minutes)
+            return '%d:%02d A.M.' % (12 if time_24h == 0 else time_24h, time_minutes)
         else:
-            return '%d:%02dAM' % (time_24h - 12, time_minutes)
+            return '%d:%02d P.M.' % (12 if time_24h == 24 else time_24h % 12, time_minutes)
 
 
 def generate_alarm_message(owner, time_24h, time_minutes, message_template):
@@ -334,9 +334,7 @@ def generate_alarm_message(owner, time_24h, time_minutes, message_template):
     return newval
 
 
-
-
-def generate_random_alarm_message(owner_of_clock, time_24h, time_minutes, voice=None):
+def generate_random_alarm_message(owner_of_clock, time_24h, time_minutes, justforthisvoice=None):
     """Example function with types documented in the docstring.
 
     `PEP 484`_ type annotations are supported. If attribute, parameter, and
@@ -353,8 +351,8 @@ def generate_random_alarm_message(owner_of_clock, time_24h, time_minutes, voice=
     TODO: Write me
 
     """
-    if voice in default_speaker_alarm_message_dct.keys():
-        message_template = random.choice([default_speaker_alarm_message_dct[voice]] + alarm_messages_lst)
+    if justforthisvoice in default_speaker_alarm_message_dct.keys():
+        message_template = random.choice([default_speaker_alarm_message_dct[justforthisvoice]] + alarm_messages_lst)
     else:
         message_template = random.choice(alarm_messages_lst)
     message = generate_alarm_message(owner_of_clock, time_24h, time_minutes, message_template)

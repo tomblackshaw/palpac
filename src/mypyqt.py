@@ -4,12 +4,12 @@ Created on Jun 2, 2024
 @author: Tom Blackshaw
 '''
 
-from PyQt6 import QtWidgets
+from PyQt5.QtWidgets import QMainWindow, QApplication
 
 import pyqtgraph as pg
 
 
-class MainWindow(QtWidgets.QMainWindow):
+class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
 
@@ -22,7 +22,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
 
 if __name__ == '__main__':
-    app = QtWidgets.QApplication([])
+    app = QApplication([])
     main = MainWindow()
     main.show()
     app.exec()

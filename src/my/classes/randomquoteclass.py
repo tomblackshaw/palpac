@@ -46,7 +46,7 @@ class _RandomQuoteClass:
     """
     def __init__(self):
         from my.stringutils import get_random_zenquote
-        self._our_zenquote_caching_call = SelfCachingCall(60, get_random_zenquote)
+        self._our_zenquote_caching_call = SelfCachingCall(15, get_random_zenquote)
         super().__init__()
 
     def force_update(self):
