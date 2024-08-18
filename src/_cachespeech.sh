@@ -2,7 +2,7 @@
 
 for i in 15 14 13 12 11 10 9 8; do
     if which python3.$i &> /dev/null; then
-        python3.$i cachespeech.py "$@"
+        python3.$i _cachespeech.py "$@"
         exit $?
     fi
 done

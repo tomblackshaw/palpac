@@ -151,7 +151,7 @@ def phrase_audio(voice, text):
         vers = sys.version_info
         major_ver, minor_ver = vers[:2]
         if major_ver < 3 or minor_ver < 11:
-            os.system('''./cachespeech.sh "{voice}" "{text}" "{outfile}"'''.format(voice=voice, text=text, outfile=outfile))
+            os.system('''./_cachespeech.sh "{voice}" "{text}" "{outfile}"'''.format(voice=voice, text=text, outfile=outfile))
         else:
             with open(outfile, 'wb') as f:
                 old_v = Text2SpeechSingleton.voice
