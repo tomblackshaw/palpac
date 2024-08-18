@@ -3,17 +3,14 @@ Created on Aug 4, 2024
 
 @author: Tom Blackshaw
 '''
-from random import choice
 import os
 import sys
 
 from PyQt5 import QtCore
 from PyQt5.QtCore import QUrl
-from PyQt5.QtWebEngineWidgets import QWebEngineView
 from PyQt5.QtWidgets import QApplication, QMainWindow, QDialog
 
-from my.classes import singleton, ReadWriteLock
-from my.classes.exceptions import PythonVersionError
+from my.classes import ReadWriteLock
 from ui.ConfigDialog import Ui_ConfigDiualog
 from ui.MainWindow import Ui_MainWindow
 

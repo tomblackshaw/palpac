@@ -34,17 +34,26 @@ sound2 = AudioSegment.from_mp3("/tmp/2.mp3")
 combined = sound1 + sound2
 file_handle = combined.export("/tmp/out.mp3", format="mp3")
 
+
+sound = AudioSegment.from_file("/path/to/file.wav", format="wav")
+
+start_trim = detect_leading_silence(sound)
+end_trim = detect_leading_silence(sound.reverse())
+
+duration = len(sound)
+trimmed_sound = sound[start_trim:duration-end_trim]
+
 """
 from random import choice
 import os
 
 from elevenlabs.client import ElevenLabs, Voice
 
-from pydub import AudioSegment
+# from pydub import AudioSegment
 from pydub.audio_segment import AudioSegment
 
 from my.classes import singleton, ReadWriteLock
-from my.classes.exceptions import MissingVoskAPIKeyError, CachingError, ElevenLabsDownError
+from my.classes.exceptions import MissingVoskAPIKeyError, ElevenLabsDownError
 from my.globals import ELEVENLABS_KEY_BASENAME
 from my.stringutils import flatten, generate_random_string
 
@@ -97,15 +106,6 @@ def detect_leading_silence(sound, silence_threshold=DEFAULT_SILENCE_THRESHOLD, c
 
     return trim_ms
 
-'''
-sound = AudioSegment.from_file("/path/to/file.wav", format="wav")
-
-start_trim = detect_leading_silence(sound)
-end_trim = detect_leading_silence(sound.reverse())
-
-duration = len(sound)
-trimmed_sound = sound[start_trim:duration-end_trim]
-'''
 
 
 def convert_audio_recordings_list_into_an_mp3_file(data, exportfile, trim_level=0):
@@ -432,8 +432,8 @@ class _Text2SpeechClass:
         from httpx._exceptions import ConnectError
         try:
             return audio if getgenerator else b''.join(audio)
-        except ConnectError:
-            raise ElevenLabsDownError("Unable to access the ElevenLabs engine. Check your Internet connection.")
+        except ConnectError as e:
+            raise ElevenLabsDownError("Unable to access the ElevenLabs engine. Check your Internet connection.") from e
 
     def play(self, data, force_mpv=True, trim_level=0):
         if type(data) is str:

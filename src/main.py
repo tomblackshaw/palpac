@@ -59,11 +59,10 @@ import sys
 
 from PyQt5.QtWidgets import QWidget, QApplication  # pylint: disable=no-name-in-module
 
-from my.classes.exceptions import StillAwaitingCachedValue, WebAPITimeoutError, WebAPIOutputError, PyQtStartupError, StartupError, MainAppStartupError
+from my.classes.exceptions import StillAwaitingCachedValue, WebAPITimeoutError, WebAPIOutputError, MainAppStartupError
 from my.randomquotes import RandomQuoteSingleton as q
 from my.stringutils import add_to_os_path_if_existent
 from my.tools import compile_all_uic_files
-from ui.newform import Ui_Form
 
 
 class FunWidget(QWidget):
@@ -83,7 +82,7 @@ class FunWidget(QWidget):
         self.tts = tts
 
         # use the Ui_login_form
-        self.ui = Ui_Form()
+#        self.ui = Ui_Form()
         self.ui.setupUi(self)
 
         # show the login window
