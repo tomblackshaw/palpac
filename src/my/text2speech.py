@@ -38,6 +38,7 @@ from pydub.exceptions import CouldntDecodeError
 
 from my.classes.exceptions import NoProfessionalVoicesError, MissingFromCacheError
 from my.classes.text2speechclass import convert_audio_recordings_list_into_one_audio_recording, convert_audio_recordings_list_into_an_mp3_file
+from my.consts import hours_lst, minutes_lst
 from my.stringutils import generate_random_alarm_message, convert_24h_and_mins_to_shorttime, generate_detokenized_message, pathname_of_phrase_audio
 
 try:
@@ -147,6 +148,10 @@ def play_dialogue_lst(tts, dialogue_lst):  # , stability=0.5, similarity_boost=0
 
 def phrase_audio(voice, text, raise_exception_if_not_cached=False):
     text = text.lower().strip(' ')
+    if len(text) > 1:
+    # if text not in ('!', '?', '.', ','):
+        while len(text) > 0 and text[0] in ' !?;:.,':
+            text = text[1:]
     outfile =pathname_of_phrase_audio(voice, text)
     if not os.path.exists(outfile):
         if raise_exception_if_not_cached:
@@ -164,6 +169,7 @@ def phrase_audio(voice, text, raise_exception_if_not_cached=False):
             os.system('''./_cachespeech.sh "{voice}" "{text}" "{outfile}"'''.format(voice=voice, text=text, outfile=outfile))
         else:
             with open(outfile, 'wb') as f:
+                print("Writing >%s<" % outfile)
                 old_v = Text2SpeechSingleton.voice
                 Text2SpeechSingleton.voice = voice
                 f.write(Text2SpeechSingleton.audio(text))
@@ -182,7 +188,6 @@ def list_phrases_to_handle(smart_phrase):
         else:
             phrases_to_handle.append(smart_phrase[:i])
             j = smart_phrase.find('}', i)
-            phrases_to_handle.append( smart_phrase[i:j+1])
             smart_phrase = smart_phrase[j+1:]
     return phrases_to_handle
 
@@ -195,40 +200,29 @@ def decoded_token(token, hello_owner, owner, shorttime, one_minute_ago, one_minu
         newval = ov_template.substitute(hello_owner=hello_owner, owner=owner, shorttime=shorttime, one_minute_ago=one_minute_ago, one_minute_later=one_minute_later, morning_or_afternoon_or_evening=morning_or_afternoon_or_evening)
     return newval
 
-'''
-from my.text2speech import smart_phrase_audio, phrase_audio
-from my.classes.text2speechclass import convert_audio_recordings_list_into_one_audio_recording, convert_audio_recordings_list_into_an_mp3_file
-voice = 'Hugo'
-smart_phrase="Hello ${test} there."
-convert_audio_recordings_list_into_an_mp3_file(data, '/tmp/out.mp3')
-s = convert_audio_recordings_list_into_one_audio_recording(data)
-'''
 
-
-def deliberately_cache_a_phrase(voice, smart_phrase):
-    data = []
-    startpos = smart_phrase.find('${')
-    if startpos >= 0:
-        endpos = smart_phrase.find('}', startpos) + 1
-        while endpos < len(smart_phrase) and smart_phrase[endpos] in '?!;:,. ':
-            endpos += 1
-        s = smart_phrase[:startpos].strip()
-        audio_op = phrase_audio(voice, s)
+def deliberately_cache_a_smart_phrase(voice, smart_phrase):
+    phrases_to_handle = list_phrases_to_handle(smart_phrase)
+    for phrase in phrases_to_handle:
+        audio_op = phrase_audio(voice, phrase)
         try:
             _ = convert_audio_recordings_list_into_one_audio_recording([audio_op], trim_level=1)
-            data.append(audio_op)
-        except CouldntDecodeError:
-            print('"%s" (for %s) failed. Ignoring.' % (s, voice))
 
-        startpos = endpos
-        return convert_audio_recordings_list_into_one_audio_recording(data, trim_level=1)
+        except CouldntDecodeError:
+            print('"%s" (%s) failed. Retrying.' % (phrase, voice))
+            os.unlink(pathname_of_phrase_audio(voice, phrase))
+            deliberately_cache_a_smart_phrase(voice, phrase)
+            print('"%s" (%s) regenerated successfully.' % (phrase, voice))
 
 
 def smart_phrase_audio(voice, smart_phrase, owner=None, time_24h=None, time_minutes=None):
-    if owner and time_24h and time_minutes:
+    if owner is not None and time_24h is not None and time_minutes is not None:
         detokenized_phrase = generate_detokenized_message(owner, time_24h, time_minutes, smart_phrase)  # Decoder. FIXME. Document!
+        detokenized_phrase = detokenized_phrase.replace('12 noon', '12:00 P.M.').replace('12 midnight', '12:00 A.M.')  # FIXME hack hack hack
     else:
-        detokenized_phrase = smart_phrase
+#        print('No detokenizing possible')
+        detokenized_phrase = ''.join(r + ' ' for r in list_phrases_to_handle(smart_phrase)).strip(' ')
+    detokenized_phrase = detokenized_phrase.lower()
     data = []
     all_words = [r.lower().strip(' ') for r in detokenized_phrase.split(' ')]
     firstwordno = 0
@@ -236,23 +230,61 @@ def smart_phrase_audio(voice, smart_phrase, owner=None, time_24h=None, time_minu
         lastwordno = len(all_words)
         while lastwordno > firstwordno:
             searchforthis = ''.join([r + ' ' for r in all_words[firstwordno:lastwordno]]).strip()
-            while len(searchforthis) > 0 and searchforthis[0] in (';:,.!?'):
-                searchforthis = searchforthis[1:]
+#            while len(searchforthis) > 0 and searchforthis[0] in (';:,.!?'):
+#                searchforthis = searchforthis[1:]
+#            print('looking for >>%s<<' % searchforthis)
             if not os.path.exists(pathname_of_phrase_audio(voice, searchforthis)):
                 lastwordno -= 1
+            elif len(searchforthis) == 0:
+                break
             else:
-                print("FOUND", searchforthis)
                 firstwordno = lastwordno - 1
+                print("GOT IT (%s) >>%s<<" % (voice, searchforthis))
                 data.append(phrase_audio(voice, searchforthis))
                 break
         if lastwordno == firstwordno:
-            if searchforthis == '' or searchforthis.startswith('${'):
+            if searchforthis == '':
+                pass
                 print('Ignoring', searchforthis)
-            elif ':' in searchforthis:
+            elif ':' in searchforthis and len(searchforthis) >= 4:
+                if lastwordno + 1 < len(all_words) and all_words[lastwordno + 1].lower()[:4] in ('a.m.', 'p.m.'):
+                    lastwordno += 1
+                    searchforthis = ''.join([r + ' ' for r in all_words[firstwordno:lastwordno + 1]]).strip()
                 print("TIME <=", searchforthis)
-#                data.append(phrase_audio(voice, "fish"))
+                for s in generate_timedate_phrases_list(voice, searchforthis):
+                    print("s =", s)
+                    outfile = pathname_of_phrase_audio(voice, s)
+                    if not os.path.exists(outfile):
+                        raise MissingFromCacheError("{voice} => {s} <= {outfile} => (time thingy) is missing from the cache".format(s=s, voice=voice, outfile=outfile))
+                    data.append(phrase_audio(voice, s))
+                firstwordno = lastwordno
+#                data.append(phrase_audio(voice, searchforthis))
+            elif searchforthis in ('?', ':', '!', '.'):
+                print("Ignoring", searchforthis)
             else:
-                raise MissingFromCacheError("{searchforthis} is missing from the cache".format(searchforthis=searchforthis))
+                outfile = pathname_of_phrase_audio(voice, searchforthis)
+                raise MissingFromCacheError("{voice} => {searchforthis} <= {outfile} => is missing from the cache".format(searchforthis=searchforthis, voice=voice, outfile=outfile))
         firstwordno += 1
     return convert_audio_recordings_list_into_one_audio_recording(data, trim_level=1)
 
+
+def generate_timedate_phrases_list(voice, timedate_str):
+    the_hr, the_min = timedate_str.split(':')
+    the_hr = the_hr.strip('.')
+    the_min = the_min.strip('.')
+    the_ampm = ''
+    if ' ' in the_min:
+        the_min, the_ampm = the_min.split(' ')
+    the_ampm = the_ampm[:4].strip(' . ')
+    print('the_hr={the_hr}; the_min={the_min}; the_ampm={the_ampm}'.format(the_hr=the_hr, the_min=the_min, the_ampm=the_ampm))
+    if the_hr not in (12, '12'):
+        print("the_hr is neither 12 nor '12'")
+        print(type(the_hr))
+    if the_hr in (0, '0') and the_min in (0, '0', '00'):
+        return ("twelve midnight",)
+    elif the_hr in (12, '12') and the_min in (0, '0', '00'):
+        return ("twelve noon",)
+    elif the_ampm == '':
+        return (hours_lst[int(the_hr)] + '?', minutes_lst[int(the_min)])
+    else:
+        return (hours_lst[int(the_hr)] + '?', minutes_lst[int(the_min)], the_ampm + '.')
