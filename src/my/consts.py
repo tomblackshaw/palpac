@@ -136,16 +136,22 @@ hello_owner_lst = [
 """Excuse me, ${owner}, may I have a word?""",
 """Oh my, ${owner}, I have such news! Have you the time? You do now.""",
 """Ground control to Major ${owner}!""",
+"""Oh captain, my captain? ${owner}, you salty dog!"""
 ]
 
 alarm_messages_lst = [
+"""${hello_owner} Swab the decks, hoist the main sail, and give those jolly jack tars a good whipping! It's ${shorttime}. Up and atom!""",
+"""It's ${one_minute_later}. Just kidding, it's actually ${shorttime} but it'll be ${one_minute_later} soon. Or will it? ${hello_owner} You'd better get up and check.""",
+"""Knock, knock! Who's there? Get a warrant. Oh, and by the way, ${hello_owner} It's ${shorttime}.""",
+"""${hello_owner} I love you, but you look like crap. Get up and do something. It's ${shorttime} and time's a-wasting.""",
+"""${hello_owner} I am an interrupting cow. Moo. Moo. Moo. I'll keep mooing until you get out of bed. Moo. It's ${shorttime}.""",
 """${hello_owner} It's ${shorttime}. So, ${owner}, who has two thumbs and a functional alarm clock?. . . I'll give you a hint. It isn't Bill Cosby.""",
 """${hello_owner} The time is ${shorttime}. You're late, you're late, for a very important date. . . When? Where? I don't care!""",
 """${hello_owner} It's ${shorttime}. Each day has at least 24 hours. You're awake for, wait, no, that's not it. Every day has 12 hours and you're... No, that's not it either. Don't judge me! I'm sleepy!""",
-"""${hello_owner} This is your alarm. This is your alarm. Ring. ... Ring, ring. ... Ring, ring, ring. Hello? Hi, It's ${owner}'s life, passing by. What's that? ${owner} doesn't care? Okay, bye. Also, it's ${shorttime}.""",
+"""${hello_owner} This is your alarm. This is your alarm. Ring. ... Ring, ring. ... Ring, ring, ring. Hello? Hi, It's your life, passing you by. What's that? ${owner} doesn't care? Okay, bye. Also, it's ${shorttime}.""",
 """${hello_owner} Get up! It's ${shorttime}. If you get up, I'll promise not to tell your friends you fart in your sleep.""",
 """${hello_owner} Okay, Rip Van ${owner}. It's ${shorttime}. Get your ass out of bed before I play Baby Shark on Repeat.""",
-"""${hello_owner} Current location of ${owner}: bed. Appropriate location of ${owner}: somewhere else. It is ${shorttime}. Do you know where your future is?""",
+"""${hello_owner} Current location of ${owner}, bed. Appropriate location of ${owner}, somewhere else. It is ${shorttime}. Do you know where your future is?""",
 """${hello_owner} It's ${shorttime}. The forecast is 100% chance of misery if you haven't charged your electronic devices.""",
 """${hello_owner} Crikey, it's ${shorttime} and there's a crocodile in your bed. Better run for cover! Preferably into a shower, a college class, or a grocery store. Lucky you!""",
 """${hello_owner} Don't cheat yourself. Treat yourself. It's ${shorttime}, time for you to hustle and bustle!""",
@@ -172,3 +178,13 @@ default_speaker_alarm_message_dct = {
     "Giovanni":"""Good despicable morning! Hello ${owner}, my favorite minion! It's ${shorttime}. Today, we are going to blow up ... the bathroom!""",
     "Daniel":"""Oi, ${owner}, mate! It's ${shorttime} Time to have a red hot go, son! Go waltz your Matilda. Good on ya!""",
     }
+
+hours_lst = 'twelve one two three four five six seven eight nine ten eleven twelve thirteen fourteen fifteen \
+sixteen seventeen eighteen nineteen twenty twenty-one twenty-two twenty-three twenty-four'.split(' ')
+minutes_lst = 'hundred oh-one oh-two oh-three oh-four oh-five oh-six oh-seven oh-eight oh-nine ten eleven twelve thirteen fourteen fifteen \
+sixteen seventeen eighteen nineteen twenty twenty-one twenty-two twenty-three twenty-four twenty-five \
+twenty-six twenty-seven twenty-eight twenty-nine thirty thirty-one thirty-two thirty-three thirty-four \
+thirty-five thirty-six thirty-seven thirty-eight thirty-nine forty forty-one forty-two forty-three \
+forty-four forty-five forty-six forty-seven forty-eight forty-nine fifty fifty-one fifty-two fifty-three \
+fifty-four fifty-five fifty-six fifty-seven fifty-eight fifty-nine sixty'.split(' ')
+
