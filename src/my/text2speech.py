@@ -141,13 +141,15 @@ def play_dialogue_lst(tts, dialogue_lst):  # , stability=0.5, similarity_boost=0
 
 
 def phrase_audio(voice, text):
+    text = text.lower().strip(' ')
     outfile = 'audio/cache/{voice}/{text}.mp3'.format(voice=voice, text=text.lower().replace(' ', '_'))
     if not os.path.exists(outfile):
-        print("Generating speech audio (spoken by {voice}) for '{text}'".format(voice=voice, text=text))
-        try:
-            os.mkdir(os.path.dirname(outfile))
-        except FileExistsError:
-            pass
+#        print("Generating speech audio (spoken by {voice}) for '{text}'".format(voice=voice, text=text))
+        os.system('mkdir -p "{mydir}"'.format(mydir=os.path.dirname(outfile)))
+#        try:
+#            os.mkdir(os.path.dirname(outfile))
+#        except FileExistsError:
+#            pass
         vers = sys.version_info
         major_ver, minor_ver = vers[:2]
         if major_ver < 3 or minor_ver < 11:
