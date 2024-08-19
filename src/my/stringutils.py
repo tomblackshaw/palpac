@@ -512,5 +512,7 @@ def text2time(incoming_time_text):
 
 
 def pathname_of_phrase_audio(voice, text):
+    if len(text) > 0 and text[0] == '.':
+        text = text[1:]
     return 'audio/cache/{voice}/{text}.mp3'.format(voice=voice, text=text.lower().replace(' ', '_'))
 
