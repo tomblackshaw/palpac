@@ -264,11 +264,11 @@ def convert_24h_and_mins_to_shorttime(time_24h, time_minutes, diff=0):
         if time_24h == 0:
             return '%d midnight' % (time_24h + 12)
         elif time_24h < 12:
-            return '%dAM' % (time_24h)
+            return '%d A.M.' % (time_24h)
         elif time_24h == 12:
             return '%d noon' % time_24h
         elif time_24h < 24:
-            return '%dPM' % (time_24h - 12)
+            return '%d P.M.' % (time_24h - 12)
         else:
             return '%d hours (how is that possible)' % time_24h
     else:
