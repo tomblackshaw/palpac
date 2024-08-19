@@ -193,6 +193,14 @@ class CachingError(Error):
         super().__init__(message)
 
 
+class MissingFromCacheError(Error):
+    """If the value *should* have been cached already but *hasn't*, raise this."""
+
+    def __init__(self, message):  # pylint: disable=useless-parent-delegation
+
+        super().__init__(message)
+
+
 class StillAwaitingCachedValue(CachingError):
     """If we're trying to access a cached value that hasn't been cached yet.
 

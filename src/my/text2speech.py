@@ -33,7 +33,7 @@ import os
 import random
 import sys
 
-from my.classes.exceptions import NoProfessionalVoicesError
+from my.classes.exceptions import NoProfessionalVoicesError, MissingFromCacheError
 from my.stringutils import generate_random_alarm_message
 
 try:
@@ -140,10 +140,13 @@ def play_dialogue_lst(tts, dialogue_lst):  # , stability=0.5, similarity_boost=0
     #     tts.play(d)
 
 
-def phrase_audio(voice, text):
+def phrase_audio(voice, text, raise_exception_if_not_cached=False):
     text = text.lower().strip(' ')
     outfile = 'audio/cache/{voice}/{text}.mp3'.format(voice=voice, text=text.lower().replace(' ', '_'))
     if not os.path.exists(outfile):
+        if raise_exception_if_not_cached:
+            raise MissingFromCacheError("'{text}' (for {voice}) should have been cached not hasn't been.".format(text=text, voice=voice))
+        print(voice, '==>', text)
 #        print("Generating speech audio (spoken by {voice}) for '{text}'".format(voice=voice, text=text))
         os.system('mkdir -p "{mydir}"'.format(mydir=os.path.dirname(outfile)))
 #        try:
