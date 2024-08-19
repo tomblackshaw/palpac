@@ -24,6 +24,7 @@ Error
         WebAPIOutputError
         WebAPITimeoutError
     CachingError
+        MissingFromCacheError
         StillAwaitingCachedValue
     Text2SpeechError
         VoiceNotFoundError
