@@ -273,13 +273,13 @@ def convert_24h_and_mins_to_shorttime(time_24h, time_minutes, diff=0):
             return '%d hours (how is that possible)' % time_24h
     else:
         if time_24h < 12:
-            return '%d:%02d A.M.' % (12 if time_24h == 0 else time_24h, time_minutes)
+            return '%d:%02d A.M.' % (12 if time_24h in (0, 12, 24) else time_24h, time_minutes)
         else:
-            return '%d:%02d P.M.' % (12 if time_24h == 24 else time_24h % 12, time_minutes)
+            return '%d:%02d P.M.' % (12 if time_24h in (0, 12, 24) else time_24h % 12, time_minutes)
 
 
-def generate_alarm_message(owner, time_24h, time_minutes, message_template):
-    """Generate the text of an alarm message.
+def generate_detokenized_message(owner, time_24h, time_minutes, message_template):
+    """Generate the text of an alarm or otherwise tokenized message.
 
     Using the specified time and template, generate a human-readable,
     pronounceable string containing a simple but pleasant alarm message.
@@ -332,7 +332,7 @@ def generate_alarm_message(owner, time_24h, time_minutes, message_template):
     return newval
 
 
-def generate_random_alarm_message(owner_of_clock, time_24h, time_minutes, justforthisvoice=None):
+def generate_random_alarm_message(owner_of_clock, time_24h, time_minutes, for_voice=None):
     """Example function with types documented in the docstring.
 
     `PEP 484`_ type annotations are supported. If attribute, parameter, and
@@ -349,11 +349,11 @@ def generate_random_alarm_message(owner_of_clock, time_24h, time_minutes, justfo
     TODO: Write me
 
     """
-    if justforthisvoice in default_speaker_alarm_message_dct.keys():
-        message_template = random.choice([default_speaker_alarm_message_dct[justforthisvoice]] + alarm_messages_lst)
+    if for_voice in default_speaker_alarm_message_dct.keys():
+        message_template = random.choice([default_speaker_alarm_message_dct[for_voice]] + alarm_messages_lst)
     else:
         message_template = random.choice(alarm_messages_lst)
-    message = generate_alarm_message(owner_of_clock, time_24h, time_minutes, message_template)
+    message = generate_detokenized_message(owner_of_clock, time_24h, time_minutes, message_template)
     return message
 
 
@@ -509,4 +509,8 @@ def text2time(incoming_time_text):
         raise ValueError("Unable to decode {incoming_time_text}. I made it as far as {txt} but hours={hours} and minutes={minutes}...? Really?".format(
             incoming_time_text=incoming_time_text, txt=txt, hours=hrs, minutes=mns))
     return (hrs, mns)
+
+
+def pathname_of_phrase_audio(voice, text):
+    return 'audio/cache/{voice}/{text}.mp3'.format(voice=voice, text=text.lower().replace(' ', '_'))
 

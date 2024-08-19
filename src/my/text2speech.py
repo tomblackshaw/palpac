@@ -31,10 +31,14 @@ Attributes:
 
 import os
 import random
+import string
 import sys
 
+from pydub.exceptions import CouldntDecodeError
+
 from my.classes.exceptions import NoProfessionalVoicesError, MissingFromCacheError
-from my.stringutils import generate_random_alarm_message
+from my.classes.text2speechclass import convert_audio_recordings_list_into_one_audio_recording, convert_audio_recordings_list_into_an_mp3_file
+from my.stringutils import generate_random_alarm_message, convert_24h_and_mins_to_shorttime, generate_detokenized_message, pathname_of_phrase_audio
 
 try:
     from my.classes.text2speechclass import _Text2SpeechClass
@@ -140,14 +144,15 @@ def play_dialogue_lst(tts, dialogue_lst):  # , stability=0.5, similarity_boost=0
     #     tts.play(d)
 
 
+
 def phrase_audio(voice, text, raise_exception_if_not_cached=False):
     text = text.lower().strip(' ')
-    outfile = 'audio/cache/{voice}/{text}.mp3'.format(voice=voice, text=text.lower().replace(' ', '_'))
+    outfile =pathname_of_phrase_audio(voice, text)
     if not os.path.exists(outfile):
         if raise_exception_if_not_cached:
             raise MissingFromCacheError("'{text}' (for {voice}) should have been cached not hasn't been.".format(text=text, voice=voice))
         print(voice, '==>', text)
-#        print("Generating speech audio (spoken by {voice}) for '{text}'".format(voice=voice, text=text))
+        print("Generating speech audio (spoken by {voice}) for '{text}'".format(voice=voice, text=text))
         os.system('mkdir -p "{mydir}"'.format(mydir=os.path.dirname(outfile)))
 #        try:
 #            os.mkdir(os.path.dirname(outfile))
@@ -165,4 +170,89 @@ def phrase_audio(voice, text, raise_exception_if_not_cached=False):
                 Text2SpeechSingleton.voice = old_v
     with open(outfile, 'rb') as f:
         return f.read()
+
+
+def list_phrases_to_handle(smart_phrase):
+    phrases_to_handle = []
+    while len(smart_phrase) > 0:
+        i = smart_phrase.find('${')
+        if i < 0:
+            phrases_to_handle.append(smart_phrase)
+            smart_phrase = ''
+        else:
+            phrases_to_handle.append(smart_phrase[:i])
+            j = smart_phrase.find('}', i)
+            phrases_to_handle.append( smart_phrase[i:j+1])
+            smart_phrase = smart_phrase[j+1:]
+    return phrases_to_handle
+
+
+def decoded_token(token, hello_owner, owner, shorttime, one_minute_ago, one_minute_later, morning_or_afternoon_or_evening):
+    newval = token
+    for _ in range(0, 5):
+        oldval = newval
+        ov_template = string.Template(oldval)
+        newval = ov_template.substitute(hello_owner=hello_owner, owner=owner, shorttime=shorttime, one_minute_ago=one_minute_ago, one_minute_later=one_minute_later, morning_or_afternoon_or_evening=morning_or_afternoon_or_evening)
+    return newval
+
+'''
+from my.text2speech import smart_phrase_audio, phrase_audio
+from my.classes.text2speechclass import convert_audio_recordings_list_into_one_audio_recording, convert_audio_recordings_list_into_an_mp3_file
+voice = 'Hugo'
+smart_phrase="Hello ${test} there."
+convert_audio_recordings_list_into_an_mp3_file(data, '/tmp/out.mp3')
+s = convert_audio_recordings_list_into_one_audio_recording(data)
+'''
+
+
+def deliberately_cache_a_phrase(voice, smart_phrase):
+    data = []
+    startpos = smart_phrase.find('${')
+    if startpos >= 0:
+        endpos = smart_phrase.find('}', startpos) + 1
+        while endpos < len(smart_phrase) and smart_phrase[endpos] in '?!;:,. ':
+            endpos += 1
+        s = smart_phrase[:startpos].strip()
+        audio_op = phrase_audio(voice, s)
+        try:
+            _ = convert_audio_recordings_list_into_one_audio_recording([audio_op], trim_level=1)
+            data.append(audio_op)
+        except CouldntDecodeError:
+            print('"%s" (for %s) failed. Ignoring.' % (s, voice))
+
+        startpos = endpos
+        return convert_audio_recordings_list_into_one_audio_recording(data, trim_level=1)
+
+
+def smart_phrase_audio(voice, smart_phrase, owner=None, time_24h=None, time_minutes=None):
+    if owner and time_24h and time_minutes:
+        detokenized_phrase = generate_detokenized_message(owner, time_24h, time_minutes, smart_phrase)  # Decoder. FIXME. Document!
+    else:
+        detokenized_phrase = smart_phrase
+    data = []
+    all_words = [r.lower().strip(' ') for r in detokenized_phrase.split(' ')]
+    firstwordno = 0
+    while firstwordno < len(all_words):
+        lastwordno = len(all_words)
+        while lastwordno > firstwordno:
+            searchforthis = ''.join([r + ' ' for r in all_words[firstwordno:lastwordno]]).strip()
+            while len(searchforthis) > 0 and searchforthis[0] in (';:,.!?'):
+                searchforthis = searchforthis[1:]
+            if not os.path.exists(pathname_of_phrase_audio(voice, searchforthis)):
+                lastwordno -= 1
+            else:
+                print("FOUND", searchforthis)
+                firstwordno = lastwordno - 1
+                data.append(phrase_audio(voice, searchforthis))
+                break
+        if lastwordno == firstwordno:
+            if searchforthis == '' or searchforthis.startswith('${'):
+                print('Ignoring', searchforthis)
+            elif ':' in searchforthis:
+                print("TIME <=", searchforthis)
+#                data.append(phrase_audio(voice, "fish"))
+            else:
+                raise MissingFromCacheError("{searchforthis} is missing from the cache".format(searchforthis=searchforthis))
+        firstwordno += 1
+    return convert_audio_recordings_list_into_one_audio_recording(data, trim_level=1)
 

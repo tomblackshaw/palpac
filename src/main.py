@@ -61,7 +61,8 @@ from PyQt5.QtWidgets import QWidget, QApplication  # pylint: disable=no-name-in-
 
 from my.classes.exceptions import StillAwaitingCachedValue, WebAPITimeoutError, WebAPIOutputError, MainAppStartupError
 from my.randomquotes import RandomQuoteSingleton as q
-from my.stringutils import add_to_os_path_if_existent
+from my.stringutils import add_to_os_path_if_existent, generate_random_alarm_message
+from my.text2speech import smart_phrase_audio
 from my.tools import compile_all_uic_files
 
 
@@ -142,12 +143,17 @@ if __name__ == '__main__':
     for binname in ('mpv', 'pyuic6'):
         if 0 != os.system('which {binname} > /dev/null'.format(binname=binname)):
             raise MainAppStartupError("{binname} is missing. Please install it.".format(binname=binname))
-    from my.text2speech import Text2SpeechSingleton
     os.system('''amixer set "Master" 80%''')
     os.system("mpv audio/startup.mp3 &")
-    add_to_os_path_if_existent('/opt/homebrew/bin', strict=False)
-    compile_all_uic_files('ui')
-    app = QApplication(sys.argv)
-    qwin = FunWidget(tts=Text2SpeechSingleton)
-    qwin.showMaximized()
-    sys.exit(app.exec())
+#    add_to_os_path_if_existent('/opt/homebrew/bin', strict=False)
+#    compile_all_uic_files('ui')
+#    app = QApplication(sys.argv)
+#    qwin = FunWidget(tts=Text2SpeechSingleton)
+#    qwin.showMaximized()
+#    sys.exit(app.exec())
+    this_voice = 'Sarah'
+    txt = generate_random_alarm_message('Charlie', 1, 30, for_voice=this_voice)
+    with open('/tmp/out.mp3', 'wb') as f:
+        f.write(smart_phrase_audio(this_voice, txt))
+    os.system("$(which mpv) /tmp/out.mp3")
+

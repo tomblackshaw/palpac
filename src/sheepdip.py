@@ -14,7 +14,7 @@ from my.stringutils import generate_random_alarm_message
 import datetime
 import random
 tts.voice = random.choice(tts.all_voices)
-tts.say(generate_random_alarm_message('Charles Rabson', datetime.datetime.now().hour, datetime.datetime.now().minute)) # , justforthisvoice=tts.voice))
+tts.say(generate_random_alarm_message('Charles Rabson', datetime.datetime.now().hour, datetime.datetime.now().minute)) # , for_voice=tts.voice))
 
 from ast import literal_eval
 from my.speechrecognition import SpeechRecognitionSingleton as s2t

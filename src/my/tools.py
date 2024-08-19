@@ -15,7 +15,6 @@ This module contains miscellaneous tools.
 import datetime
 import os
 import time
-
 from my.classes.exceptions import PyQtUICompilerError
 
 
@@ -97,4 +96,8 @@ def object_from_dictionary(dct):
     for k in dct.keys():
         setattr(o, k, dct[k])
     return o
+
+
+
+
 

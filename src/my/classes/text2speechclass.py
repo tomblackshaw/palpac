@@ -57,9 +57,6 @@ from my.classes.exceptions import MissingVoskAPIKeyError, ElevenLabsDownError
 from my.globals import ELEVENLABS_KEY_BASENAME
 from my.stringutils import flatten, generate_random_string
 
-DEFAULT_SILENCE_THRESHOLD = -50.0
-SNIPPY_SILENCE_THRESHOLD = -30.0
-
 
 # import random
 def get_elevenlabs_clientclass(key_filename):
