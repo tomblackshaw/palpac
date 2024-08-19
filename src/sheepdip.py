@@ -255,7 +255,7 @@ def handle_alarm_command(tts, text):
 def main():
     os.system('''for i in $(wpctl status | grep HDMI | tr ' ' '\n' | tr '.' '\n' | grep -x "[0-9]*"); do  wpctl set-volume $i 100% 2> /dev/null; done''')
     print("Initializing the sheepdip")
-    from my.speechrecognition import SpeechRecognitionSingleton as s2t
+    # from my.speechrecognition import SpeechRecognitionSingleton as s2t
     global G_stop, G_yes
     from my.text2speech import Text2SpeechSingleton as tts
     global G_sorry_audio, G_fu2, G_watch, G_dowhatnow, G_our_cached_weather_report_messages, G_goodbye
@@ -270,23 +270,22 @@ def main():
     G_goodbye = tts.audio("Toodles! Goodbye {owner_name}".format(owner_name=owner_name))
 #    G_our_cached_weather_report_messages = SelfCachingCall(180, generate_weather_audio, tts, owner_name)
     G_stop = False
-    s2t.always_adjust = True
-    s2t.max_recording_time = 5
-    s2t.pause_threshold = 0.8
-    audio_queue = Queue()  # FIXME: Add a limit. Add exception-catching for when we accidentally overload the queue, too.
-    text_queue = Queue()  # FIXME: Make thread-safe, if not already. See https://superfastpython.com/thread-queue/
-    audio_thread = Thread(target=indefinitely_capture_snatches_of_audio_from_microphone, args=(s2t, audio_queue,))
-    audio_thread.start()
-    convertsounds_thread = Thread(target=indefinitely_convert_all_audio, args=(s2t, audio_queue, text_queue,))
-    convertsounds_thread.start()
-    print("Press CTRL-C to quit.")
-    indefinitely_turn_text_into_commands(s2t=s2t, text_queue=text_queue,
-                                         triggerphrases=G_trigger_phrases,
-                                         goading_call=lambda: tts.play(G_yes),
-                                         process_command_func=lambda txt: process_text(tts, txt))
-    convertsounds_thread.join()
-    audio_thread.join()
-
+    # s2t.always_adjust = True
+    # s2t.max_recording_time = 5
+    # s2t.pause_threshold = 0.8
+    # audio_queue = Queue()  # FIXME: Add a limit. Add exception-catching for when we accidentally overload the queue, too.
+    # text_queue = Queue()  # FIXME: Make thread-safe, if not already. See https://superfastpython.com/thread-queue/
+    # audio_thread = Thread(target=indefinitely_capture_snatches_of_audio_from_microphone, args=(s2t, audio_queue,))
+    # audio_thread.start()
+    # convertsounds_thread = Thread(target=indefinitely_convert_all_audio, args=(s2t, audio_queue, text_queue,))
+    # convertsounds_thread.start()
+    # print("Press CTRL-C to quit.")
+    # indefinitely_turn_text_into_commands(s2t=s2t, text_queue=text_queue,
+    #                                      triggerphrases=G_trigger_phrases,
+    #                                      goading_call=lambda: tts.play(G_yes),
+    #                                      process_command_func=lambda txt: process_text(tts, txt))
+    # convertsounds_thread.join()
+    # audio_thread.join()
 
 
 if __name__ == '__main__':
