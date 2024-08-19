@@ -307,9 +307,7 @@ def generate_alarm_message(owner, time_24h, time_minutes, message_template):
 
     """
     # TODO: Write me
-    '''
 
-    '''
     from my.consts import hello_owner_lst
     if owner == '' or owner is None:
         raise ValueError("Owner -- the name of the human who owns this alarm clock -- needs to be a non-empty string. You supplied a duff value.")
@@ -448,7 +446,7 @@ def trim_away_the_trigger_and_locate_the_command_if_there_is_one(sentence, trigg
 
 
 def text2time(incoming_time_text):
-    dct = {'midnight':(0, 0), 'noon':(12, 0), 'midday':(12, 0), 'twelve noon':(12, 0), 'twelve midnight':(0, 0), 'twelve midnight':(0, 0)}
+    dct = {'midnight':(0, 0), 'noon':(12, 0), 'midday':(12, 0), 'twelve noon':(12, 0), 'twelve midnight':(0, 0)}
     if incoming_time_text in dct.keys():
         return dct[incoming_time_text]
     pot_values_lst = ['0', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten',
