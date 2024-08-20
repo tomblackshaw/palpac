@@ -215,7 +215,7 @@ def deliberately_cache_a_smart_phrase(voice, smart_phrase):
             print('"%s" (%s) regenerated successfully.' % (phrase, voice))
 
 
-def smart_phrase_audio(voice, smart_phrase, owner=None, time_24h=None, time_minutes=None):
+def smart_phrase_audio(voice, smart_phrase, owner=None, time_24h=None, time_minutes=None, trim_level=1):
     if owner is not None and time_24h is not None and time_minutes is not None:
         detokenized_phrase = generate_detokenized_message(owner, time_24h, time_minutes, smart_phrase)  # Decoder. FIXME. Document!
         detokenized_phrase = detokenized_phrase.replace('12 noon', '12:00 P.M.').replace('12 midnight', '12:00 A.M.')  # FIXME hack hack hack
@@ -265,7 +265,7 @@ def smart_phrase_audio(voice, smart_phrase, owner=None, time_24h=None, time_minu
                 outfile = pathname_of_phrase_audio(voice, searchforthis)
                 raise MissingFromCacheError("{voice} => {searchforthis} <= {outfile} => is missing from the cache".format(searchforthis=searchforthis, voice=voice, outfile=outfile))
         firstwordno += 1
-    return convert_audio_recordings_list_into_one_audio_recording(data, trim_level=1)
+    return convert_audio_recordings_list_into_one_audio_recording(data=data, trim_level=trim_level)
 
 
 def generate_timedate_phrases_list(voice, timedate_str):
