@@ -8,7 +8,7 @@ generate_random_alarm_message(owner_of_clock, time_24h, time_minutes, for_voice=
 
 '''
 
-from my.consts import hello_owner_lst, alarm_messages_lst, default_speaker_alarm_message_dct, hours_lst, minutes_lst
+from my.consts import hello_owner_lst, alarm_messages_lst, default_speaker_alarm_message_dct, hours_lst, minutes_lst, postsnooze_alrm_msgs_lst
 from my.text2speech import smart_phrase_audio, deliberately_cache_a_smart_phrase
 
 
@@ -32,6 +32,7 @@ def cache_phrases_for_voice(voice):
     cache_this_list_of_smart_phrases_for_voice(voice, hours_lst)
     cache_this_list_of_smart_phrases_for_voice(voice, minutes_lst, add_punctuation=False)
     cache_this_list_of_smart_phrases_for_voice(voice, hello_owner_lst)
+    cache_this_list_of_smart_phrases_for_voice(voice, postsnooze_alrm_msgs_lst)
     cache_this_list_of_smart_phrases_for_voice(voice, alarm_messages_lst)
     cache_this_list_of_smart_phrases_for_voice(voice, ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'])
 #    cache_this_list_of_smart_phrases_for_voice(voice, [str(r) + " P.M." for r in range(1, 13)])

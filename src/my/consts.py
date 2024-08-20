@@ -170,6 +170,18 @@ alarm_messages_lst = [
 """Tardiness has all the professional appeal of ringworm. ${hello_owner} It's ${shorttime}, ${owner}. Get. Up. Now!""",
 ]
 
+postsnooze_alrm_msgs_lst = [
+"""So, ${owner}, were those few extra minutes worthwhile? Ring. Ring. Ring, ring. Yep, it's ${shorttime} now.""",
+"""Hi, my name's ${owner}, and I don't like getting up. It's ${shorttime}. Stop snoozing.""",
+"""Snooze these nuts, home skillet. It's ${shorttime}, ${owner}. Drag yourself out of bed now.""",
+"""${owner} has snoozed, ${owner} hasn't risen, ${owner} will probably snooze again. Whatever. It's ${shorttime} and you've snoozed enough.""",
+"""In the beginning was the snooze, and the snooze was with ${owner}, and the snooze was ${owner}. It's ${shorttime} and you're still napping.""",
+"""As it is written in Ezekiel 23 verse 20, ${owner}, born of woman, shall have a short time to snooze. It's ${shorttime} and you should get up.""",
+"""Look, you had your fun, ${owner}, but time is passing you by. It's ${shorttime}. Get out there and fuck some shit up, yo.""",
+"""Buddhists ask, what is the sound of one hand clapping? I ask, what is the sound of one ${owner} napping? It's ${shorttime} and you need to get up.""",
+"""Awake, ${owner}! Heretofore henceforth forthwitih and post haste. It's ${shorttime}, my dear, so hither your yon and gird up your loins.""",
+]
+
 default_speaker_alarm_message_dct = {
     "Freya": """${hello_owner} Like, OMG, you are totes late, ${owner}. JK, it's ${shorttime} and POV your drip is straight fire. Or gay fire. Whatevs. Anyway, time to rise and shine, my short boss sigma!""",
     "Jessie": """${hello_owner} If you want your bed to outlast its warranty, get up! C'mon! It's ${shorttime} and time's a-wastin', ${owner}!""",
