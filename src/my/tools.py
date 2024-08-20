@@ -78,7 +78,7 @@ def compile_all_uic_files(a_path):
     onlyfiles = [f for f in listdir(a_path) if isfile(join(a_path, f))]
     for f in onlyfiles:
         if f.endswith('.ui'):
-            cmd = '''pyuic6 -o "{a_path}/{pyfile}" "{a_path}/{uifile}"'''.format(
+            cmd = '''pyuic5 -o "{a_path}/{pyfile}" "{a_path}/{uifile}"'''.format(
                 a_path=a_path,
                 uifile=f,
                 pyfile=f[:-2] + 'py')
