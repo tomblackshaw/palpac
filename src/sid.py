@@ -11,9 +11,12 @@ from PyQt5.QtCore import QUrl
 from PyQt5.QtWidgets import QApplication, QMainWindow, QDialog
 
 from my.classes import ReadWriteLock
+from my.tools import compile_all_uic_files, set_vdu_brightness
 from ui.ConfigDialog import Ui_ConfigDiualog
 from ui.MainWindow import Ui_MainWindow
 
+# from PyQt5.QtWebKitWidgets import QWebView , QWebPage
+# from PyQt5.QtWebKit import QWebSettings
 # from PyQt5.Qt import *
 # from PyQt5.Qt import QPushButton
 # from PyQt5.QtWebEngineWidgets import *
@@ -91,6 +94,13 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         else:
             print("You chose", dlg.chosen_clock)
             self.clockname = dlg.chosen_clock
+            if os.path.exists("/tmp/procno"):
+                with open("/tmp/procno", 'r') as f:
+                    procno = int(f.read().strip())
+                os.system("kill %d" % procno)
+            os.system("/Applications/Firefox.app/Contents/MacOS/firefox ui/clocks/%s & echo $! > /tmp/procno" % self.clocks_dct[self.clockname][1])
+            os.system("sleep 6")
+
     #     return super(MainWindow, self).eventFilter(obj, event)
 
     @property
@@ -114,12 +124,17 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         finally:
             self.__clockname_lock.release_write()
 
+# https://pythonspot.com/pyqt5-webkit-browser/
+
 
 if __name__ == '__main__':
 #    sys.path.insert(0, '/opt/homebrew/bin')
-    os.system("$(which pyuic5) ui/mainwindow.ui -o ui/MainWindow.py")
-    os.system("$(which pyuic5) ui/configdialog.ui -o ui/ConfigDialog.py")
+    compile_all_uic_files('ui')
+#    os.system("$(which pyuic5) ui/mainwindow.ui -o ui/MainWindow.py")
+#    os.system("$(which pyuic5) ui/configdialog.ui -o ui/ConfigDialog.py")
     os.system("$(which pyrcc5) ui/palpac.qrc -o palpac_rc.py")
+    set_vdu_brightness(70)
+
     vers = sys.version_info
     major_ver, minor_ver = vers[:2]
 #    if major_ver < 3 or minor_ver < 12:
@@ -130,11 +145,12 @@ if __name__ == '__main__':
         w.clockname = sys.argv[1]
     except IndexError:
         w.clockname = w.all_clocknames[-1]
-#    w.setWindowOpacity(0.1)
+    w.setWindowOpacity(0.1)
     w.setWindowFlags(QtCore.Qt.FramelessWindowHint)
-    w.setWindowFlags(QtCore.Qt.WA_TranslucentBackground, on=True)
+#    w.setWindowFlags(QtCore.Qt.WA_TranslucentBackground)
     print(w.all_clocknames)
     # analog analdig analmast vanilla caac digiclock flatso analclean pureclock neon purewatch rotate rounded wally
+
 
     w.show()
     w.toolButton.clicked.connect(w.choose_clock)

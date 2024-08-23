@@ -38,7 +38,7 @@ class Ui_MainWindow(object):
         self.webengineview.setUrl(QtCore.QUrl("about:blank"))
         self.webengineview.setObjectName("webengineview")
         self.toolButton = QtWidgets.QToolButton(self.centralwidget)
-        self.toolButton.setGeometry(QtCore.QRect(230, 200, 26, 22))
+        self.toolButton.setGeometry(QtCore.QRect(170, 180, 141, 121))
         self.toolButton.setObjectName("toolButton")
         MainWindow.setCentralWidget(self.centralwidget)
 

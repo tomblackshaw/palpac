@@ -29,23 +29,27 @@ Attributes:
 
 """
 
+import datetime
 import os
 import random
 import string
 import sys
 
+from pydub.audio_segment import AudioSegment
 from pydub.exceptions import CouldntDecodeError
 
 from my.classes.exceptions import NoProfessionalVoicesError, MissingFromCacheError
-from my.classes.text2speechclass import convert_audio_recordings_list_into_one_audio_recording, convert_audio_recordings_list_into_an_mp3_file
 from my.consts import hours_lst, minutes_lst
-from my.stringutils import generate_random_alarm_message, convert_24h_and_mins_to_shorttime, generate_detokenized_message, pathname_of_phrase_audio
+from my.stringutils import generate_random_alarm_message, generate_detokenized_message, pathname_of_phrase_audio, generate_random_string
+from my.tools.sound.sing import autotune_this_mp3
+from my.tools.sound.trim import convert_audio_recordings_list_into_one_audio_recording
 
 try:
     from my.classes.text2speechclass import _Text2SpeechClass
     Text2SpeechSingleton = _Text2SpeechClass()
-except ModuleNotFoundError:
+except (ModuleNotFoundError, ImportError):
     Text2SpeechSingleton = None  # compatibility w/ Python 3.8
+
 
 
 def get_first_prof_name(tts):
@@ -218,7 +222,7 @@ def deliberately_cache_a_smart_phrase(voice, smart_phrase):
 def smart_phrase_audio(voice, smart_phrase, owner=None, time_24h=None, time_minutes=None, trim_level=1):
     if owner is not None and time_24h is not None and time_minutes is not None:
         detokenized_phrase = generate_detokenized_message(owner, time_24h, time_minutes, smart_phrase)  # Decoder. FIXME. Document!
-        detokenized_phrase = detokenized_phrase.replace('12 noon', '12:00 P.M.').replace('12 midnight', '12:00 A.M.')  # FIXME hack hack hack
+        detokenized_phrase = detokenized_phrase.replace('12 newn', '12:00 P.M.').replace('12 midnight', '12:00 A.M.')  # FIXME hack hack hack
     else:
 #        print('No detokenizing possible')
         detokenized_phrase = ''.join(r + ' ' for r in list_phrases_to_handle(smart_phrase)).strip(' ')
@@ -239,20 +243,19 @@ def smart_phrase_audio(voice, smart_phrase, owner=None, time_24h=None, time_minu
                 break
             else:
                 firstwordno = lastwordno - 1
-                print("GOT IT (%s) >>%s<<" % (voice, searchforthis))
+#                print("GOT IT (%s) >>%s<<" % (voice, searchforthis))
                 data.append(phrase_audio(voice, searchforthis))
                 break
         if lastwordno == firstwordno:
             if searchforthis == '':
-                pass
                 print('Ignoring', searchforthis)
             elif ':' in searchforthis and len(searchforthis) >= 4:
                 if lastwordno + 1 < len(all_words) and all_words[lastwordno + 1].lower()[:4] in ('a.m.', 'p.m.'):
                     lastwordno += 1
                     searchforthis = ''.join([r + ' ' for r in all_words[firstwordno:lastwordno + 1]]).strip()
                 print("TIME <=", searchforthis)
-                for s in generate_timedate_phrases_list(voice, searchforthis):
-                    print("s =", s)
+                for s in generate_timedate_phrases_list(searchforthis):
+#                    print("s =", s)
                     outfile = pathname_of_phrase_audio(voice, s)
                     if not os.path.exists(outfile):
                         raise MissingFromCacheError("{voice} => {s} <= {outfile} => (time thingy) is missing from the cache".format(s=s, voice=voice, outfile=outfile))
@@ -268,7 +271,43 @@ def smart_phrase_audio(voice, smart_phrase, owner=None, time_24h=None, time_minu
     return convert_audio_recordings_list_into_one_audio_recording(data=data, trim_level=trim_level)
 
 
-def generate_timedate_phrases_list(voice, timedate_str):
+def randomized_note_sequences(keys, len_per):
+    notes = []
+    for k in keys:
+        notes += [random.choice(k) for _ in range(len_per)]
+    return notes
+# make_the_monks_chant(('Hugo', 'Laura', 'Charlotte', 'Alice'), 'Today is my birthday. I am happy.'.split(' '), \
+#                      (Cmaj, Cmaj, Gmaj, Fmaj, Fmaj, Fmin, Cmaj),
+#                      '/tmp/out.mp3', squelch=5)
+#    sys.exit(0)
+
+
+# sing_random_alarm_message('Charlie', 'Sarah', 4, [Cmaj, Fmaj, Gmaj, Fmaj, Fmin, Cmaj], 5, snoozed=False, squelch=4)
+def sing_random_alarm_message(owner, voice, noof_singers, keys, len_per, squelch=4, snoozed=False):
+# ['Sarah', 'Laura', 'Charlie', 'George', 'Callum', 'Liam', 'Charlotte', 'Alice', 'Matilda', 'Will', 'Jessica', 'Eric', 'Chris', 'Brian', 'Daniel', 'Lily', 'Bill', 'Hugo']
+    my_txt = generate_random_alarm_message(owner, datetime.datetime.now().hour, datetime.datetime.now().minute, for_voice=voice, snoozed=snoozed)
+    d = smart_phrase_audio(voice, my_txt)
+    rndstr = generate_random_string(32)
+    flat_voice_fname = '/tmp/tts{rndstr}.flat.mp3'.format(rndstr=rndstr)
+    autotuned_fname = '/tmp/tts{rndstr}.autotuned.mp3'.format(rndstr=rndstr)
+    final_fname = '/tmp/tts{rndstr}.final.mp3'.format(rndstr=rndstr)
+    file_handle = d.export(flat_voice_fname, format="mp3")
+    all_sounds = []
+    for i in range(noof_singers):
+        notes = randomized_note_sequences(keys, len_per)
+        autotune_this_mp3(flat_voice_fname, autotuned_fname, notes, squelch=squelch)
+        all_sounds.append(AudioSegment.from_file(autotuned_fname, format="mp3"))
+    cumulative_overlay = all_sounds[0]
+    for i in range(1, len(all_sounds)):
+        cumulative_overlay = cumulative_overlay.overlay(all_sounds[i])
+    cumulative_overlay.export(final_fname , format="mp3")
+    os.system("$(which mpv) %s" % final_fname)
+    os.unlink(flat_voice_fname)
+    os.unlink(autotuned_fname)
+    os.unlink(final_fname)
+
+
+def generate_timedate_phrases_list(timedate_str):
     the_hr, the_min = timedate_str.split(':')
     the_hr = the_hr.strip('.')
     the_min = the_min.strip('.')
@@ -277,13 +316,13 @@ def generate_timedate_phrases_list(voice, timedate_str):
         the_min, the_ampm = the_min.split(' ')
     the_ampm = the_ampm[:4].strip(' . ')
     print('the_hr={the_hr}; the_min={the_min}; the_ampm={the_ampm}'.format(the_hr=the_hr, the_min=the_min, the_ampm=the_ampm))
-    if the_hr not in (12, '12'):
-        print("the_hr is neither 12 nor '12'")
-        print(type(the_hr))
+#    if the_hr not in (12, '12'):
+#        print("the_hr is neither 12 nor '12'")
+#        print(type(the_hr))
     if the_hr in (0, '0') and the_min in (0, '0', '00'):
         return ("twelve midnight",)
     elif the_hr in (12, '12') and the_min in (0, '0', '00'):
-        return ("twelve noon",)
+        return ("twelve newn",)  # UGH! Necessary, because ElevenLabs can't pronounce 'noon' properly.
     elif the_ampm == '':
         return (hours_lst[int(the_hr)] + '?', minutes_lst[int(the_min)])
     else:

@@ -98,6 +98,13 @@ def object_from_dictionary(dct):
     return o
 
 
-
-
+def set_vdu_brightness(brightness):
+    # Technically, brightness>100 will be ignored by the hardware.
+    if type(brightness) is not int:
+        raise TypeError("Brightness parameter must be an integer")
+    elif brightness < 0 or brightness > 100:
+        raise ValueError("Brightness parameter must be between 0 and 100 (inclusive)")
+    # echo {onoroff} > /sys/class/backlight/rpi_backlight/brightness; \
+    res = os.system('''gpio -g mode 19 pwm; gpio -g pwm 19 {brightness}'''.format(brightness=brightness))
+    return res
 

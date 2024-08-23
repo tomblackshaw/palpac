@@ -161,13 +161,25 @@ alarm_messages_lst = [
 """${hello_owner} The time for sleeping ended at ${one_minute_ago}. The time for adulting is now. It is ${shorttime}. Make a move.""",
 """It's ${shorttime}! If you thought your childhood was fun, you'll love adulting. It's like being old, except you still have to work. Your lesson starts now.""",
 """${hello_owner} This is your conscience. Get up, ${owner}. It's ${shorttime}. It's time to get up. Beep, beep, beep, beep. Do not ignore your conscience. I know where you sleep, ${owner}.""",
-"""${owner}, it's ${shorttime}. You're giving me operational dysfunction. I find your ongoing bedridden-ness to be triggering. Please get up. ${owner}""",
+"""${owner}, it's ${shorttime}. You're giving me operational dysfunction. I find your ongoing bedridden-ness to be triggering. Please get up.""",
 """It is ${shorttime}. . . Hey ${owner}! ${hello_owner} it's still ${shorttime}. . . In a minute, it'll be ${one_minute_later}. . . You don't want to be in bed when that happens, trust me.""",
-"""Hi ${owner}! It'll be ${shorttime} in 3, 2, 1, OK. Now, it's ${shorttime}. ${hello_owner} You really should get up, ${owner}. In 60 seconds, it'll be ${one_minute_later} and you'll be late! Well, OK, not late-late, but you'll be one minute closer to being late.""",
+"""It'll be ${shorttime} in 3, 2, 1, OK. Now, it's ${shorttime}. ${hello_owner}""",
+"""${hello_owner} You really should get up, ${owner}. In 60 seconds, it'll be ${one_minute_later} and you'll be late! Well, OK, not late-late, but you'll be one minute closer to being late.""",
 # """And now it's 7:02. Fantastic. Fan bloody tastic.""",
 # """Seriously? You pushed the snooze button for the 3rd time, ${owner}, and it's already 7:29. Who raised you?
 """Shrek is love. Shrek is life. ${owner} is late. ${hello_owner} It's ${shorttime} and you need to get up.""",
-"""Tardiness has all the professional appeal of ringworm. ${hello_owner} It's ${shorttime}, ${owner}. Get. Up. Now!""",
+"""Tardiness has all the professional appeal of ringworm. It's ${shorttime}, ${owner}. Get. Up. Now!""",
+"""${hello_owner} It is now ${shorttime}. Each day has 24 hours. You are awake for at least twelve of them.""",
+"""${hello_owner} It is now ${shorttime}. Did you charge your cell phone and other electronic devices?""",
+"""${hello_owner} It is now ${shorttime}. Are you sleepy? I love you, but the world doesn't give a shit. Get up!""",
+"""${hello_owner} It is now ${shorttime}. Welcome to adulthood.""",
+"""${hello_owner} It is now ${shorttime}. Please tidy your room. The floor is not a storage system.""",
+"""${hello_owner} It is now ${shorttime}. This is your wake-up call, and a teachable moment.""",
+"""${hello_owner} As Martin Luther King once said, Wake-up delayed is wake-up denied. It is now ${shorttime}.""",
+"""${hello_owner} In the immortal words of Judas Iscariot, go get that money. It is now ${shorttime}.""",
+"""${hello_owner} Hey Alexa, remind {owner} to It is now ${shorttime}. """,
+"""At the beep, the time will be ${shorttime}. . . . . . Beep. Sorry, no, that was premature. Wait. . . . Okay, now, beep. ${hello_owner}""",
+"""""",
 ]
 
 postsnooze_alrm_msgs_lst = [
@@ -179,8 +191,8 @@ postsnooze_alrm_msgs_lst = [
 """As it is written in Ezekiel 23 verse 20, ${owner}, born of woman, shall have a short time to snooze. It's ${shorttime} and you should get up.""",
 """Look, you had your fun, ${owner}, but time is passing you by. It's ${shorttime}. Get out there and fuck some shit up, yo.""",
 """Buddhists ask, what is the sound of one hand clapping? I ask, what is the sound of one ${owner} napping? It's ${shorttime} and you need to get up.""",
-"""Awake, ${owner}! Heretofore henceforth forthwitih and post haste. It's ${shorttime}, my dear, so hither your yon and gird up your loins.""",
-]
+"""Awake, ${owner}! Heretofore henceforth forthwith and post haste. It's ${shorttime}, my dear, so hither your yon and gird up your loins.""",
+"""Hey Alexa, Set volume to maximum. . . Hey Alexa, Play Baby Shark by Pink Fong."""]
 
 default_speaker_alarm_message_dct = {
     "Freya": """${hello_owner} Like, OMG, you are totes late, ${owner}. JK, it's ${shorttime} and POV your drip is straight fire. Or gay fire. Whatevs. Anyway, time to rise and shine, my short boss sigma!""",
@@ -199,4 +211,9 @@ twenty-six twenty-seven twenty-eight twenty-nine thirty thirty-one thirty-two th
 thirty-five thirty-six thirty-seven thirty-eight thirty-nine forty forty-one forty-two forty-three \
 forty-four forty-five forty-six forty-seven forty-eight forty-nine fifty fifty-one fifty-two fifty-three \
 fifty-four fifty-five fifty-six fifty-seven fifty-eight fifty-nine sixty'.split(' ')
+
+Cmaj = 'c3 g3 c4 e4 g4 c5'.split(' ')
+Fmaj = 'c3 f3 a3 c4 f4 a4 c5'.split(' ')
+Gmaj = 'd3 g3 b3 d4 g4 b4 d5'.split(' ')
+Fmin = 'c3 f3 g#3 c4 f4 g#4 c5'.split(' ')
 
