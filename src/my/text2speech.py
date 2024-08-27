@@ -41,7 +41,6 @@ from pydub.exceptions import CouldntDecodeError
 from my.classes.exceptions import NoProfessionalVoicesError, MissingFromCacheError
 from my.consts import hours_lst, minutes_lst
 from my.stringutils import generate_random_alarm_message, generate_detokenized_message, pathname_of_phrase_audio, generate_random_string
-from my.tools.sound.sing import autotune_this_mp3
 from my.tools.sound.trim import convert_audio_recordings_list_into_one_audio_recording
 
 try:
@@ -271,41 +270,6 @@ def smart_phrase_audio(voice, smart_phrase, owner=None, time_24h=None, time_minu
     return convert_audio_recordings_list_into_one_audio_recording(data=data, trim_level=trim_level)
 
 
-def randomized_note_sequences(keys, len_per):
-    notes = []
-    for k in keys:
-        notes += [random.choice(k) for _ in range(len_per)]
-    return notes
-# make_the_monks_chant(('Hugo', 'Laura', 'Charlotte', 'Alice'), 'Today is my birthday. I am happy.'.split(' '), \
-#                      (Cmaj, Cmaj, Gmaj, Fmaj, Fmaj, Fmin, Cmaj),
-#                      '/tmp/out.mp3', squelch=5)
-#    sys.exit(0)
-
-
-# sing_random_alarm_message('Charlie', 'Sarah', 4, [Cmaj, Fmaj, Gmaj, Fmaj, Fmin, Cmaj], 5, snoozed=False, squelch=4)
-def sing_random_alarm_message(owner, voice, noof_singers, keys, len_per, squelch=4, snoozed=False):
-# ['Sarah', 'Laura', 'Charlie', 'George', 'Callum', 'Liam', 'Charlotte', 'Alice', 'Matilda', 'Will', 'Jessica', 'Eric', 'Chris', 'Brian', 'Daniel', 'Lily', 'Bill', 'Hugo']
-    my_txt = generate_random_alarm_message(owner, datetime.datetime.now().hour, datetime.datetime.now().minute, for_voice=voice, snoozed=snoozed)
-    d = smart_phrase_audio(voice, my_txt)
-    rndstr = generate_random_string(32)
-    flat_voice_fname = '/tmp/tts{rndstr}.flat.mp3'.format(rndstr=rndstr)
-    autotuned_fname = '/tmp/tts{rndstr}.autotuned.mp3'.format(rndstr=rndstr)
-    final_fname = '/tmp/tts{rndstr}.final.mp3'.format(rndstr=rndstr)
-    file_handle = d.export(flat_voice_fname, format="mp3")
-    all_sounds = []
-    for i in range(noof_singers):
-        notes = randomized_note_sequences(keys, len_per)
-        autotune_this_mp3(flat_voice_fname, autotuned_fname, notes, squelch=squelch)
-        all_sounds.append(AudioSegment.from_file(autotuned_fname, format="mp3"))
-    cumulative_overlay = all_sounds[0]
-    for i in range(1, len(all_sounds)):
-        cumulative_overlay = cumulative_overlay.overlay(all_sounds[i])
-    cumulative_overlay.export(final_fname , format="mp3")
-    os.system("$(which mpv) %s" % final_fname)
-    os.unlink(flat_voice_fname)
-    os.unlink(autotuned_fname)
-    os.unlink(final_fname)
-
 
 def generate_timedate_phrases_list(timedate_str):
     the_hr, the_min = timedate_str.split(':')
@@ -327,3 +291,14 @@ def generate_timedate_phrases_list(timedate_str):
         return (hours_lst[int(the_hr)] + '?', minutes_lst[int(the_min)])
     else:
         return (hours_lst[int(the_hr)] + '?', minutes_lst[int(the_min)], the_ampm + '.')
+
+
+def speak_a_random_alarm_message(owner, hour, minute, voice, snoozed=False):
+    rndstr = generate_random_string(32)
+    flat_filename = '/tmp/tts{rndstr}.flat.mp3'.format(rndstr=rndstr)
+    my_txt = generate_random_alarm_message(owner_of_clock=owner, time_24h=hour, time_minutes=minute, for_voice=voice, snoozed=snoozed)
+    data = smart_phrase_audio(voice, my_txt)
+    data.export(flat_filename, format="mp3")
+    os.system("$(which mpv) %s" % flat_filename)
+    os.unlink(flat_filename)
+

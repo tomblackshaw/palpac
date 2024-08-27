@@ -105,6 +105,6 @@ def set_vdu_brightness(brightness):
     elif brightness < 0 or brightness > 100:
         raise ValueError("Brightness parameter must be between 0 and 100 (inclusive)")
     # echo {onoroff} > /sys/class/backlight/rpi_backlight/brightness; \
-    res = os.system('''gpio -g mode 19 pwm; gpio -g pwm 19 {brightness}'''.format(brightness=brightness))
+    res = os.system('''gpio -g mode 19 pwm; gpio -g pwm 19 {brightness}'''.format(brightness=brightness * 10))
     return res
 

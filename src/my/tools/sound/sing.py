@@ -8,12 +8,37 @@ Created on Aug 22, 2024
 create MP3s
 mix them @ sofware level
 Sing one MP3 file at a time
+
+
+
+    sing_a_random_alarm_message(owner='Charlie', voice=this_voice, hour=datetime.datetime.now().hour, minute=datetime.datetime.now().minute, snoozed=False,
+                                len_per=7, keys=[Cmaj, Fmaj, Gmaj, Fmaj, Fmin, Cmaj])
+
+    songify_this_mp3(infile='audio/cache/Sarah/charlie..mp3', outfile='/tmp/00.mp3', noof_singers=1,
+                         keys=[['c4'.split(' ')]], len_per=4, squelch=3)
+    songify_this_mp3(infile='audio/cache/Sarah/charlie?.mp3', outfile='/tmp/01.mp3', noof_singers=1,
+                         keys=[['g4'.split(' ')]], len_per=4, squelch=3)
+    songify_this_mp3(infile='audio/cache/Sarah/charlie!.mp3', outfile='/tmp/02.mp3', noof_singers=1,
+                         keys=[['c5'.split(' ')]], len_per=4, squelch=3)
+    songify_this_mp3(infile='audio/cache/Sarah/you_really_should_get_up,.mp3', outfile='/tmp/03.mp3', noof_singers=3,
+                         keys=['g3 c4 e4 g4 c5 e5 c6'.split(' '), 'c3 g3 c4 d#4 g4 c5 d#5 c6'.split(' '), ], len_per=1, squelch=3)
+    songify_this_mp3(infile='audio/cache/Sarah/up_you_get!.mp3', outfile='/tmp/04.mp3', noof_singers=1,
+                         keys=[['c4'.split(' ')]], len_per=4, squelch=3)
+    songify_this_mp3(infile='audio/cache/Sarah/up_you_get!.mp3', outfile='/tmp/05.mp3', noof_singers=1,
+                         keys=[['g4'.split(' ')]], len_per=4, squelch=3)
+    songify_this_mp3(infile='audio/cache/Sarah/up_you_get!.mp3', outfile='/tmp/06.mp3', noof_singers=1,
+                         keys=[['c5'.split(' ')]], len_per=4, squelch=3)
+    songify_this_mp3(infile='audio/cache/Sarah/you_really_should_get_up,.mp3', outfile='/tmp/07.mp3', noof_singers=3,
+                         keys=['g3 c4 d#4 g4 c5 d#5 c6'.split(' '), 'c3 g3 c4 e4 g4 c5 e5 c6'.split(' '), ], len_per=1, squelch=3)
+
+
 '''
 
 from functools import partial
 from pathlib import Path
 from textwrap import wrap
 import argparse
+import datetime
 import os
 import random
 import sys
@@ -24,7 +49,9 @@ import librosa
 import librosa.display
 import psola
 
-from my.stringutils import generate_random_string
+from my.consts import Cmaj
+from my.stringutils import generate_random_string, generate_random_alarm_message
+from my.text2speech import smart_phrase_audio
 from my.tools.sound.trim import convert_audio_recordings_list_into_an_mp3_file
 import matplotlib.pyplot as plt
 import numpy as np
@@ -141,4 +168,81 @@ def make_the_monks_chant(voices, phrases, chords, outfile, squelch):
 #        print("Working on", phrase)
         lst.append([phrase, [[random.choice(chord)] for _ in voices]])
     save_mp3_audio_of_several_voices_singing_several_phrases(voices, lst, outfile, squelch)
+
+
+def this_voice_note_sequences(keys, len_per, voxno):
+    notes = []
+    for k in keys:
+        notes += [k[voxno] for _ in range(len_per)]
+    return notes
+
+
+def songify_this_mp3(infile, outfile, noof_singers, keys, len_per, squelch):
+    rndstr = generate_random_string(32)
+    temp_fname = '/tmp/tts{rndstr}.autotuned.mp3'.format(rndstr=rndstr)
+    all_sounds = []
+    for i in range(noof_singers):
+        if len(keys) > noof_singers:
+            notes = randomized_note_sequences(keys=keys, len_per=len_per)
+        else:
+            notes = this_voice_note_sequences(keys=keys, len_per=len_per, voxno=i)
+        autotune_this_mp3(infile, temp_fname, notes, squelch=squelch)
+        all_sounds.append(AudioSegment.from_file(temp_fname, format="mp3"))
+    cumulative_overlay = all_sounds[0]
+    for i in range(1, len(all_sounds)):
+        cumulative_overlay = cumulative_overlay.overlay(all_sounds[i])
+    cumulative_overlay.export(outfile , format="mp3")
+    os.unlink(temp_fname)
+
+
+def randomized_note_sequences(keys, len_per):
+    notes = []
+    for k in keys:
+        notes += [random.choice(k) for _ in range(len_per)]
+    return notes
+# make_the_monks_chant(('Hugo', 'Laura', 'Charlotte', 'Alice'), 'Today is my birthday. I am happy.'.split(' '), \
+#                      (Cmaj, Cmaj, Gmaj, Fmaj, Fmaj, Fmin, Cmaj),
+#                      '/tmp/out.mp3', squelch=5)
+#    sys.exit(0)
+
+
+def NEW_sing_a_random_alarm_message(owner, hour, minute, voice, snoozed=False, noof_singers=4, keys=None, len_per=4, squelch=3):
+    if keys is None:
+        keys = [Cmaj]
+    rndstr = generate_random_string(32)
+    flat_filename = '/tmp/tts{rndstr}.flat.mp3'.format(rndstr=rndstr)
+    sung_filename = '/tmp/tts{rndstr}.sung.mp3'.format(rndstr=rndstr)
+    my_txt = generate_random_alarm_message(owner_of_clock=owner, time_24h=hour, time_minutes=minute, for_voice=voice, snoozed=snoozed)
+    data = smart_phrase_audio(voice, my_txt)
+    data.export(flat_filename, format="mp3")
+    songify_this_mp3(infile=flat_filename, outfile=sung_filename, noof_singers=noof_singers,
+                     keys=keys, len_per=len_per, squelch=squelch)
+    os.system("$(which mpv) --speed=.8 %s" % sung_filename)
+    os.unlink(sung_filename)
+    os.unlink(flat_filename)
+
+
+# sing_random_alarm_message('Charlie', 'Sarah', 4, [Cmaj, Fmaj, Gmaj, Fmaj, Fmin, Cmaj], 5, snoozed=False, squelch=4)
+def OLD_sing_a_random_alarm_message(owner, voice, noof_singers, keys, len_per, squelch=4, snoozed=False):
+# ['Sarah', 'Laura', 'Charlie', 'George', 'Callum', 'Liam', 'Charlotte', 'Alice', 'Matilda', 'Will', 'Jessica', 'Eric', 'Chris', 'Brian', 'Daniel', 'Lily', 'Bill', 'Hugo']
+    my_txt = generate_random_alarm_message(owner, datetime.datetime.now().hour, datetime.datetime.now().minute, for_voice=voice, snoozed=snoozed)
+    d = smart_phrase_audio(voice, my_txt)
+    rndstr = generate_random_string(32)
+    flat_voice_fname = '/tmp/tts{rndstr}.flat.mp3'.format(rndstr=rndstr)
+    autotuned_fname = '/tmp/tts{rndstr}.autotuned.mp3'.format(rndstr=rndstr)
+    final_fname = '/tmp/tts{rndstr}.final.mp3'.format(rndstr=rndstr)
+    file_handle = d.export(flat_voice_fname, format="mp3")
+    all_sounds = []
+    for i in range(noof_singers):
+        notes = randomized_note_sequences(keys, len_per)
+        autotune_this_mp3(flat_voice_fname, autotuned_fname, notes, squelch=squelch)
+        all_sounds.append(AudioSegment.from_file(autotuned_fname, format="mp3"))
+    cumulative_overlay = all_sounds[0]
+    for i in range(1, len(all_sounds)):
+        cumulative_overlay = cumulative_overlay.overlay(all_sounds[i])
+    cumulative_overlay.export(final_fname , format="mp3")
+    os.system("$(which mpv) %s" % final_fname)
+    os.unlink(flat_voice_fname)
+    os.unlink(autotuned_fname)
+    os.unlink(final_fname)
 

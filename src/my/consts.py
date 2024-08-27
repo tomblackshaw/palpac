@@ -159,7 +159,7 @@ alarm_messages_lst = [
 """${hello_owner} What up, G?. . . Don't make me grab my gat and bust caps up in this biznatch. It's ${shorttime}. . . Up you get!""",
 """${hello_owner} Just because it's ${shorttime}, that doesn't mean you need to get up. It's fine. Go back to sleep. I mean, you did set the alarm, but whatever.""",
 """${hello_owner} The time for sleeping ended at ${one_minute_ago}. The time for adulting is now. It is ${shorttime}. Make a move.""",
-"""It's ${shorttime}! If you thought your childhood was fun, you'll love adulting. It's like being old, except you still have to work. Your lesson starts now.""",
+"""It's ${shorttime}. If you thought your childhood was fun, you'll love adulting. It's like being old, except you still have to work. Your lesson starts now.""",
 """${hello_owner} This is your conscience. Get up, ${owner}. It's ${shorttime}. It's time to get up. Beep, beep, beep, beep. Do not ignore your conscience. I know where you sleep, ${owner}.""",
 """${owner}, it's ${shorttime}. You're giving me operational dysfunction. I find your ongoing bedridden-ness to be triggering. Please get up.""",
 """It is ${shorttime}. . . Hey ${owner}! ${hello_owner} it's still ${shorttime}. . . In a minute, it'll be ${one_minute_later}. . . You don't want to be in bed when that happens, trust me.""",
@@ -177,7 +177,7 @@ alarm_messages_lst = [
 """${hello_owner} It is now ${shorttime}. This is your wake-up call, and a teachable moment.""",
 """${hello_owner} As Martin Luther King once said, Wake-up delayed is wake-up denied. It is now ${shorttime}.""",
 """${hello_owner} In the immortal words of Judas Iscariot, go get that money. It is now ${shorttime}.""",
-"""${hello_owner} Hey Alexa, remind {owner} to It is now ${shorttime}. """,
+"""${hello_owner} Hey Alexa, remind ${owner} to It is now ${shorttime}. """,
 """At the beep, the time will be ${shorttime}. . . . . . Beep. Sorry, no, that was premature. Wait. . . . Okay, now, beep. ${hello_owner}""",
 """""",
 ]
