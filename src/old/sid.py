@@ -11,7 +11,7 @@ from PyQt5.QtCore import QUrl
 from PyQt5.QtWidgets import QApplication, QMainWindow, QDialog
 
 from my.classes import ReadWriteLock
-from my.tools import compile_all_uic_files, set_vdu_brightness
+from my.gui import set_vdu_brightness, compile_all_uic_files
 from ui.ConfigDialog import Ui_ConfigDiualog
 from ui.MainWindow import Ui_MainWindow
 
