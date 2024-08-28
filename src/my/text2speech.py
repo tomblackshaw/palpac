@@ -29,13 +29,11 @@ Attributes:
 
 """
 
-import datetime
 import os
 import random
 import string
 import sys
 
-from pydub.audio_segment import AudioSegment
 from pydub.exceptions import CouldntDecodeError
 
 from my.classes.exceptions import NoProfessionalVoicesError, MissingFromCacheError
@@ -90,8 +88,6 @@ def speak_random_alarm(owner_name, time_24h, time_minutes, voice=None, tts=Text2
     """
     if voice is None:
         voice = tts.random_voice
-#    tts.voice = voice
-#    del voice
     message = generate_random_alarm_message(owner_name, time_24h, time_minutes, voice)
     prof_name = get_first_prof_name(tts)  # [r for r in tts.api_voices if r.samples is not None][0].name
     if voice == prof_name:
@@ -142,8 +138,6 @@ def play_dialogue_lst(tts, dialogue_lst):  # , stability=0.5, similarity_boost=0
         tts.voice = name
         data_to_play.append(tts.audio(text))
     tts.play(data_to_play)
-    # for d in data_to_play:
-    #     tts.play(d)
 
 
 
@@ -160,10 +154,6 @@ def phrase_audio(voice, text, raise_exception_if_not_cached=False):
         print(voice, '==>', text)
         print("Generating speech audio (spoken by {voice}) for '{text}'".format(voice=voice, text=text))
         os.system('mkdir -p "{mydir}"'.format(mydir=os.path.dirname(outfile)))
-#        try:
-#            os.mkdir(os.path.dirname(outfile))
-#        except FileExistsError:
-#            pass
         vers = sys.version_info
         major_ver, minor_ver = vers[:2]
         if major_ver < 3 or minor_ver < 11:
@@ -217,11 +207,11 @@ def deliberately_cache_a_smart_phrase(voice, smart_phrase):
 
 
 def smart_phrase_audio(voice, smart_phrase, owner=None, time_24h=None, time_minutes=None, trim_level=1):
+    # FIXME This is a badly written subroutine. Clean it up. Document it. Thank you.
     if owner is not None and time_24h is not None and time_minutes is not None:
-        detokenized_phrase = generate_detokenized_message(owner, time_24h, time_minutes, smart_phrase)  # Decoder. FIXME. Document!
-        detokenized_phrase = detokenized_phrase.replace('12 newn', '12:00 P.M.').replace('12 midnight', '12:00 A.M.')  # FIXME hack hack hack
+        detokenized_phrase = generate_detokenized_message(owner, time_24h, time_minutes, smart_phrase)
+        detokenized_phrase = detokenized_phrase.replace('12 newn', '12:00 P.M.').replace('12 midnight', '12:00 A.M.')
     else:
-#        print('No detokenizing possible')
         detokenized_phrase = ''.join(r + ' ' for r in list_phrases_to_handle(smart_phrase)).strip(' ')
     detokenized_phrase = detokenized_phrase.lower()
     data = []
@@ -231,16 +221,12 @@ def smart_phrase_audio(voice, smart_phrase, owner=None, time_24h=None, time_minu
         lastwordno = len(all_words)
         while lastwordno > firstwordno:
             searchforthis = ''.join([r + ' ' for r in all_words[firstwordno:lastwordno]]).strip()
-#            while len(searchforthis) > 0 and searchforthis[0] in (';:,.!?'):
-#                searchforthis = searchforthis[1:]
-#            print('looking for >>%s<<' % searchforthis)
             if not os.path.exists(pathname_of_phrase_audio(voice, searchforthis)):
                 lastwordno -= 1
             elif len(searchforthis) == 0:
                 break
             else:
                 firstwordno = lastwordno - 1
-#                print("GOT IT (%s) >>%s<<" % (voice, searchforthis))
                 data.append(phrase_audio(voice, searchforthis))
                 break
         if lastwordno == firstwordno:
@@ -252,13 +238,11 @@ def smart_phrase_audio(voice, smart_phrase, owner=None, time_24h=None, time_minu
                     searchforthis = ''.join([r + ' ' for r in all_words[firstwordno:lastwordno + 1]]).strip()
                 print("TIME <=", searchforthis)
                 for s in generate_timedate_phrases_list(searchforthis):
-#                    print("s =", s)
                     outfile = pathname_of_phrase_audio(voice, s)
                     if not os.path.exists(outfile):
                         raise MissingFromCacheError("{voice} => {s} <= {outfile} => (time thingy) is missing from the cache".format(s=s, voice=voice, outfile=outfile))
                     data.append(phrase_audio(voice, s))
                 firstwordno = lastwordno
-#                data.append(phrase_audio(voice, searchforthis))
             elif searchforthis in ('?', ':', '!', '.'):
                 print("Ignoring", searchforthis)
             else:
@@ -278,9 +262,6 @@ def generate_timedate_phrases_list(timedate_str):
         the_min, the_ampm = the_min.split(' ')
     the_ampm = the_ampm[:4].strip(' . ')
     print('the_hr={the_hr}; the_min={the_min}; the_ampm={the_ampm}'.format(the_hr=the_hr, the_min=the_min, the_ampm=the_ampm))
-#    if the_hr not in (12, '12'):
-#        print("the_hr is neither 12 nor '12'")
-#        print(type(the_hr))
     if the_hr in (0, '0') and the_min in (0, '0', '00'):
         return ("twelve midnight",)
     elif the_hr in (12, '12') and the_min in (0, '0', '00'):
