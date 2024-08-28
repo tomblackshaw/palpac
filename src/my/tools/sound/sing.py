@@ -44,14 +44,14 @@ import random
 import sys
 
 from pydub.audio_segment import AudioSegment
+import librosa
+import librosa.display
 
 from more_itertools import sliced
 from my.consts import Cmaj
 from my.stringutils import generate_random_string, generate_random_alarm_message
 from my.text2speech import smart_phrase_audio
 from my.tools.sound.trim import convert_audio_recordings_list_into_an_mp3_file
-import librosa
-import librosa.display
 import matplotlib.pyplot as plt
 import numpy as np
 import psola
@@ -231,7 +231,7 @@ def OLD_sing_a_random_alarm_message(owner, voice, noof_singers, keys, len_per, s
     flat_voice_fname = '/tmp/tts{rndstr}.flat.mp3'.format(rndstr=rndstr)
     autotuned_fname = '/tmp/tts{rndstr}.autotuned.mp3'.format(rndstr=rndstr)
     final_fname = '/tmp/tts{rndstr}.final.mp3'.format(rndstr=rndstr)
-    file_handle = d.export(flat_voice_fname, format="mp3")
+    _ = d.export(flat_voice_fname, format="mp3")
     all_sounds = []
     for i in range(noof_singers):
         notes = randomized_note_sequences(keys, len_per)
