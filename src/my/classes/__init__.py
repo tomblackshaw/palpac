@@ -61,6 +61,9 @@ class ReadWriteLock:
     need to permit a given variable to be read by multiple threads but
     be modified by only one thread.
 
+    Attributes:
+        locked (bool): Returns status of lock: True if locked, False if not.
+
     """
     def __init__(self):
         self._read_ready_lck = Lock()
