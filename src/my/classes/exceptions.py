@@ -5,9 +5,8 @@ Created on May 20, 2024
 
 @author: Tom Blackshaw
 
-This module demonstrates documentation. Docstrings may extend over multiple lines. Sections are created
-with a section header and a colon followed by a block of indented text.
-
+This module contains every custom exception that the app uses. The classes and subclasses
+are namedw accordingly.
 
 Error
     StartupError
@@ -16,8 +15,6 @@ Error
             MissingVoskAPIKeyError
         PyQtStartupError
             PyQtUICompilerError
-        Text2SpeechStartupError
-            VoiceNotChosenYetError
         VersionError
             PythonVersionError
     WebAPIError
@@ -26,15 +23,7 @@ Error
     CachingError
         MissingFromCacheError
         StillAwaitingCachedValue
-    Text2SpeechError
-        VoiceNotFoundError
-            NoProfessionalVoicesError
-    Speech2TextError
-        RecognitionError
-            MicrophoneError
-                MicrophoneTimeoutError
-                MutedMicrophoneError
-            UnknownCommandError
+
 
 Example:
     n/a
@@ -60,20 +49,6 @@ class StartupError(Error):
 
     def __init__(self, message):  # pylint: disable=useless-parent-delegation
         super().__init__(message)
-
-# class Text2SpeechStartupError(StartupError):
-#     """Class for all Text2Speech Startup Errors"""
-#
-#     def __init__(self, message):  # pylint: disable=useless-parent-delegation
-#         super().__init__(message)
-#
-#
-# class VoiceNotChosenYetError(Text2SpeechStartupError):
-#     """The programmer hasn't chosen a voice yet; use tts.voice=... to do that."""
-#
-#     def __init__(self, message):  # pylint: disable=useless-parent-delegation
-#
-#         super().__init__(message)
 
 
 class MainAppStartupError(StartupError):
@@ -265,58 +240,4 @@ class NoProfessionalVoicesError(VoiceNotFoundError):
         super().__init__(message)
 
 
-class Speech2TextError(Error):
-    """Class for all speechrecognitionclass errors"""
-
-    def __init__(self, message):  # pylint: disable=useless-parent-delegation
-
-        super().__init__(message)
-
-
-class ElevenLabsDownError(Speech2TextError):
-    """Class for all my custom speech recognition errors"""
-
-    def __init__(self, message):  # pylint: disable=useless-parent-delegation
-
-        super().__init__(message)
-
-
-class RecognitionError(Speech2TextError):
-    """Class for all my custom speech recognition errors"""
-
-    def __init__(self, message):  # pylint: disable=useless-parent-delegation
-
-        super().__init__(message)
-
-
-class MicrophoneError(RecognitionError):
-    """Class for all my custom microphone errors"""
-
-    def __init__(self, message):  # pylint: disable=useless-parent-delegation
-
-        super().__init__(message)
-
-
-class MicrophoneTimeoutError(MicrophoneError):
-    """Class for all my timed-out microphone errors"""
-
-    def __init__(self, message):  # pylint: disable=useless-parent-delegation
-
-        super().__init__(message)
-
-
-class MutedMicrophoneError(MicrophoneError):
-    """Class for all my muted microphone errors"""
-
-    def __init__(self, message):  # pylint: disable=useless-parent-delegation
-
-        super().__init__(message)
-
-
-class UnknownCommandError(RecognitionError):
-    """Class for all my 'unknown command' errors"""
-
-    def __init__(self, message):  # pylint: disable=useless-parent-delegation
-
-        super().__init__(message)
 
