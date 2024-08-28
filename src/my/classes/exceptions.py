@@ -10,15 +10,13 @@ are namedw accordingly.
 
 Error
     StartupError
-        VoskStartupError
-            MissingVoskModelError
-            MissingVoskAPIKeyError
         PyQtStartupError
             PyQtUICompilerError
         VersionError
             PythonVersionError
     Text2SpeechError
         ElevenLabsDownError
+        ElevenLabsMissingKeyError
         VoiceNotFoundError
             NoProfessionalVoicesError
     WebAPIError
@@ -62,34 +60,6 @@ class MainAppStartupError(StartupError):
         super().__init__(message)
 
 
-class VoskStartupError(StartupError):
-    """Class for all Vosk startup errors"""
-
-    def __init__(self, message):  # pylint: disable=useless-parent-delegation
-        super().__init__(message)
-
-
-class MissingVoskAPIKeyError(VoskStartupError):
-    """Vosk API key is missing"""
-
-    def __init__(self, message):  # pylint: disable=useless-parent-delegation
-        super().__init__(message)
-
-
-class CannotImportVoskError(VoskStartupError):
-    """The 'import vosk' call failed"""
-
-    def __init__(self, message):  # pylint: disable=useless-parent-delegation
-        super().__init__(message)
-
-
-class CannotImportLooseVersionError(VoskStartupError):  # TODO: elaborate on this
-    """The 'from distutils.version import LooseVersion' call failed"""
-
-    def __init__(self, message):  # pylint: disable=useless-parent-delegation
-        super().__init__(message)
-
-
 class VersionError(StartupError):
     """Class for all main app startup errors"""
 
@@ -99,20 +69,6 @@ class VersionError(StartupError):
 
 class PythonVersionError(VersionError):
     """Class for all main app startup errors"""
-
-    def __init__(self, message):  # pylint: disable=useless-parent-delegation
-        super().__init__(message)
-
-
-class CannotSetVoskLogLevelError(VoskStartupError):
-    """I cannot set Vosk's log level"""
-
-    def __init__(self, message):  # pylint: disable=useless-parent-delegation
-        super().__init__(message)
-
-
-class MissingVoskModelError(VoskStartupError):
-    """Model folder is missing; it should be saved to 'model' folder in src dir"""
 
     def __init__(self, message):  # pylint: disable=useless-parent-delegation
         super().__init__(message)
@@ -222,6 +178,14 @@ class StillAwaitingCachedValue(CachingError):
 
 class Text2SpeechError(Error):
     """Class for all text2speech errors"""
+
+    def __init__(self, message):  # pylint: disable=useless-parent-delegation
+
+        super().__init__(message)
+
+
+class ElevenLabsMissingKeyError(Text2SpeechError):
+    """If the elevenlabs key file is missing, throw this"""
 
     def __init__(self, message):  # pylint: disable=useless-parent-delegation
 
