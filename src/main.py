@@ -12,30 +12,11 @@ Example:
         $ cd src
         $ python3 main.py
 
-Section breaks are created by resuming unindented text. Section breaks
-are also implicitly created anytime a new section starts.
-
-Todo:
-    * For module TODOs
-    * You have to also use ``sphinx.ext.todo`` extension
-
 .. _Style Guide:
    https://sphinxcontrib-napoleon.readthedocs.io/en/latest/example_google.html
 
 
 
-0 0
-1 51
-2 60
-3 68
-4 75
-5 81
-6 86
-7 90
-8 93
-9 95
-10 96
-11 100
 '''
 
 # from my.classes.text2speechclass import convert_audio_recordings_list_into_an_mp3_file
@@ -161,7 +142,7 @@ if __name__ == '__main__':
         print("Options:", voices_lst)
         sys.exit(1)
     this_voice = sys.argv[1]
-    os.system('''amixer set "Master" {vol}'''.format(vol=sys.argv[2]))
+    set_audio_volume(int(sys.argv[2])) # between 0 and 10
     speak_a_random_alarm_message(owner='Charlie', voice=this_voice, hour=datetime.datetime.now().hour, minute=datetime.datetime.now().minute, snoozed=False)
 
 #     make_the_monks_chant(['Callum', 'Jessica', 'Sarah'], 'Hello world, you are loved.'.split(' '),

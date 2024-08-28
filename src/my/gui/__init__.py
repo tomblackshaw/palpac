@@ -27,6 +27,24 @@ def set_vdu_brightness(brightness):
     return res
 
 
+def set_audio_volume(volume, mixer="Master"):
+    """Set the volume of the principal ALSA device.
+
+    Args:
+        v (int): Volume level, from 0 to 11. (Don't use 11.)
+
+    Raises:
+        ValueError: if v<0 or >11
+        TypeError: if v is not int.
+    """
+    real_vol_list = [0, 51, 60, 68, 75, 81, 86, 90, 93, 95, 96, 100]
+    if type(volume) is not int:
+        raise TypeError("set_audio_volume() takes an integer parameter, please.")
+    if volume < 0 or volume > 11:
+        raise ValueError("set_audio_volume() takes an int between 0 and 10, inclusive, please.")
+    os.system('''amixer set "{mixer}" {volume}'''.format(mixer=mixer, volume=real_vol_list[volume]))
+
+
 def compile_all_uic_files(a_path):
     """Compile the UIC files in the supplied path.
 
