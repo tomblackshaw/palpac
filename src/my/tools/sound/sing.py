@@ -204,7 +204,11 @@ def randomized_note_sequences(keys, len_per):
 #    sys.exit(0)
 
 
-def sing_a_random_alarm_message(owner, hour, minute, voice, snoozed=False, noof_singers=4, keys=None, len_per=4, squelch=3):
+def sing_a_random_alarm_message(owner, hour, minute, voice, snoozed=False, noof_singers=4, keys=None, len_per=4, squelch=3, speed=0.8):
+    '''
+    keys = [r.split(' ') for r in ('C4 C4 C4 C4', 'G4 G4 G4 G4', 'C5 C5 C5 C5', 'C4 G4 C5 E5 C3 G4 C5 E5', 'C3 G4 C5 E5 C3 G4 C5 D#5')]
+    sing_a_random_alarm_message('Charlie',12,0,'Jessie', keys=keys)
+    '''
     if keys is None:
         keys = [Cmaj]
     rndstr = generate_random_string(32)
@@ -215,7 +219,7 @@ def sing_a_random_alarm_message(owner, hour, minute, voice, snoozed=False, noof_
     data.export(flat_filename, format="mp3")
     songify_this_mp3(infile=flat_filename, outfile=sung_filename, noof_singers=noof_singers,
                      keys=keys, len_per=len_per, squelch=squelch)
-    os.system("$(which mpv) --speed=.8 %s" % sung_filename)
+    os.system("$(which mpv) --speed={speed} {filename}".format(speed=speed, filename=sung_filename))
     os.unlink(sung_filename)
     os.unlink(flat_filename)
 
