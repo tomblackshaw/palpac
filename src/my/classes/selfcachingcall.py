@@ -38,6 +38,7 @@ Examples:
 from threading import Thread  # Condition, Lock,
 from time import sleep
 import copy
+import random
 
 from my.classes import ReadWriteLock
 from my.classes.exceptions import StillAwaitingCachedValue
@@ -167,7 +168,7 @@ class SelfCachingCall:
                     retval = copy.deepcopy(self.__result)
                 except RuntimeError:
                     logit('value changed while iterating, or something; probably a race condition; retrying...')
-                    sleep(1)
+                    sleep(.5 + random.randint(0, 4) / 10)
                 else:
                     reterr = self.__error
                     break
