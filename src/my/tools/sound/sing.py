@@ -1,15 +1,13 @@
+#!/usr/bin/python3
+
 '''
 Created on Aug 22, 2024
 
 @author: Tom Blackshaw
-'''
-#!/usr/bin/python3
-'''
+
 create MP3s
 mix them @ sofware level
 Sing one MP3 file at a time
-
-
 
     sing_a_random_alarm_message(owner='Charlie', voice=this_voice, hour=datetime.datetime.now().hour, minute=datetime.datetime.now().minute, snoozed=False,
                                 len_per=7, keys=[Cmaj, Fmaj, Gmaj, Fmaj, Fmin, Cmaj])
@@ -206,7 +204,7 @@ def randomized_note_sequences(keys, len_per):
 #    sys.exit(0)
 
 
-def Sing_a_random_alarm_message(owner, hour, minute, voice, snoozed=False, noof_singers=4, keys=None, len_per=4, squelch=3):
+def sing_a_random_alarm_message(owner, hour, minute, voice, snoozed=False, noof_singers=4, keys=None, len_per=4, squelch=3):
     if keys is None:
         keys = [Cmaj]
     rndstr = generate_random_string(32)
