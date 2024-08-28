@@ -2,13 +2,17 @@
 Created on Aug 21, 2024
 
 @author: Tom Blackshaw
+
+This module contains functions that trim silence from either end of audio samples, concatenate
+audio recordings, and so on. Technically, I'm not sure why it should be called 'trim' as opposed
+to 'trim_and_concat', but that's okay. No one is perfect.
 '''
 
 import os
 
 from pydub.audio_segment import AudioSegment
 
-from my.globals import ELEVENLABS_KEY_BASENAME, DEFAULT_SILENCE_THRESHOLD, SNIPPY_SILENCE_THRESHOLD, LAZY_SILENCE_THRESHOLD
+from my.globals import DEFAULT_SILENCE_THRESHOLD, SNIPPY_SILENCE_THRESHOLD, LAZY_SILENCE_THRESHOLD
 from my.stringutils import generate_random_string
 
 
