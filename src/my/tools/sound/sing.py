@@ -43,18 +43,18 @@ import os
 import random
 import sys
 
+from more_itertools import sliced
 from pydub.audio_segment import AudioSegment
 import librosa
 import librosa.display
+import psola
 
-from more_itertools import sliced
 from my.consts import Cmaj
 from my.stringutils import generate_random_string, generate_random_alarm_message
 from my.text2speech import smart_phrase_audio
 from my.tools.sound.trim import convert_audio_recordings_list_into_an_mp3_file
 import matplotlib.pyplot as plt
 import numpy as np
-import psola
 import scipy.signal as sig
 import soundfile as sf
 
@@ -206,7 +206,7 @@ def randomized_note_sequences(keys, len_per):
 #    sys.exit(0)
 
 
-def NEW_sing_a_random_alarm_message(owner, hour, minute, voice, snoozed=False, noof_singers=4, keys=None, len_per=4, squelch=3):
+def Sing_a_random_alarm_message(owner, hour, minute, voice, snoozed=False, noof_singers=4, keys=None, len_per=4, squelch=3):
     if keys is None:
         keys = [Cmaj]
     rndstr = generate_random_string(32)
@@ -222,27 +222,4 @@ def NEW_sing_a_random_alarm_message(owner, hour, minute, voice, snoozed=False, n
     os.unlink(flat_filename)
 
 
-# sing_random_alarm_message('Charlie', 'Sarah', 4, [Cmaj, Fmaj, Gmaj, Fmaj, Fmin, Cmaj], 5, snoozed=False, squelch=4)
-def OLD_sing_a_random_alarm_message(owner, voice, noof_singers, keys, len_per, squelch=4, snoozed=False):
-# ['Sarah', 'Laura', 'Charlie', 'George', 'Callum', 'Liam', 'Charlotte', 'Alice', 'Matilda', 'Will', 'Jessica', 'Eric', 'Chris', 'Brian', 'Daniel', 'Lily', 'Bill', 'Callum']
-    my_txt = generate_random_alarm_message(owner, datetime.datetime.now().hour, datetime.datetime.now().minute, for_voice=voice, snoozed=snoozed)
-    d = smart_phrase_audio(voice, my_txt)
-    rndstr = generate_random_string(32)
-    flat_voice_fname = '/tmp/tts{rndstr}.flat.mp3'.format(rndstr=rndstr)
-    autotuned_fname = '/tmp/tts{rndstr}.autotuned.mp3'.format(rndstr=rndstr)
-    final_fname = '/tmp/tts{rndstr}.final.mp3'.format(rndstr=rndstr)
-    _ = d.export(flat_voice_fname, format="mp3")
-    all_sounds = []
-    for i in range(noof_singers):
-        notes = randomized_note_sequences(keys, len_per)
-        autotune_this_mp3(flat_voice_fname, autotuned_fname, notes, squelch=squelch)
-        all_sounds.append(AudioSegment.from_file(autotuned_fname, format="mp3"))
-    cumulative_overlay = all_sounds[0]
-    for i in range(1, len(all_sounds)):
-        cumulative_overlay = cumulative_overlay.overlay(all_sounds[i])
-    cumulative_overlay.export(final_fname , format="mp3")
-    os.system("$(which mpv) %s" % final_fname)
-    os.unlink(flat_voice_fname)
-    os.unlink(autotuned_fname)
-    os.unlink(final_fname)
 
