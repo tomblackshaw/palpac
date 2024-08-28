@@ -43,18 +43,18 @@ import os
 import random
 import sys
 
-from more_itertools import sliced
 from pydub.audio_segment import AudioSegment
-import librosa
-import librosa.display
-import psola
 
+from more_itertools import sliced
 from my.consts import Cmaj
 from my.stringutils import generate_random_string, generate_random_alarm_message
 from my.text2speech import smart_phrase_audio
 from my.tools.sound.trim import convert_audio_recordings_list_into_an_mp3_file
+import librosa
+import librosa.display
 import matplotlib.pyplot as plt
 import numpy as np
+import psola
 import scipy.signal as sig
 import soundfile as sf
 
@@ -200,7 +200,7 @@ def randomized_note_sequences(keys, len_per):
     for k in keys:
         notes += [random.choice(k) for _ in range(len_per)]
     return notes
-# make_the_monks_chant(('Hugo', 'Laura', 'Charlotte', 'Alice'), 'Today is my birthday. I am happy.'.split(' '), \
+# make_the_monks_chant(('Callum', 'Laura', 'Charlotte', 'Alice'), 'Today is my birthday. I am happy.'.split(' '), \
 #                      (Cmaj, Cmaj, Gmaj, Fmaj, Fmaj, Fmin, Cmaj),
 #                      '/tmp/out.mp3', squelch=5)
 #    sys.exit(0)
@@ -224,7 +224,7 @@ def NEW_sing_a_random_alarm_message(owner, hour, minute, voice, snoozed=False, n
 
 # sing_random_alarm_message('Charlie', 'Sarah', 4, [Cmaj, Fmaj, Gmaj, Fmaj, Fmin, Cmaj], 5, snoozed=False, squelch=4)
 def OLD_sing_a_random_alarm_message(owner, voice, noof_singers, keys, len_per, squelch=4, snoozed=False):
-# ['Sarah', 'Laura', 'Charlie', 'George', 'Callum', 'Liam', 'Charlotte', 'Alice', 'Matilda', 'Will', 'Jessica', 'Eric', 'Chris', 'Brian', 'Daniel', 'Lily', 'Bill', 'Hugo']
+# ['Sarah', 'Laura', 'Charlie', 'George', 'Callum', 'Liam', 'Charlotte', 'Alice', 'Matilda', 'Will', 'Jessica', 'Eric', 'Chris', 'Brian', 'Daniel', 'Lily', 'Bill', 'Callum']
     my_txt = generate_random_alarm_message(owner, datetime.datetime.now().hour, datetime.datetime.now().minute, for_voice=voice, snoozed=snoozed)
     d = smart_phrase_audio(voice, my_txt)
     rndstr = generate_random_string(32)

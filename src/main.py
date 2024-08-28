@@ -164,7 +164,7 @@ if __name__ == '__main__':
     os.system('''amixer set "Master" {vol}'''.format(vol=sys.argv[2]))
     speak_a_random_alarm_message(owner='Charlie', voice=this_voice, hour=datetime.datetime.now().hour, minute=datetime.datetime.now().minute, snoozed=False)
 
-#     make_the_monks_chant(['Hugo', 'Jessica', 'Sarah'], 'Hello world, you are loved.'.split(' '),
+#     make_the_monks_chant(['Callum', 'Jessica', 'Sarah'], 'Hello world, you are loved.'.split(' '),
 #                          (Cmaj, Fmaj, Gmaj, Fmin, Cmaj), outfile='/tmp/out.mp3', squelch=3)
 
 # class MyBrowser(QWebPage):
