@@ -15,7 +15,9 @@ Error
         VersionError
             PythonVersionError
     Text2SpeechError
-        ElevenLabsDownError
+        ElevenLabsWebsiteError
+            ElevenLabsDownError
+            ElevenLabsAPIError
         ElevenLabsMissingKeyError
         VoiceNotFoundError
             NoProfessionalVoicesError
@@ -192,15 +194,27 @@ class ElevenLabsMissingKeyError(Text2SpeechError):
         super().__init__(message)
 
 
-class ElevenLabsDownError(Text2SpeechError):
-    """If the website is down, throw this"""
+class ElevenLabsWebsiteError(Text2SpeechError):
 
     def __init__(self, message):  # pylint: disable=useless-parent-delegation
 
         super().__init__(message)
 
 
-class VoiceNotFoundError(Text2SpeechError):
+class ElevenLabsAPIError(ElevenLabsWebsiteError):
+
+    def __init__(self, message):  # pylint: disable=useless-parent-delegation
+
+        super().__init__(message)
+
+
+class ElevenLabsDownError(ElevenLabsWebsiteError):
+    def __init__(self, message):  # pylint: disable=useless-parent-delegation
+
+        super().__init__(message)
+
+
+class VoiceNotFoundError(ElevenLabsWebsiteError):
     """Class for all 'voice not found' errors"""
 
     def __init__(self, message):  # pylint: disable=useless-parent-delegation

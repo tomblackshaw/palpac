@@ -11,6 +11,8 @@ lot of cool stuff in here.
 .. _Style Guide:
    https://sphinxcontrib-napoleon.readthedocs.io/en/latest/example_google.html
 
+
+
 import os
 os.system('''for i in $(wpctl status | grep HDMI | tr ' ' '\n' | tr '.' '\n' | grep -x "[0-9]*"); do  wpctl set-volume $i 100% 2> /dev/null; done''')
 from my.text2speech import Text2SpeechSingleton as tts
@@ -48,11 +50,12 @@ from random import choice
 import os
 
 from elevenlabs.client import ElevenLabs, Voice
+from elevenlabs.core.api_error import ApiError
 from pydub import AudioSegment
 from pydub.audio_segment import AudioSegment
 
 from my.classes import singleton, ReadWriteLock
-from my.classes.exceptions import ElevenLabsMissingKeyError, ElevenLabsDownError
+from my.classes.exceptions import ElevenLabsMissingKeyError, ElevenLabsAPIError
 from my.globals import ELEVENLABS_KEY_BASENAME
 from my.stringutils import flatten, generate_random_string
 from my.tools.sound.sing import autotune_this_mp3
@@ -365,6 +368,8 @@ class _Text2SpeechClass:
             return audio if getgenerator else b''.join(audio)
         except ConnectError as e:
             raise ElevenLabsDownError("Unable to access the ElevenLabs engine. Check your Internet connection.") from e
+        except ApiError as e:
+            raise ElevenLabsAPIError("Unable to retrieve audio from the ElevenLabs egine. Did you pay your subscription?") from e
 
     def play(self, data, force_mpv=True, trim_level=0):
         if type(data) is str:

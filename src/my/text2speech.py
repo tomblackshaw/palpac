@@ -49,8 +49,6 @@ try:
 except (ModuleNotFoundError, ImportError):
     Text2SpeechSingleton = None  # compatibility w/ Python 3.8
 
-
-
 def get_first_prof_name(tts):
     """Get the name of the first professional-grade voice.
 
