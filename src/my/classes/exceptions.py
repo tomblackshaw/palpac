@@ -17,6 +17,10 @@ Error
             PyQtUICompilerError
         VersionError
             PythonVersionError
+    Text2SpeechError
+        ElevenLabsDownError
+        VoiceNotFoundError
+            NoProfessionalVoicesError
     WebAPIError
         WebAPIOutputError
         WebAPITimeoutError
@@ -218,6 +222,14 @@ class StillAwaitingCachedValue(CachingError):
 
 class Text2SpeechError(Error):
     """Class for all text2speech errors"""
+
+    def __init__(self, message):  # pylint: disable=useless-parent-delegation
+
+        super().__init__(message)
+
+
+class ElevenLabsDownError(Text2SpeechError):
+    """If the website is down, throw this"""
 
     def __init__(self, message):  # pylint: disable=useless-parent-delegation
 
