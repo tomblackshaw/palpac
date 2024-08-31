@@ -49,7 +49,6 @@ import psola
 
 from my.consts import Cmaj
 from my.stringutils import generate_random_string, generate_random_alarm_message
-from my.text2speech import smart_phrase_audio
 from my.tools.sound.trim import convert_audio_recordings_list_into_an_mp3_file
 import matplotlib.pyplot as plt
 import numpy as np
@@ -59,6 +58,7 @@ import soundfile as sf
 
 def closest_pitch(f0, the_notes, squelch=0):
     """Round the given pitch values to the nearest MIDI note numbers"""
+    # FIXME WRITE DOX
     midi_note = np.around(librosa.hz_to_midi(f0))
     # To preserve the nan values.
     nan_indices = np.isnan(f0)
@@ -79,6 +79,7 @@ def closest_pitch(f0, the_notes, squelch=0):
 
 
 def autotune(audio, sr, the_notes, squelch):
+    # FIXME WRITE DOX
     # Set some basis parameters.
     frame_length = 2048
     hop_length = frame_length // 4
@@ -101,6 +102,7 @@ def autotune(audio, sr, the_notes, squelch):
 
 
 def autotune_this_mp3(infile, outfile, notes, squelch=0):
+    # FIXME WRITE DOX
     # 'c4 d4 e4 f4 g4 a4 b4 c5'.split(' ')
     # squelch=3
     y, sr = librosa.load(infile, sr=None, mono=False)
@@ -113,6 +115,7 @@ def autotune_this_mp3(infile, outfile, notes, squelch=0):
 
 
 def save_mp3_audio_of_one_voice_singing_one_phrase(voice, phrase, notes, autotunedfile, squelch):
+    # FIXME WRITE DOX
     from my.text2speech import Text2SpeechSingleton as tts
     tts.voice = voice
     audio = [tts.audio(text=phrase)]
@@ -124,6 +127,7 @@ def save_mp3_audio_of_one_voice_singing_one_phrase(voice, phrase, notes, autotun
 
 
 def save_mp3_audio_of_several_voices_singing_one_phrase(voices_list, phrase, notes, outputfile, squelch):
+    # FIXME WRITE DOX
     fnames_list = []
     fnameroot = '/tmp/tts%s' % generate_random_string(32)
     noof_voices = 0
@@ -144,6 +148,7 @@ def save_mp3_audio_of_several_voices_singing_one_phrase(voices_list, phrase, not
 
 def save_mp3_audio_of_several_voices_singing_several_phrases(voices_list, phrases_and_notes_lst, outputfile, squelch=1, trim_level=1):
     # generate a combined audio for for each phrase; then, concatenate them all
+    # FIXME WRITE DOX
     fnames_list = []
     fnameroot = '/tmp/tts%s' % generate_random_string(32)
     for phraseno in range(len(phrases_and_notes_lst)):
@@ -159,6 +164,7 @@ def save_mp3_audio_of_several_voices_singing_several_phrases(voices_list, phrase
 
 
 def make_the_monks_chant(voices, phrases, chords, outfile, squelch):
+    # FIXME WRITE DOX
     lst = []
     for phraseno in range(0, len(phrases)):
         phrase = phrases[phraseno]
@@ -169,6 +175,7 @@ def make_the_monks_chant(voices, phrases, chords, outfile, squelch):
 
 
 def this_voice_note_sequences(keys, len_per, voxno):
+    # FIXME WRITE DOX
     notes = []
     for k in keys:
         notes += [k[voxno] for _ in range(len_per)]
@@ -176,6 +183,7 @@ def this_voice_note_sequences(keys, len_per, voxno):
 
 
 def songify_this_mp3(infile, outfile, noof_singers, keys, len_per, squelch):
+    # FIXME WRITE DOX
     rndstr = generate_random_string(32)
     temp_fname = '/tmp/tts{rndstr}.autotuned.mp3'.format(rndstr=rndstr)
     all_sounds = []
@@ -194,6 +202,7 @@ def songify_this_mp3(infile, outfile, noof_singers, keys, len_per, squelch):
 
 
 def randomized_note_sequences(keys, len_per):
+    # FIXME WRITE DOX
     notes = []
     for k in keys:
         notes += [random.choice(k) for _ in range(len_per)]
@@ -203,25 +212,6 @@ def randomized_note_sequences(keys, len_per):
 #                      '/tmp/out.mp3', squelch=5)
 #    sys.exit(0)
 
-
-def sing_a_random_alarm_message(owner, hour, minute, voice, snoozed=False, noof_singers=4, keys=None, len_per=4, squelch=3, speed=0.8):
-    '''
-    keys = [r.split(' ') for r in ('C4 C4 C4 C4', 'G4 G4 G4 G4', 'C5 C5 C5 C5', 'C4 G4 C5 E5 C3 G4 C5 E5', 'C3 G4 C5 E5 C3 G4 C5 D#5')]
-    sing_a_random_alarm_message('Charlie',12,0,'Jessie', keys=keys)
-    '''
-    if keys is None:
-        keys = [Cmaj]
-    rndstr = generate_random_string(32)
-    flat_filename = '/tmp/tts{rndstr}.flat.mp3'.format(rndstr=rndstr)
-    sung_filename = '/tmp/tts{rndstr}.sung.mp3'.format(rndstr=rndstr)
-    my_txt = generate_random_alarm_message(owner_of_clock=owner, time_24h=hour, time_minutes=minute, for_voice=voice, snoozed=snoozed)
-    data = smart_phrase_audio(voice, my_txt)
-    data.export(flat_filename, format="mp3")
-    songify_this_mp3(infile=flat_filename, outfile=sung_filename, noof_singers=noof_singers,
-                     keys=keys, len_per=len_per, squelch=squelch)
-    os.system("$(which mpv) --speed={speed} {filename}".format(speed=speed, filename=sung_filename))
-    os.unlink(sung_filename)
-    os.unlink(flat_filename)
 
 
 

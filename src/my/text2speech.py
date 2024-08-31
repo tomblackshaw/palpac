@@ -37,15 +37,19 @@ import sys
 from pydub.exceptions import CouldntDecodeError
 
 from my.classes.exceptions import NoProfessionalVoicesError, MissingFromCacheError
-from my.consts import hours_lst, minutes_lst
+from my.consts import hours_lst, minutes_lst, Cmaj
 from my.stringutils import generate_random_alarm_message, generate_detokenized_message, pathname_of_phrase_audio, generate_random_string
+from my.tools.sound.sing import songify_this_mp3
 from my.tools.sound.trim import convert_audio_recordings_list_into_one_audio_recording
 
 try:
     from my.classes.text2speechclass import _Text2SpeechClass
     Text2SpeechSingleton = _Text2SpeechClass()
-except (ModuleNotFoundError, ImportError):
+except (ModuleNotFoundError, ImportError) as my_e:
+    if 'circular' in str(my_e):
+        raise my_e
     Text2SpeechSingleton = None  # compatibility w/ Python 3.8
+
 
 def get_first_prof_name(tts):
     """Get the name of the first professional-grade voice.
@@ -142,6 +146,7 @@ def play_dialogue_lst(tts, dialogue_lst):  # , stability=0.5, similarity_boost=0
 
 
 def phrase_audio(voice, text, raise_exception_if_not_cached=False):
+    # FIXME WRITE DOX
     text = text.lower().strip(' ')
     if len(text) > 1:
     # if text not in ('!', '?', '.', ','):
@@ -170,6 +175,7 @@ def phrase_audio(voice, text, raise_exception_if_not_cached=False):
 
 
 def list_phrases_to_handle(smart_phrase):
+    # FIXME WRITE DOX
     phrases_to_handle = []
     while len(smart_phrase) > 0:
         i = smart_phrase.find('${')
@@ -184,6 +190,7 @@ def list_phrases_to_handle(smart_phrase):
 
 
 def decoded_token(token, hello_owner, owner, shorttime, one_minute_ago, one_minute_later, morning_or_afternoon_or_evening):
+    # FIXME WRITE DOX
     newval = token
     for _ in range(0, 5):
         oldval = newval
@@ -193,6 +200,7 @@ def decoded_token(token, hello_owner, owner, shorttime, one_minute_ago, one_minu
 
 
 def deliberately_cache_a_smart_phrase(voice, smart_phrase):
+    # FIXME WRITE DOX
     phrases_to_handle = list_phrases_to_handle(smart_phrase)
     for phrase in phrases_to_handle:
         audio_op = phrase_audio(voice, phrase)
@@ -207,6 +215,7 @@ def deliberately_cache_a_smart_phrase(voice, smart_phrase):
 
 
 def smart_phrase_audio(voice, smart_phrase, owner=None, time_24h=None, time_minutes=None, trim_level=1):
+    # FIXME WRITE DOX
     # FIXME This is a badly written subroutine. Clean it up. Document it. Thank you.
     if owner is not None and time_24h is not None and time_minutes is not None:
         detokenized_phrase = generate_detokenized_message(owner, time_24h, time_minutes, smart_phrase)
@@ -252,8 +261,8 @@ def smart_phrase_audio(voice, smart_phrase, owner=None, time_24h=None, time_minu
     return convert_audio_recordings_list_into_one_audio_recording(data=data, trim_level=trim_level)
 
 
-
 def generate_timedate_phrases_list(timedate_str):
+    # FIXME WRITE DOX
     the_hr, the_min = timedate_str.split(':')
     the_hr = the_hr.strip('.')
     the_min = the_min.strip('.')
@@ -273,11 +282,33 @@ def generate_timedate_phrases_list(timedate_str):
 
 
 def speak_a_random_alarm_message(owner, hour, minute, voice, snoozed=False):
+    # FIXME WRITE DOX
     rndstr = generate_random_string(32)
     flat_filename = '/tmp/tts{rndstr}.flat.mp3'.format(rndstr=rndstr)
     my_txt = generate_random_alarm_message(owner_of_clock=owner, time_24h=hour, time_minutes=minute, for_voice=voice, snoozed=snoozed)
     data = smart_phrase_audio(voice, my_txt)
     data.export(flat_filename, format="mp3")
     os.system("$(which mpv) %s" % flat_filename)
+    os.unlink(flat_filename)
+
+
+def sing_a_random_alarm_message(owner, hour, minute, voice, snoozed=False, noof_singers=4, keys=None, len_per=4, squelch=3, speed=0.8):
+    # FIXME WRITE DOX
+    '''
+    keys = [r.split(' ') for r in ('C4 C4 C4 C4', 'G4 G4 G4 G4', 'C5 C5 C5 C5', 'C4 G4 C5 E5 C3 G4 C5 E5', 'C3 G4 C5 E5 C3 G4 C5 D#5')]
+    sing_a_random_alarm_message('Charlie',12,0,'Jessie', keys=keys)
+    '''
+    if keys is None:
+        keys = [Cmaj]
+    rndstr = generate_random_string(32)
+    flat_filename = '/tmp/tts{rndstr}.flat.mp3'.format(rndstr=rndstr)
+    sung_filename = '/tmp/tts{rndstr}.sung.mp3'.format(rndstr=rndstr)
+    my_txt = generate_random_alarm_message(owner_of_clock=owner, time_24h=hour, time_minutes=minute, for_voice=voice, snoozed=snoozed)
+    data = smart_phrase_audio(voice, my_txt)
+    data.export(flat_filename, format="mp3")
+    songify_this_mp3(infile=flat_filename, outfile=sung_filename, noof_singers=noof_singers,
+                     keys=keys, len_per=len_per, squelch=squelch)
+    os.system("$(which mpv) --speed={speed} {filename}".format(speed=speed, filename=sung_filename))
+    os.unlink(sung_filename)
     os.unlink(flat_filename)
 
