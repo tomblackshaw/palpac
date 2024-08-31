@@ -55,7 +55,7 @@ from pydub import AudioSegment
 from pydub.audio_segment import AudioSegment
 
 from my.classes import singleton, ReadWriteLock
-from my.classes.exceptions import ElevenLabsMissingKeyError, ElevenLabsAPIError
+from my.classes.exceptions import ElevenLabsMissingKeyError, ElevenLabsAPIError, ElevenLabsDownError
 from my.globals import ELEVENLABS_KEY_BASENAME
 from my.stringutils import flatten, generate_random_string
 from my.tools.sound.sing import autotune_this_mp3

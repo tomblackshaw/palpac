@@ -42,7 +42,7 @@ import sys
 from PyQt5.QtWidgets import QWidget
 
 from my.classes.exceptions import StillAwaitingCachedValue, WebAPITimeoutError, WebAPIOutputError, MainAppStartupError
-from my.gui import compile_all_uic_files
+from my.gui import compile_all_uic_files, set_audio_volume
 from my.randomquotes import RandomQuoteSingleton as q
 from my.stringutils import generate_random_alarm_message, generate_random_string
 from my.text2speech import smart_phrase_audio, speak_a_random_alarm_message
