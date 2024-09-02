@@ -32,27 +32,16 @@ Sing one MP3 file at a time
 
 '''
 
-from functools import partial
-from pathlib import Path
-from textwrap import wrap
-import argparse
-import datetime
 import os
 import random
-import sys
 
-from more_itertools import sliced
 from pydub.audio_segment import AudioSegment
 import librosa
-import librosa.display
 import psola
 
-from my.consts import Cmaj
-from my.stringutils import generate_random_string, generate_random_alarm_message
+from my.stringutils import generate_random_string
 from my.tools.sound.trim import convert_audio_recordings_list_into_an_mp3_file
-import matplotlib.pyplot as plt
 import numpy as np
-import scipy.signal as sig
 import soundfile as sf
 
 
