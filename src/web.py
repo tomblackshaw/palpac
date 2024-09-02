@@ -5,7 +5,7 @@ import sys
 
 from PyQt5.QtCore import QUrl
 from PyQt5.QtWidgets import QApplication
-from ui import set_vdu_brightness
+from my.gui import set_vdu_brightness
 
 try:
     from PyQt5.QtWebKitWidgets import QWebView as Browser
@@ -21,3 +21,4 @@ view.load(QUrl('file://{cwd}/{relpath}'.format(cwd=os.getcwd(), relpath=sys.argv
 view.setFixedSize(480, 480)
 view.show()
 app.exec_()
+
