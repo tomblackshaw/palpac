@@ -39,7 +39,7 @@ tts.say('09')
 
 '''
 
-from my.consts import hello_owner_lst, alarm_messages_lst, default_speaker_alarm_message_dct, hours_lst, minutes_lst, postsnooze_alrm_msgs_lst
+from my.consts import hello_owner_lst, alarm_messages_lst, hours_lst, minutes_lst, postsnooze_alrm_msgs_lst
 from my.text2speech import smart_phrase_audio, deliberately_cache_a_smart_phrase
 
 
