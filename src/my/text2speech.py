@@ -34,6 +34,8 @@ import random
 import string
 import sys
 
+from pydub.exceptions import CouldntDecodeError
+
 from my.classes.exceptions import NoProfessionalVoicesError, MissingFromCacheError
 from my.consts import hours_lst, minutes_lst, Cmaj
 from my.stringutils import generate_random_alarm_message, generate_detokenized_message, pathname_of_phrase_audio, generate_random_string
@@ -294,7 +296,7 @@ def sing_a_random_alarm_message(owner, hour, minute, voice, snoozed=False, noof_
     # FIXME WRITE DOX
     '''
     keys = [r.split(' ') for r in ('C4 C4 C4 C4', 'G4 G4 G4 G4', 'C5 C5 C5 C5', 'C4 G4 C5 E5 C3 G4 C5 E5', 'C3 G4 C5 E5 C3 G4 C5 D#5')]
-    sing_a_random_alarm_message('Charlie',12,0,'Jessie', keys=keys)
+    sing_a_random_alarm_message('Charlie',12,0,'Lily', keys=keys)
     '''
     if keys is None:
         keys = [Cmaj]
