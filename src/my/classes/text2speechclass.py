@@ -57,7 +57,7 @@ from my.classes.exceptions import ElevenLabsMissingKeyError, ElevenLabsAPIError,
 from my.globals import ELEVENLABS_KEY_BASENAME
 from my.stringutils import flatten, generate_random_string
 from my.tools.sound.sing import autotune_this_mp3
-from my.tools.sound.trim import convert_audio_recordings_list_into_an_mp3_file, convert_audio_recordings_list_into_one_audio_recording
+from my.tools.sound.trim import convert_audio_recordings_list_into_an_mp3_file
 
 
 # import random
