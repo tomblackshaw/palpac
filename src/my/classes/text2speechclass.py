@@ -13,6 +13,7 @@ lot of cool stuff in here.
 
 
 
+
 import os
 os.system('''for i in $(wpctl status | grep HDMI | tr ' ' '\n' | tr '.' '\n' | grep -x "[0-9]*"); do  wpctl set-volume $i 100% 2> /dev/null; done''')
 from my.text2speech import Text2SpeechSingleton as tts

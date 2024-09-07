@@ -196,7 +196,7 @@ def randomized_note_sequences(keys, len_per):
     for k in keys:
         notes += [random.choice(k) for _ in range(len_per)]
     return notes
-# make_the_monks_chant(('Callum', 'Laura', 'Charlotte', 'Alice'), 'Today is my birthday. I am happy.'.split(' '), \
+# make_the_monks_chant(('Callum', 'Laura', 'Charlotte', 'Alice'), 'Would you like to see some puppies, child?'.split(' '), \
 #                      (Cmaj, Cmaj, Gmaj, Fmaj, Fmaj, Fmin, Cmaj),
 #                      '/tmp/out.mp3', squelch=5)
 #    sys.exit(0)

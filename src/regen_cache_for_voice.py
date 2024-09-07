@@ -66,9 +66,6 @@ def cache_phrases_for_voice(voice):
     cache_this_list_of_smart_phrases_for_voice(voice, postsnooze_alrm_msgs_lst)
     cache_this_list_of_smart_phrases_for_voice(voice, alarm_messages_lst)
     cache_this_list_of_smart_phrases_for_voice(voice, ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'])
-#    cache_this_list_of_smart_phrases_for_voice(voice, [str(r) + " P.M." for r in range(1, 13)])
-#    cache_this_list_of_smart_phrases_for_voice(voice, [str(r) + " A.M." for r in range(1, 13)])
-#    cache_this_list_of_smart_phrases_for_voice(voice, [str(r) for r in range(0, 60)])
     cache_this_list_of_smart_phrases_for_voice(voice, ["?", "!", "o'clock", "A.M.", "P.M.",
                                                        "twelve newn",
                                                        "twelve newn", "twelve midnight",
@@ -78,6 +75,7 @@ def cache_phrases_for_voice(voice):
                                                        "good morning", "good afternoon", "good evening",
                                                        "midnight", "hours", "in the afternoon", "in the morning",
                                                        "in the evening"])
+
 
 if __name__ == '__main__':
     potential_owner_names = ["Charlie", "Chief", "Dumbass", "Charles", "Killer"]
