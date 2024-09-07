@@ -51,8 +51,6 @@ import os
 
 from elevenlabs.client import ElevenLabs, Voice
 from elevenlabs.core.api_error import ApiError
-from pydub import AudioSegment
-from pydub.audio_segment import AudioSegment
 
 from my.classes import singleton, ReadWriteLock
 from my.classes.exceptions import ElevenLabsMissingKeyError, ElevenLabsAPIError, ElevenLabsDownError
