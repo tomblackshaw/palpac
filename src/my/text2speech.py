@@ -285,7 +285,7 @@ def speak_a_random_alarm_message(owner, hour, minute, voice, snoozed=False):
     # FIXME WRITE DOX
     rndstr = generate_random_string(32)
     flat_filename = '/tmp/tts{rndstr}.flat.mp3'.format(rndstr=rndstr)
-    my_txt = generate_random_alarm_message(owner_of_clock=owner, time_24h=hour, time_minutes=minute, for_voice=voice, snoozed=snoozed)
+    my_txt = generate_random_alarm_message(owner_of_clock=owner, time_24h=hour, time_minutes=minute, snoozed=snoozed)
     data = smart_phrase_audio(voice, my_txt)
     data.export(flat_filename, format="mp3")
     os.system("$(which mpv) %s" % flat_filename)
@@ -303,7 +303,7 @@ def sing_a_random_alarm_message(owner, hour, minute, voice, snoozed=False, noof_
     rndstr = generate_random_string(32)
     flat_filename = '/tmp/tts{rndstr}.flat.mp3'.format(rndstr=rndstr)
     sung_filename = '/tmp/tts{rndstr}.sung.mp3'.format(rndstr=rndstr)
-    my_txt = generate_random_alarm_message(owner_of_clock=owner, time_24h=hour, time_minutes=minute, for_voice=voice, snoozed=snoozed)
+    my_txt = generate_random_alarm_message(owner_of_clock=owner, time_24h=hour, time_minutes=minute, snoozed=snoozed)
     data = smart_phrase_audio(voice, my_txt)
     data.export(flat_filename, format="mp3")
     songify_this_mp3(infile=flat_filename, outfile=sung_filename, noof_singers=noof_singers,

@@ -4,7 +4,7 @@ Created on Aug 19, 2024
 @author: Tom Blackshaw
 
 from my.text2speech import smart_phrase_audio, phrase_audio
-generate_random_alarm_message(owner_of_clock, time_24h, time_minutes, for_voice=None)
+generate_random_alarm_message(owner_of_clock, time_24h, time_minutes)
 
 import os
 from my.stringutils import *
@@ -78,8 +78,6 @@ def cache_phrases_for_voice(voice):
                                                        "good morning", "good afternoon", "good evening",
                                                        "midnight", "hours", "in the afternoon", "in the morning",
                                                        "in the evening"])
-    if voice in default_speaker_alarm_message_dct.keys():
-        cache_this_list_of_smart_phrases_for_voice(voice, [default_speaker_alarm_message_dct[voice]])
 
 if __name__ == '__main__':
     potential_owner_names = ["Charlie", "Chief", "Dumbass", "Charles", "Killer"]

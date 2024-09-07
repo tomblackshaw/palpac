@@ -194,14 +194,6 @@ postsnooze_alrm_msgs_lst = [
 """Awake, ${owner}! Heretofore henceforth forthwith and post haste. It's ${shorttime}, my dear, so hither your yon and gird up your loins.""",
 """Hey Alexa, Set volume to maximum. . . Hey Alexa, Play Baby Shark by Pink Fong."""]
 
-default_speaker_alarm_message_dct = {
-    "Freya": """${hello_owner} Like, OMG, you are totes late, ${owner}. JK, it's ${shorttime} and POV your drip is straight fire. Or gay fire. Whatevs. Anyway, time to rise and shine, my short boss sigma!""",
-    "Jessie": """${hello_owner} If you want your bed to outlast its warranty, get up! C'mon! It's ${shorttime} and time's a-wastin', ${owner}!""",
-    "Ethan": """${hello_owner} It pulls the bedsheets off its skin, or else it sleeps in late again!""",
-    "Drew":"""This just in — it is now ${shorttime} and ${owner} is sleeping through the alarm, again. Sources report that our short boss has been up late, sticking out his ghee-at for the rizzler. More to come, after the skibbiddee.""",
-    "Giovanni":"""Good despicable morning! Hello ${owner}, my favorite minion! It's ${shorttime}. Today, we are going to blow up ... the bathroom!""",
-    "Daniel":"""Oi, ${owner}, mate! It's ${shorttime} Time to have a red hot go, son! Go waltz your Matilda. Good on ya!""",
-    }
 
 hours_lst = 'twelve one two three four five six seven eight nine ten eleven twelve thirteen fourteen fifteen \
 sixteen seventeen eighteen nineteen twenty twenty-one twenty-two twenty-three twenty-four'.split(' ')

@@ -24,7 +24,7 @@ import string
 import requests
 
 from my.classes.exceptions import WebAPITimeoutError, WebAPIOutputError
-from my.consts import default_speaker_alarm_message_dct, alarm_messages_lst, postsnooze_alrm_msgs_lst
+from my.consts import alarm_messages_lst, postsnooze_alrm_msgs_lst
 from my.tools import logit
 
 MAX_RANDGENSTR_LEN = 99999  # used by generate_random_string()
@@ -332,7 +332,7 @@ def generate_detokenized_message(owner, time_24h, time_minutes, message_template
     return newval
 
 
-def generate_random_alarm_message(owner_of_clock, time_24h, time_minutes, for_voice=None, snoozed=False):
+def generate_random_alarm_message(owner_of_clock, time_24h, time_minutes, snoozed=False):
     """Example function with types documented in the docstring.
 
     `PEP 484`_ type annotations are supported. If attribute, parameter, and
@@ -351,8 +351,6 @@ def generate_random_alarm_message(owner_of_clock, time_24h, time_minutes, for_vo
     """
     if snoozed:
         message_template = random.choice(postsnooze_alrm_msgs_lst)
-    elif for_voice in default_speaker_alarm_message_dct.keys():
-        message_template = random.choice([default_speaker_alarm_message_dct[for_voice]] + alarm_messages_lst)
     else:
         message_template = random.choice(alarm_messages_lst)
     message = generate_detokenized_message(owner_of_clock, time_24h, time_minutes, message_template)
