@@ -136,7 +136,11 @@ if __name__ == '__main__':
 #    qwin = FunWidget(tts=Text2SpeechSingleton)
 #    qwin.showMaximized()
 #    sys.exit(app.exec())
-    voices_lst = ['Sarah', 'Laura', 'Charlie', 'George', 'Callum', 'Liam', 'Charlotte', 'Alice', 'Matilda', 'Will', 'Jessica', 'Eric', 'Chris', 'Brian', 'Daniel', 'Lily', 'Bill', 'Hugo']
+    voices_lst = ['Alice', 'Daniel', 'Laura', 'Olivier Calm', 'Bill', 'Eric', 'Liam', 'Sarah', 'Brian', 'Frederick - Old Gnarly Narrator', 'Lily', 'Sonia',
+                  'Callum', 'George', 'Matilda', 'Will', 'Charlie', 'Hugo', 'Maya', 'Charlotte', 'Jake - Smart, Formal, Confident', 'Natasha - Valley girl',
+                  'Chris', 'Jessica', 'New York Nick - Modern NYC Wiseguy', 'Alice', 'Daniel', 'Laura', 'Olivier Calm', 'Bill', 'Eric', 'Liam', 'Sarah', 'Brian',
+                  'Frederick - Old Gnarly Narrator', 'Lily', 'Sonia', 'Callum', 'GeorgeM', 'Matilda', 'Will', 'Charlie', 'Hugo', 'Maya', 'Charlotte',
+                  'Jake- Smart, Formal, Confident', 'Natasha - Valley girl', 'Chris', 'Jessica', 'New York Nick - Modern NYC Wiseguy']
     if len(sys.argv) == 1 or sys.argv[1] not in voices_lst:
         print("Options:", voices_lst)
         sys.exit(1)
