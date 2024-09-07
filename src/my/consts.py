@@ -142,16 +142,16 @@ hello_owner_lst = [
 ]
 
 alarm_messages_lst = [
-"""${hello_owner} Swab the decks, hoist the main sail, and give those jolly jack tars a good whipping! It's ${shorttime}. Up and atom!""",
+"""Swab the decks, hoist the main sail, and give those jolly jack tars a good whipping! It's ${shorttime}. Up and atom!""",
 """${hello_owner} It's ${one_minute_later}. Just kidding, it's actually ${shorttime} but it'll be ${one_minute_later} soon. Or will it? You'd better get up and check.""",
-"""${hello_owner} Knock, knock! Who's there? Get a warrant. Oh, and by the way, it's ${shorttime}.""",
+"""Knock, knock! Who's there? Get a warrant. Oh, and by the way, it's ${shorttime}.""",
 """${hello_owner} I love you, but you look like crap. Get up and do something. It's ${shorttime} and time's a-wasting.""",
-"""${hello_owner} I am an interrupting cow. Moo. Moo. Moo. I'll keep mooing until you get out of bed. Moo. It's ${shorttime}.""",
+"""I am an interrupting cow. Moo. Moo. Moo. I'll keep mooing until you get out of bed. Moo. It's ${shorttime}.""",
 """${hello_owner} It's ${shorttime}. So, ${owner}, who has two thumbs and a functional alarm clock?. . . I'll give you a hint. It isn't Bill Cosby.""",
-"""${hello_owner} The time is ${shorttime}. You're late, you're late, for a very important date. . . When? Where? I don't care!""",
-"""${hello_owner} It's ${shorttime}. Each day has at least 24 hours. You're awake for, wait, no, that's not it. Every day has 12 hours and you're... No, that's not it either. Don't judge me! I'm sleepy!""",
-"""${hello_owner} This is your alarm. This is your alarm. Ring. ... Ring, ring. ... Ring, ring, ring. Hello? Hi, It's your life, passing you by. What's that? ${owner} doesn't care? Okay, bye. Also, it's ${shorttime}.""",
-"""${hello_owner} Get up! It's ${shorttime}. If you get up, I'll promise not to tell your friends you fart in your sleep.""",
+"""The time is ${shorttime}. You're late, you're late, for a very important date. . . When? Where? I don't care!""",
+"""It's ${shorttime}. Each day has at least 24 hours. You're awake for, wait, no, that's not it. Every day has 12 hours and you're... No, that's not it either. Don't judge me! I'm sleepy!""",
+"""This is your alarm. This is your alarm. Ring. ... Ring, ring. ... Ring, ring, ring. Hello? Hi, It's your life, passing you by. What's that? ${owner} doesn't care? Okay, bye. Also, it's ${shorttime}.""",
+"""Get up, ${owner}! It's ${shorttime}. If you get up, I'll promise not to tell your friends you fart in your sleep.""",
 """${hello_owner} It's ${shorttime}. Get your ass out of bed before I play Baby Shark on Repeat.""",
 """${hello_owner} Current location of ${owner}, bed. Appropriate location of ${owner}, somewhere else. It is ${shorttime}. Do you know where your future is?""",
 """${hello_owner} It's ${shorttime}. The forecast is 100% chance of misery if you haven't charged your electronic devices.""",
@@ -167,8 +167,6 @@ alarm_messages_lst = [
 """${hello_owner} It is ${shorttime}. . . Hey ${owner}! It's still ${shorttime}. . . In a minute, it'll be ${one_minute_later}. . . You don't want to be in bed when that happens, trust me.""",
 """${hello_owner} It'll be ${shorttime} in 3, 2, 1, OK. Now, it's ${shorttime}.""",
 """${hello_owner} You really should get up, ${owner}. In 60 seconds, it'll be ${one_minute_later} and you'll be late! Well, OK, not late-late, but you'll be one minute closer to being late.""",
-# """And now it's 7:02. Fantastic. Fan bloody tastic.""",
-# """Seriously? You pushed the snooze button for the 3rd time, ${owner}, and it's already 7:29. Who raised you?
 """Shrek is love. Shrek is life. ${owner} is late. It's ${shorttime} and you need to get up.""",
 """Tardiness has all the professional appeal of ringworm. It's ${shorttime}, ${owner}. Get. Up. Now!""",
 """${hello_owner} It is now ${shorttime}. Each day has 24 hours. You are awake for at least twelve of them.""",
@@ -179,15 +177,16 @@ alarm_messages_lst = [
 """${hello_owner} It is now ${shorttime}. This is your wake-up call, and a teachable moment.""",
 """${hello_owner} As Martin Luther King once said, Wake-up delayed is wake-up denied. It is now ${shorttime}.""",
 """${hello_owner} In the immortal words of Judas Iscariot, go get that money. It is now ${shorttime}.""",
-"""${hello_owner} Hey Alexa, remind ${owner} to It is now ${shorttime}. """,
+"""${hello_owner} Let me take your hand, I'm shaking like milk, because it's ${shorttime}.""",
+"""${hello_owner} Ay yo trip, it's ${shorttime} and my rizz got the 314's low-key all blicky.""",
 """At the beep, the time will be ${shorttime}. . . . . . Beep. Sorry, no, that was premature. Wait. . . . Okay, now, beep.""",
-"""${hello_owner} Like, OMG, you are totes late, ${owner}. JK, it's ${shorttime} and POV your drip is straight fire. Or gay fire. Whatevs. Anyway, time to rise and shine, my short boss sigma!""",
+"""Like, OMG, you are totes late, ${owner}. JK, it's ${shorttime} and POV your drip is straight fire. Or gay fire. Whatevs. Anyway, time to rise and shine, my short boss sigma!""",
 """${hello_owner} If you want your bed to outlast its warranty, get up! C'mon! It's ${shorttime} and time's a-wastin', ${owner}!""",
-"""${hello_owner} It pulls the bedsheets off its skin, or else it sleeps in late again!""",
-"""${hello_owner} This just in — it is now ${shorttime} and ${owner} is sleeping through the alarm, again. Sources report that our short boss has been up late, sticking out his ghee-at for the rizzler. More to come, after the skibbiddee.""",
-"""${hello_owner} Good despicable morning! Hello ${owner}, my favorite minion! It's ${shorttime}. Today, we are going to blow up ... the bathroom!""",
-"""${hello_owner} Oi, ${owner}, mate! It's ${shorttime} Time to have a red hot go, son! Go waltz your Matilda. Good on ya!""",
-
+"""It pulls the bedsheets off its skin, or else it sleeps in late again!""",
+"""This just in — it is now ${shorttime} and ${owner} is sleeping through the alarm, again. Sources report that our short boss has been up late, sticking out his ghee-at for the rizzler. More to come, after the skibbiddee.""",
+"""Hello ${owner}, my favorite minion! It's ${shorttime}. Today, we are going to blow up ... the bathroom!""",
+"""Oi, ${owner}, mate! It's ${shorttime} Time to have a red hot go, son! Go waltz your Matilda. Good on ya!""",
+""" Who has two thumbs, one testicle, and an appointment with destiny? I haven't a clue, but I do know the time is ${shorttime}""",
 ]
 
 postsnooze_alrm_msgs_lst = [
@@ -200,8 +199,10 @@ postsnooze_alrm_msgs_lst = [
 """Look, you had your fun, ${owner}, but time is passing you by. It's ${shorttime}. Get out there and fuck some shit up, yo.""",
 """Buddhists ask, what is the sound of one hand clapping? I ask, what is the sound of one ${owner} napping? It's ${shorttime} and you need to get up.""",
 """Awake, ${owner}! Heretofore henceforth forthwith and post haste. It's ${shorttime}, my dear, so hither your yon and gird up your loins.""",
-"""Hey Alexa, Set volume to maximum. . . Hey Alexa, Play Baby Shark by Pink Fong."""]
-
+"""Hey Alexa, play Baby Shark by Pink Fong, at maximum volume.""",
+"""And now it's ${shorttime}. Fantastic. Fan bloody tastic.""",
+"""Seriously? You pushed the snooze button, ${owner}, and now it's ${shorttime}. Who raised you?""",
+]
 
 hours_lst = 'twelve one two three four five six seven eight nine ten eleven twelve thirteen fourteen fifteen \
 sixteen seventeen eighteen nineteen twenty twenty-one twenty-two twenty-three twenty-four'.split(' ')
