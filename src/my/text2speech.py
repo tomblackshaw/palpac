@@ -34,8 +34,6 @@ import random
 import string
 import sys
 
-from pydub.exceptions import CouldntDecodeError
-
 from my.classes.exceptions import NoProfessionalVoicesError, MissingFromCacheError
 from my.consts import hours_lst, minutes_lst, Cmaj
 from my.stringutils import generate_random_alarm_message, generate_detokenized_message, pathname_of_phrase_audio, generate_random_string
