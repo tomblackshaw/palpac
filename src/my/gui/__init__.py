@@ -42,7 +42,7 @@ def set_audio_volume(volume, mixer="Master"):
         raise TypeError("set_audio_volume() takes an integer parameter, please.")
     if volume < 0 or volume > 11:
         raise ValueError("set_audio_volume() takes an int between 0 and 10, inclusive, please.")
-    os.system('''amixer set "{mixer}" {volume}'''.format(mixer=mixer, volume=real_vol_list[volume]))
+    os.system('''amixer set "{mixer}" {volume}%'''.format(mixer=mixer, volume=real_vol_list[volume]))
 
 
 def compile_all_uic_files(a_path):
