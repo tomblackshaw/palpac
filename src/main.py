@@ -5,6 +5,10 @@ This is the script that is run by the OS (or the user) when they want to
 launch PALPAC. A bash script, I imagine, will 'cd' into this folder
 and run main.py (me) accordingly.
 
+make_the_monks_chant(['Callum', 'Jessica', 'Sarah'], 'Hello world, you are loved.'.split(' '),
+                     (Cmaj, Fmaj, Gmaj, Fmin, Cmaj), outfile='/tmp/out.mp3', squelch=3)
+
+
 Example:
     This is how a sample script would look::
 
@@ -149,8 +153,6 @@ if __name__ == '__main__':
     set_audio_volume(int(sys.argv[2])) # between 0 and 10
     speak_a_random_alarm_message(owner='Charlie', voice=this_voice, hour=datetime.datetime.now().hour, minute=datetime.datetime.now().minute, snoozed=False)
 
-#     make_the_monks_chant(['Callum', 'Jessica', 'Sarah'], 'Hello world, you are loved.'.split(' '),
-#                          (Cmaj, Fmaj, Gmaj, Fmin, Cmaj), outfile='/tmp/out.mp3', squelch=3)
 
 # class MyBrowser(QWebPage):
 #     ''' Settings for the browser.'''
