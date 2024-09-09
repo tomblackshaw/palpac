@@ -12,6 +12,8 @@ lot of cool stuff in here.
    https://sphinxcontrib-napoleon.readthedocs.io/en/latest/example_google.html
 
 
+tts.sing("Hi there. My name is Elder Grant, and I would like to share with you the most amazing book.",
+"a4 f#4 a4 f#4 a4 f#4 a4 f#4 a4 f#4 a4 f#4 a4 54 a4 f#4 d4 e4 f#4 g4". split(' '), squelch=1)
 
 
 import os
