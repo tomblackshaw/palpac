@@ -162,7 +162,7 @@ alarm_messages_lst = [
 """${hello_owner} Just because it's ${shorttime}, that doesn't mean you need to get up. It's fine. Go back to sleep. I mean, you did set the alarm, but whatever.""",
 """${hello_owner} The time for sleeping ended at ${one_minute_ago}. The time for adulting is now. It is ${shorttime}. Make a move.""",
 """${hello_owner} It's ${shorttime}. If you thought your childhood was fun, you'll love adulting. It's like being old, except you still have to work. Your lesson starts now.""",
-"""${hello_owner} This is your conscience. Get up, ${owner}. It's ${shorttime}. It's time to get up. Beep, beep, beep, beep. Do not ignore your conscience. I know where you sleep, ${owner}.""",
+"""This is your conscience. Get up, ${owner}. It's ${shorttime}. It's time to get up. Beep, beep, beep, beep. Do not ignore your conscience. I know where you sleep, ${owner}.""",
 """${hello_owner} It's ${shorttime}. You're giving me operational dysfunction. I find your ongoing bedridden-ness to be triggering. Please get up.""",
 """${hello_owner} It is ${shorttime}. . . Hey ${owner} It's still ${shorttime}. . . In a minute, it'll be ${one_minute_later}. . . You don't want to be in bed when that happens, trust me.""",
 """${hello_owner} It'll be ${shorttime} in 3, 2, 1, OK. Now, it's ${shorttime}.""",
@@ -178,7 +178,7 @@ alarm_messages_lst = [
 """${hello_owner} As Martin Luther King once said, Wake-up delayed is wake-up denied. It is now ${shorttime}.""",
 """${hello_owner} In the immortal words of Judas Iscariot, go get that money. It is now ${shorttime}.""",
 """${hello_owner} Let me take your hand, I'm shaking like milk, because it's ${shorttime}.""",
-"""${hello_owner} Ay yo trip, it's ${shorttime} and my rizz got the 314's low-key all blicky.""",
+"""Ay yo trip, it's ${shorttime} and my rizz got the 314's low-key all blicky.""",
 """At the beep, the time will be ${shorttime}. . . . . . Beep. Sorry, no, that was premature. Wait. . . . Okay, now, beep.""",
 """Like, OMG, you are totes late, ${owner}. JK, it's ${shorttime} and POV your drip is straight fire. Or gay fire. Whatevs. Anyway, time to rise and shine, my short boss sigma!""",
 """${hello_owner} If you want your bed to outlast its warranty, get up! C'mon! It's ${shorttime} and time's a-wastin', ${owner}.""",
@@ -186,7 +186,8 @@ alarm_messages_lst = [
 """This just in — it is now ${shorttime} and ${owner} is sleeping through the alarm, again. Sources report that our short boss has been up late, sticking out his ghee-at for the rizzler. More to come, after the skibbiddee.""",
 """Hello ${owner}, my favorite minion! It's ${shorttime}. Today, we are going to blow up ... the bathroom!""",
 """Oi, ${owner}, mate! It's ${shorttime} Time to have a red hot go, son! Go waltz your Matilda. Good on ya!""",
-""" Who has two thumbs, one testicle, and an appointment with destiny? I haven't a clue, but I do know the time is ${shorttime}""",
+"""Who has two thumbs, one testicle, and an appointment with destiny? I haven't a clue, but I do know the time is ${shorttime}""",
+"""${hello_owner} What ho and good day, old chum. It is ${shorttime}. Methinks 'tis time for thee to unshackle thyself from thine bedchamber and pound the pavement like it owes you money.""",
 ]
 
 postsnooze_alrm_msgs_lst = [
