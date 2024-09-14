@@ -39,7 +39,7 @@ tts.say('09')
 
 '''
 
-from my.consts import hello_owner_lst, alarm_messages_lst, hours_lst, minutes_lst, postsnooze_alrm_msgs_lst
+from my.consts import hello_owner_lst, alarm_messages_lst, hours_lst, minutes_lst, postsnooze_alrm_msgs_lst, all_potential_owner_names
 from my.text2speech import smart_phrase_audio, deliberately_cache_a_smart_phrase
 
 
@@ -78,7 +78,7 @@ def cache_phrases_for_voice(voice):
 
 
 if __name__ == '__main__':
-    potential_owner_names = ["Charlie", "Chief", "Dumbass", "Charles", "Killer"]
+    potential_owner_names = all_potential_owner_names
     from my.text2speech import Text2SpeechSingleton as tts
     for this_voice in tts.all_voices:
         print("Working on", this_voice)

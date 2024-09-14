@@ -24,6 +24,8 @@ SOURCE: https://www.nodc.noaa.gov/archive/arc0021/0002199/1.1/data/0-data/HTML/W
 
 """
 
+all_potential_owner_names = ["Charlie", "Chief", "Dumbass", "Charles", "Killer", "Numb Nuts", "Shawday", "Boss"]
+
 WMO_code_warnings_dct = {
 0: ("Blue skies", "...with not a cloud in the sky!"),
 1: ("Those clouds are fading away.", "The clouds are generally dissolving or becoming less developed."),
@@ -131,7 +133,7 @@ WMO_code_warnings_dct = {
 hello_owner_lst = [
 """${owner}. . . ${owner}? . . . ${owner}! . . .Hey! Good ${morning_or_afternoon_or_evening}.""",
 """Good ${morning_or_afternoon_or_evening}, ${owner}.""",
-"""Ay yo, ${owner}! Good ${morning_or_afternoon_or_evening}.""",
+"""Ay yoe, ${owner}! Good ${morning_or_afternoon_or_evening}.""",
 """What's crackalackin', ${owner}?""",
 """Excuse me, ${owner}, may I have a word?""",
 """Oh my, ${owner}, I have such news! Have you the time? You do now.""",
@@ -178,7 +180,7 @@ alarm_messages_lst = [
 """${hello_owner} As Martin Luther King once said, Wake-up delayed is wake-up denied. It is now ${shorttime}.""",
 """${hello_owner} In the immortal words of Judas Iscariot, go get that money. It is now ${shorttime}.""",
 """${hello_owner} Let me take your hand, I'm shaking like milk, because it's ${shorttime}.""",
-"""Ay yo trip, it's ${shorttime} and my rizz got the 314's low-key all blicky.""",
+"""Ay yoe trip, it's ${shorttime} and my rizz got the 314's low-key all blicky.""",
 """At the beep, the time will be ${shorttime}. . . . . . Beep. Sorry, no, that was premature. Wait. . . . Okay, now, beep.""",
 """Like, OMG, you are totes late, ${owner}. JK, it's ${shorttime} and POV your drip is straight fire. Or gay fire. Whatevs. Anyway, time to rise and shine, my short boss sigma!""",
 """${hello_owner} If you want your bed to outlast its warranty, get up! C'mon! It's ${shorttime} and time's a-wastin', ${owner}.""",
