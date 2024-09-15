@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""my.classes.elevenwrapper
+"""my.classes.text2speechclass
 
 Created on May 19, 2024
 
