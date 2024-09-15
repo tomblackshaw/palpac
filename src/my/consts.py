@@ -189,7 +189,7 @@ alarm_messages_lst = [
 """Hello ${owner}, my favorite minion! It's ${shorttime}. Today, we are going to blow up ... the bathroom!""",
 """Oi, ${owner}, mate! It's ${shorttime} Time to have a red hot go, son! Go waltz your Matilda. Good on ya!""",
 """Who has two thumbs, one testicle, and an appointment with destiny? I haven't a clue, but I do know the time is ${shorttime}""",
-"""${hello_owner} What ho and good day, old chum. It is ${shorttime}. Methinks 'tis time for thee to unshackle thyself from thine bedchamber and pound the pavement like it owes you money.""",
+"""${hello_owner} What ho and good day, old chum. It is ${shorttime}. Methinks 'tis time for thee to unshackle thyself from thine own bedchamber and pound the pavement as if it owed you money.""",
 ]
 
 postsnooze_alrm_msgs_lst = [
