@@ -9,9 +9,8 @@ import os
 import sys
 
 from PyQt5 import uic
-from PyQt5.QtCore import QUrl, Qt, QEvent, QObject, QEvent, QSize
-from PyQt5.QtGui import QCursor, QImage, QPalette, QBrush
-from PyQt5.QtWidgets import QApplication, QWidget, QMainWindow, QLabel, QPushButton, QGridLayout, QSizePolicy, QDesktopWidget
+from PyQt5.QtCore import QUrl, Qt, QObject, QEvent
+from PyQt5.QtWidgets import QApplication, QMainWindow, QDesktopWidget
 
 from my.gui import set_vdu_brightness
 
@@ -23,20 +22,11 @@ except ImportError:
 BASEDIR = os.path.dirname(__file__)
 
 
-def center_the_widget(q):
-    qr = q.frameGeometry()
-    cp = QDesktopWidget().availableGeometry().center()
-    qr.moveCenter(cp)
-    q.move(qr.topLeft())
-
-
-class MainWindow(QMainWindow):
+class ConfiguratorWindow(QMainWindow):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         uic.loadUi(os.path.join(BASEDIR, "ui/invisiwindow.ui"), self)
-        self.btnClose.clicked.connect(self.close)
-        self.setWindowModality(Qt.ApplicationModal)
         self.setAttribute(Qt.WA_TranslucentBackground)  # Turn background of window transparent
         self.setWindowFlags(Qt.FramelessWindowHint)
 
@@ -48,15 +38,16 @@ class InvisibleButClickableOverlayWindow(QMainWindow):
         self.the_widget_to_open = widget_to_open
         self.setFixedSize(480, 480)
         self.show()
-#        self.activateWindow()  # FIXME: Superfluous?
         self.raise_()  # FIXME: Superfluous?
         self.setWindowOpacity(0.)  # Turn entire window transparent
         self.setStyleSheet('QWidget{background: #000000}')  # Turn background transparent too
 
     def mousePressEvent(self, event):
         super().mousePressEvent(event)
-        self.the_widget_to_open.show()
-        self.the_widget_to_open.activateWindow()
+        if self.the_widget_to_open.isVisible():
+            self.the_widget_to_open.hide()
+        else:
+            self.the_widget_to_open.show()
 
 
 class MyBrowser(Browser):
@@ -73,13 +64,8 @@ app = QApplication(sys.argv)
 os.system('''amixer set "Master" 80%''')
 os.system('''mpv audio/startup.mp3 &''')
 set_vdu_brightness(80)
-
 browser = MyBrowser('ui/clocks/braun-clock/dist/index.html' if len(sys.argv) < 2 else sys.argv[1])  # 3d-clock
-confwindow = MainWindow()
+confwindow = ConfiguratorWindow()
 clickme = InvisibleButClickableOverlayWindow(confwindow)
-
-# center_the_widget(clickme)
-# center_the_widget(confwindow)
-# center_the_widget(browser)
 
 app.exec_()
