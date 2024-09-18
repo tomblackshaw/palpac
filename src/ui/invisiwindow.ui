@@ -106,36 +106,6 @@
      <set>Qt::AlignCenter</set>
     </property>
    </widget>
-   <widget class="QToolButton" name="btnClose">
-    <property name="geometry">
-     <rect>
-      <x>30</x>
-      <y>10</y>
-      <width>231</width>
-      <height>241</height>
-     </rect>
-    </property>
-    <property name="sizePolicy">
-     <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
-      <horstretch>2</horstretch>
-      <verstretch>2</verstretch>
-     </sizepolicy>
-    </property>
-    <property name="maximumSize">
-     <size>
-      <width>250</width>
-      <height>250</height>
-     </size>
-    </property>
-    <property name="font">
-     <font>
-      <pointsize>64</pointsize>
-     </font>
-    </property>
-    <property name="text">
-     <string>MOOO</string>
-    </property>
-   </widget>
   </widget>
  </widget>
  <resources/>
