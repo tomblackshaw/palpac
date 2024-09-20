@@ -14,6 +14,7 @@ This module contains GUI-related tools.
 
 import os
 from my.classes.exceptions import PyQtUICompilerError
+from PyQt5.QtCore import Qt
 
 
 def set_vdu_brightness(brightness):
@@ -45,7 +46,18 @@ def set_audio_volume(volume, mixer="Master"):
     os.system('''amixer set "{mixer}" {volume}%'''.format(mixer=mixer, volume=real_vol_list[volume]))
 
 
-def compile_all_uic_files(a_path):
+def make_entire_window_transparent(q):
+    q.setWindowOpacity(0.)  # Turn entire window transparent
+    q.setStyleSheet('QWidget{background: #000000}')  # Turn background transparent too
+
+    
+def set_background_translucent(q):
+    q.setAttribute(Qt.WA_TranslucentBackground)  # Turn background of window transparent
+    q.setWindowFlags(Qt.FramelessWindowHint)
+
+
+
+def DONOTUSE_compile_all_uic_files(a_path):
     """Compile the UIC files in the supplied path.
 
     Using the PyQt-supplied UIC file compiler, turn the path's every UIC file
