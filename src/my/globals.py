@@ -25,4 +25,30 @@ MAX_LATLONG_TIMEOUT = 999
 LAZY_SILENCE_THRESHOLD = -65.0
 DEFAULT_SILENCE_THRESHOLD = -50.0
 SNIPPY_SILENCE_THRESHOLD = -30.0
+FACES_DCT = {'neon 1':'ui/clocks/neon-clock-css-jquery/dist/index.html',
+             'neon 2':'ui/clocks/this-neon/dist/index.html',
+             'braun':'ui/clocks/braun-clock/dist/index.html',
+             'analog 1':'ui/clocks/analog-clock-1/dist/index.html',
+             'analog 2':'ui/clocks/analog-digital-clock/dist/index.html',
+             'digital 1':'ui/clocks/digital-clock-1/dist/index.html',
+             'digital 2': 'ui/clocks/digital-clock-2/dist/index.html',
+             'clean': 'ui/clocks/minimal-clean-analog/index.html',
+             'simple': 'ui/clocks/simple_javascript_clock/dist/index.html',
+             'css':'ui/clocks/a-css-clock/dist/index.html',
+             'jss':'ui/clocks/js-css-clock-with-sound/dist/index.html',
+             'wall':'ui/clocks/wall-clock/dist/index.html',
+             'rounded':'ui/clocks/rounded-clock-main/index.html',
+             'series 2':'ui/clocks/time-series-2-typographic-clock/dist/index.html',
+             '3D':'ui/clocks/3d-clock/dist/index.html',
+             'slide':'ui/clocks/slide-clock/dist/index.html',
+             'challenge':'ui/clocks/dev-challenge-week-3/dist/index.html',
+             'another':'ui/clocks/another-canvas-clock/dist/index.html',
+    }
+FACETWEAKS_DCT = {'neon 1':(-15, -5, .9),
+                  'neon 2':(0, 0, 1.16),
+                  'analog 1':(80,80,1.0),
+                  'digital 1':(0,20,1.0),
+                  'simple':(0,0,1.7),
+                  }
 
+TOUCHSCREEN_SIZE_X, TOUCHSCREEN_SIZE_Y = 480, 480 
