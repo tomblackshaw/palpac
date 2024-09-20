@@ -82,7 +82,7 @@ def autotune(audio, sr, the_notes, squelch):
     fmax = librosa.note_to_hz('C7')
 
     # Pitch tracking using the PYIN algorithm.
-    f0, voiced_flag, voiced_probabilities = librosa.pyin(audio,
+    f0, _voiced_flag, _voiced_probabilities = librosa.pyin(audio,
                                                          frame_length=frame_length,
                                                          hop_length=hop_length,
                                                          sr=sr,
