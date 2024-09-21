@@ -306,8 +306,6 @@ def generate_detokenized_message(owner, time_24h, time_minutes, message_template
         ValueError: The value of length is an invalid parameter.
 
     """
-    # TODO: Write me
-
     from my.consts import hello_owner_lst
     if owner == '' or owner is None:
         raise ValueError("Owner -- the name of the human who owns this alarm clock -- needs to be a non-empty string. You supplied a duff value.")
