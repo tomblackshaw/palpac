@@ -77,7 +77,7 @@ class ConfiguratorWindow(QMainWindow):
         self.sliBrightness.valueChanged.connect(set_vdu_brightness)
         self.sliVolume.valueChanged.connect(set_audio_volume)
         [self.lswFaces.addItem(k) for k in FACES_DCT.keys()]
-        self.lswFaces.currentTextChanged.connect(lambda x: self.clockface.changeFace.emit(x)) # TODO: clockface.b.
+        self.lswFaces.currentTextChanged.connect(lambda x: self.clockface.changeFace.emit(x)) 
         [self.lswFaces.setCurrentItem(x) for x in self.lswFaces.findItems(DEFAULT_CLOCK_NAME, Qt.MatchExactly)]
         self.setFixedSize(TOUCHSCREEN_SIZE_X, TOUCHSCREEN_SIZE_Y)
         self.move(0, 0)
