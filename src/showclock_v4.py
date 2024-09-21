@@ -18,10 +18,6 @@ In this way, the user is given the impression that (1) the clock is clickable,
 (2) clicking on it will let the user reconfigure it 'live', and (3) clicking on
 it again will hide the configuration tools. 
 
-Todo:
-    * For module TODOs
-    * You have to also use ``sphinx.ext.todo`` extension
-
 .. _Google Python Style Guide:
    http://google.github.io/styleguide/pyguide.html
 
@@ -32,24 +28,17 @@ import sys
 
 from PyQt5 import uic
 from PyQt5.QtCore import QUrl, Qt, QObject, pyqtSignal, QPoint, QEvent
-from PyQt5.QtWidgets import QApplication, QMainWindow, QVBoxLayout, QSizePolicy
+from PyQt5.QtWidgets import QApplication, QMainWindow, QVBoxLayout, QSizePolicy, QLabel, QStackedLayout, QWidget
 
-from my.gui import set_vdu_brightness, set_audio_volume, make_entire_window_transparent, set_background_translucent
-from my.globals import FACES_DCT, TOUCHSCREEN_SIZE_X, TOUCHSCREEN_SIZE_Y, FACETWEAKS_DCT
+from my.gui import set_vdu_brightness, set_audio_volume, make_background_translucent
+from my.globals import FACES_DCT, TOUCHSCREEN_SIZE_X, TOUCHSCREEN_SIZE_Y, ZOOMS_DCT
 import time
-from showclock_v2 import DEFAULT_CLOCK_NAME
 
-# Each PyQt5 installation has EITHER a QWebView OR a QWebEngineView, depending on the OS. For example,
-# MacOS Sonoma appears to have a QWebEngineView whereas Debian Buster has a QWebView. It's possible to
-# use either (in my case) because I use only the most rudimentary features of each/both instance. 
-try:
-    from PyQt5.QtWebKitWidgets import QWebView as Browser
-except ImportError:
-    from PyQt5.QtWebEngineWidgets import QWebEngineView as Browser
-
+from my.gui import Browser
 BASEDIR = os.path.dirname(__file__) # Base directory of me, the executable script
 DEFAULT_CLOCK_NAME = 'braun' # list(FACES_DCT.keys())[0]
 # find ui | grep index.html | grep -v /src/ | grep -v original
+
 
 
 
@@ -73,35 +62,18 @@ class ConfiguratorWindow(QMainWindow):
         super().__init__()
         self.clockface = clockface
         uic.loadUi(os.path.join(BASEDIR, "ui/configuratorwindow.ui"), self)
-        set_background_translucent(self)
+        self.setAttribute(Qt.WA_TranslucentBackground)  # Turn background of window transparent
+        self.setWindowFlags(Qt.FramelessWindowHint)
         self.sliBrightness.valueChanged.connect(set_vdu_brightness)
         self.sliVolume.valueChanged.connect(set_audio_volume)
         [self.lswFaces.addItem(k) for k in FACES_DCT.keys()]
         self.lswFaces.currentTextChanged.connect(lambda x: self.clockface.changeFace.emit(x)) 
         [self.lswFaces.setCurrentItem(x) for x in self.lswFaces.findItems(DEFAULT_CLOCK_NAME, Qt.MatchExactly)]
-        self.setFixedSize(TOUCHSCREEN_SIZE_X, TOUCHSCREEN_SIZE_Y)
-        self.move(0, 0)
-        self.clickme = OverlayWindow(func_when_clicked=self.clicked)
+        self.show()
         
     def clicked(self):
-        self.setVisible(not self.isVisible())
-
-
-class OverlayWindow(QMainWindow):
-    def __init__(self, func_when_clicked):
-        super().__init__()
-        self.func_when_clicked = func_when_clicked
-        make_entire_window_transparent(self)
-        self.setFixedSize(TOUCHSCREEN_SIZE_X, TOUCHSCREEN_SIZE_Y)
-        self.move(0, 0)
-        self.show()
-        self.raise_() # Ensure that I appear *in front of* the ClockFace
-        
-    def mousePressEvent(self, event):
-        self.func_when_clicked()
-        super().mousePressEvent(event)
-
-
+        print("Configuration window -- hiding!")
+        self.hide()
 
 
 class ClockFace(Browser):
@@ -111,74 +83,51 @@ class ClockFace(Browser):
         self.changeFace.connect(self.load)
         self.setWindowFlags(Qt.FramelessWindowHint)
         self.setFixedSize(TOUCHSCREEN_SIZE_X, TOUCHSCREEN_SIZE_Y)
-        self.move(0, 0)
-        self.show()
-        self.old_x = 0
-        self.old_y = 0
         self.loadFinished.connect(self.adjust_zoom_etc)
-
 
     def load(self, face_name):
         self.face_name = face_name
-        self.setWindowOpacity(0.1)
-        self.setZoomFactor(1)
-        self.scroll(-self.old_x, -self.old_y)
         super().load(QUrl('file://{cwd}/{relpath}'.format(cwd=os.getcwd(), relpath=FACES_DCT[face_name])))
-        self.setStyleSheet('QScrollBar {height:0px;}; QScrollBar {width:0px;}')  # Turn background transparent too
         
     def adjust_zoom_etc(self, _ok_or_nah):
-        x, y, zoom = FACETWEAKS_DCT[self.face_name] if self.face_name in FACETWEAKS_DCT.keys() else (0, 0, 1)
-        self.scroll(x, y)
-        self.old_x = x 
-        self.old_y = y 
-        self.setZoomFactor(zoom)
-        self.setWindowOpacity(1.0)
+        self.setZoomFactor(ZOOMS_DCT[self.face_name] if self.face_name in ZOOMS_DCT.keys() else 1)
         self.setStyleSheet('QScrollBar {height:0px;}; QScrollBar {width:0px;}')  # Turn background transparent too
 
 
+class MainWindow(QMainWindow):
+    # FIXME: WRITE THESE DOX
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        self.our_layout = QStackedLayout()
+        self.clockface = ClockFace()
+        self.clockface.load(DEFAULT_CLOCK_NAME)
+        self.config_win = ConfiguratorWindow(self.clockface)
+        self.clockbeard = QLabel("") # This label (which is invisible) is *stacked* in front of the clock, making it clickable.
+        make_background_translucent(self.clockbeard)
+        for w in (self.config_win, self.clockface, self.clockbeard):
+            self.our_layout.addWidget(w)
+        self.our_layout.setCurrentWidget(self.clockbeard)
+        self.our_layout.setStackingMode(QStackedLayout.StackAll) # Ensure that ALL the stack is visible at once.
+        strawman = QWidget()
+        strawman.setLayout(self.our_layout)
+        self.setCentralWidget(strawman) # Apparently, it's necessary to create a straw-man widget and give it this burden.
 
-class ClickableClockFace(Browser):
-    """
-    A subclass of the QMainWindow with the eventFilter method.
-    """
+    def mousePressEvent(self, event):
+        if self.our_layout.currentWidget() == self.clockbeard:
+            self.our_layout.setCurrentWidget(self.config_win)
+            self.config_win.show()
+        else:
+            self.config_win.hide()
+            self.our_layout.setCurrentWidget(self.clockbeard)
+        super().mousePressEvent(event)
 
-    def __init__(self):
-        super().__init__() # super(ClockFace, self)
-    
-    def eventFilter(self, obj, event):
-        if event.type() == QEvent.TouchBegin:  # Catch the TouchBegin event.
-            print('We have a touch begin')
-            return True
-        elif event.type() == QEvent.TouchEnd:  # Catch the TouchEnd event.
-            print('We have a touch end')
-            return True        
-        return super().eventFilter(obj, event)
-    
-    
-# class ClockFace(QMainWindow):
-#     def __init__(self):
-#         super().__init__()
-#         self.b = ClkBrowser()
-#         self.layout = QVBoxLayout()
-#         self.layout.addWidget(self.b)
-#         self.setCentralWidget(self.b)
-#         self.setWindowFlags(Qt.FramelessWindowHint)
-#         self.setStyleSheet('QWidget{background: #000000}')  # Turn background transparent too
-#         self.setFixedSize(TOUCHSCREEN_SIZE_X, TOUCHSCREEN_SIZE_Y)
-#         self.move(0, 0)
-#         self.show()
 
 if __name__ == '__main__':
 #os.system('''mpv audio/startup.mp3 &''')
     app = QApplication(sys.argv)
-    clockface = ClickableClockFace()
-    #clockface.load(DEFAULT_CLOCK_NAME)
-    clockface.load(FACES_DCT[DEFAULT_CLOCK_NAME])
-    clockface.show()
-    #win = ConfiguratorWindow(clockface=ClickableClockFace())
-    #win.hide()
+    w = MainWindow()
+    w.show()
     app.exec_()
-
 
 
 

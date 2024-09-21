@@ -17,6 +17,12 @@ from my.classes.exceptions import PyQtUICompilerError
 from PyQt5.QtCore import Qt
 
 
+try:
+    from PyQt5.QtWebKitWidgets import QWebView as Browser
+except ImportError:
+    from PyQt5.QtWebEngineWidgets import QWebEngineView as Browser
+    
+
 def set_vdu_brightness(brightness):
     # Technically, brightness>100 will be ignored by the hardware.
     if type(brightness) is not int:
@@ -46,12 +52,12 @@ def set_audio_volume(volume, mixer="Master"):
     os.system('''amixer set "{mixer}" {volume}%'''.format(mixer=mixer, volume=real_vol_list[volume]))
 
 
-def make_entire_window_transparent(q):
+def make_window_transparent(q):
     q.setWindowOpacity(0.)  # Turn entire window transparent
     q.setStyleSheet('QWidget{background: #000000}')  # Turn background transparent too
 
     
-def set_background_translucent(q):
+def make_background_translucent(q):
     q.setAttribute(Qt.WA_TranslucentBackground)  # Turn background of window transparent
     q.setWindowFlags(Qt.FramelessWindowHint)
 
