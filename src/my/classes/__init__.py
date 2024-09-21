@@ -15,10 +15,8 @@ Classes:
     ReadWriteLock
 
 Attributes:
-    n/a
+    none
 
-.. _Style Guide:
-   https://sphinxcontrib-napoleon.readthedocs.io/en/latest/example_google.html
 """
 
 from threading import Condition, Lock, Thread
@@ -63,7 +61,7 @@ class ReadWriteLock:
 
     Attributes:
         locked (bool): Returns status of lock: True if locked, False if not.
-
+    
     """
     def __init__(self):
         self._read_ready_lck = Lock()

@@ -6,7 +6,7 @@ Created on May 20, 2024
 @author: Tom Blackshaw
 
 This module contains every custom exception that the app uses. The classes and subclasses
-are namedw accordingly.
+are named accordingly.
 
 Error
     StartupError
@@ -28,15 +28,11 @@ Error
         MissingFromCacheError
         StillAwaitingCachedValue
 
-
 Example:
     n/a
 
 Attributes:
-    n/a
-
-.. _Style Guide:
-   https://sphinxcontrib-napoleon.readthedocs.io/en/latest/example_google.html
+    none
 
 """
 
@@ -195,14 +191,14 @@ class ElevenLabsMissingKeyError(Text2SpeechError):
 
 
 class ElevenLabsWebsiteError(Text2SpeechError):
-
+    """If the Eleven Labs website appears to be down"""
     def __init__(self, message):  # pylint: disable=useless-parent-delegation
 
         super().__init__(message)
 
 
 class ElevenLabsAPIError(ElevenLabsWebsiteError):
-
+    """If the Eleven Labs API returns an error"""
     def __init__(self, message):  # pylint: disable=useless-parent-delegation
 
         super().__init__(message)

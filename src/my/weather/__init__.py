@@ -390,7 +390,7 @@ def generate_short_and_long_weather_forecast_messages(forecast, owner_name, test
         Returned strings are always UTF-8.
 
     Raises:
-        FIXME: I do not know which exceptions may occur. Please add entries.
+        QQQ: I do not know which exceptions may occur. Please add entries.
 
     """
     if forecast is None:

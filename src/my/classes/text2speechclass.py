@@ -394,6 +394,7 @@ class _Text2SpeechClass:
         stream(data)
 
     def say(self, txt, stream=False):
+        # TODO: WRITE ME
         if type(txt) is not str:
             raise ValueError("Please supply a string, when calling me.")
         elif stream is False:
@@ -414,6 +415,7 @@ class _Text2SpeechClass:
             self.stream(audio_stream)
 
     def sing(self, txt, notes, squelch):
+        # TODO: WRITE ME
         audio = [self.audio(text=txt)]
         rndstr = generate_random_string(42)
         exportfile = '/tmp/tts{rndstr}.mp3'.format(rndstr=rndstr)

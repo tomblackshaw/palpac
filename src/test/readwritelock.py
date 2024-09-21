@@ -8,7 +8,7 @@ Created on May 21, 2024
 import unittest
 # from my.classes import ReadWriteLock
 
-# TODO: Write a comprehensive test of ReadWriteLock
+# TODO: Write a comprehensive test of ReadWriteLock... and everything else.
 
 # class SimpleClass:
 #

@@ -21,10 +21,7 @@ are also implicitly created anytime a new section starts.
 
 Attributes:
     RandomQuoteSingleton (_RandomQuoteClass): Singleton to be imported for
-        retrieving a quote. It is a singleton.
-
-.. _Style Guide:
-   https://sphinxcontrib-napoleon.readthedocs.io/en/latest/example_google.html
+        retrieving a quote.
 
 """
 

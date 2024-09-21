@@ -30,9 +30,6 @@ Examples:
         print(GVAR)
     c.join()
 
-.. _Style Guide:
-   https://sphinxcontrib-napoleon.readthedocs.io/en/latest/example_google.html
-
 """
 
 from threading import Thread  # Condition, Lock,
