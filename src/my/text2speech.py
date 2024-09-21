@@ -37,10 +37,12 @@ import sys
 from pydub.exceptions import CouldntDecodeError
 
 from my.classes.exceptions import NoProfessionalVoicesError, MissingFromCacheError
-from my.consts import hours_lst, minutes_lst, Cmaj
+from my.consts import hours_lst, minutes_lst, Cmaj, farting_msgs_lst
 from my.stringutils import generate_random_alarm_message, generate_detokenized_message, pathname_of_phrase_audio, generate_random_string
 from my.tools.sound.sing import songify_this_mp3
-from my.tools.sound.trim import convert_audio_recordings_list_into_one_audio_recording
+from my.tools.sound.trim import convert_audio_recordings_list_into_one_audio_recording,\
+    convert_audio_recordings_list_into_an_mp3_file
+import time
 
 try:
     from my.classes.text2speechclass import _Text2SpeechClass
@@ -290,6 +292,23 @@ def speak_a_random_alarm_message(owner, hour, minute, voice, snoozed=False):
     data.export(flat_filename, format="mp3")
     os.system("$(which mpv) %s" % flat_filename)
     os.unlink(flat_filename)
+
+
+def fart_and_apologize(voice, delay_before_apologizing=None, fart_vol=75, voice_vol=80):
+    data_apologize = smart_phrase_audio(voice, random.choice(farting_msgs_lst))
+    from os import listdir
+    from os.path import isfile, join
+    path = 'audio/farts'
+    fartfiles = [f for f in listdir(path) if isfile(join(path, f))]
+    fart_mp3file = '{path}/{chx}'.format(path=path, chx=random.choice(fartfiles))
+    apologize_mp3file = '/tmp/tts{rnd}'.format(rnd=generate_random_string(32))
+    data_apologize.export(apologize_mp3file, format="mp3")
+    os.system('mpv --volume={vol} {fart}'.format(vol=fart_vol, fart=fart_mp3file))
+    cmd_apologize = '(sleep {delay}; mpv --volume={vol} {playme}; rm {playme})'.format(vol=voice_vol, delay=delay_before_apologizing, playme=apologize_mp3file)
+    if delay_before_apologizing is None:
+        os.system(cmd_apologize)
+    else:
+        os.system(cmd_apologize + ' &')
 
 
 def sing_a_random_alarm_message(owner, hour, minute, voice, snoozed=False, noof_singers=4, keys=None, len_per=4, squelch=3, speed=0.8):

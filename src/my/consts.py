@@ -221,3 +221,19 @@ Fmaj = 'c3 f3 a3 c4 f4 a4 c5'.split(' ')
 Gmaj = 'd3 g3 b3 d4 g4 b4 d5'.split(' ')
 Fmin = 'c3 f3 g#3 c4 f4 g#4 c5'.split(' ')
 
+farting_msgs_lst = [
+    """My bad.""",
+    """Oh dear.""",
+    """Was there something in that?""",
+    """Whoops.""",
+    """That wasn't me.""",
+    """Who was that?""",
+    """Uh-oh.""",
+    """I'm sorry.""",
+    """Excuse me...""",
+    """Backblast area clear!""",
+    """My party trick!""",
+    """I made that just for you.""",
+    """Clear the area!""",
+    ]
+
