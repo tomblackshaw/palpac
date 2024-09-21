@@ -46,7 +46,7 @@ import sys
 from PyQt5.QtWidgets import QWidget
 
 from my.classes.exceptions import StillAwaitingCachedValue, WebAPITimeoutError, WebAPIOutputError, MainAppStartupError
-from my.gui import compile_all_uic_files, set_audio_volume
+from my.gui import set_audio_volume
 from my.randomquotes import RandomQuoteSingleton as q
 from my.text2speech import speak_a_random_alarm_message
 
@@ -135,7 +135,6 @@ if __name__ == '__main__':
             raise MainAppStartupError("{binname} is missing. Please install it.".format(binname=binname))
 #    os.system("mpv audio/startup.mp3 &")
 #    add_to_os_path_if_existent('/opt/homebrew/bin', strict=False)
-    compile_all_uic_files('ui')
 #    app = QApplication(sys.argv)
 #    qwin = FunWidget(tts=Text2SpeechSingleton)
 #    qwin.showMaximized()

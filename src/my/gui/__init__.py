@@ -56,28 +56,3 @@ def set_background_translucent(q):
     q.setWindowFlags(Qt.FramelessWindowHint)
 
 
-
-def DONOTUSE_compile_all_uic_files(a_path):
-    """Compile the UIC files in the supplied path.
-
-    Using the PyQt-supplied UIC file compiler, turn the path's every UIC file
-    into a set of importable Python modules/wrappers.
-
-    Args:
-        a_path (str): Path to the directory.
-
-    Returns:
-        n/a
-
-    """
-    from os import listdir
-    from os.path import isfile, join
-    onlyfiles = [f for f in listdir(a_path) if isfile(join(a_path, f))]
-    for f in onlyfiles:
-        if f.endswith('.ui'):
-            cmd = '''pyuic5 -o "{a_path}/{pyfile}" "{a_path}/{uifile}"'''.format(
-                a_path=a_path,
-                uifile=f,
-                pyfile=f[:-2] + 'py')
-            if 0 != os.system(cmd):
-                raise PyQtUICompilerError("{cmd} failed".format(cmd=cmd))
