@@ -39,7 +39,7 @@ class InvisibleButClickableOverlayWindow(QMainWindow):
         self.the_widget_to_open = widget_to_open
         self.setFixedSize(480, 480)
         self.show()
-        self.raise_()  # FIXME: Superfluous?
+        self.raise_()
         self.setWindowOpacity(0.)  # Turn entire window transparent
         self.setStyleSheet('QWidget{background: #000000}')  # Turn background transparent too
 

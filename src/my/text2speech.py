@@ -161,7 +161,7 @@ def phrase_audio(voice, text, raise_exception_if_not_cached=False):
         os.system('mkdir -p "{mydir}"'.format(mydir=os.path.dirname(outfile)))
         vers = sys.version_info
         major_ver, minor_ver = vers[:2]
-        if major_ver < 3 or minor_ver < 11:  # FIXME: Why? _cachespeech.sh? WHY?
+        if major_ver < 3 or minor_ver < 11:  # Some versions of Python can't handle Eleven Labs. Therefore, we call the bash script, will calls the correct version. Or something.
             os.system('''./_cachespeech.sh "{voice}" "{text}" "{outfile}"'''.format(voice=voice, text=text, outfile=outfile))
         else:
             with open(outfile, 'wb') as f:
