@@ -46,9 +46,10 @@ FACES_DCT = {'neon 1':'ui/clocks/neon-clock-css-jquery/dist/index.html',
     }
 FACETWEAKS_DCT = {'neon 1':(-15, -5, .9),
                   'neon 2':(0, 0, 1.16),
-                  'analog 1':(80,80,1.0),
+                  'analog 1':(0, 0, 1.46),
                   'digital 1':(0,20,1.0),
                   'simple':(0,0,1.7),
+                  'another':(0,0,0.9),
                   }
 
 TOUCHSCREEN_SIZE_X, TOUCHSCREEN_SIZE_Y = 480, 480 
