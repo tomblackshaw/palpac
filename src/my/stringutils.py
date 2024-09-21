@@ -419,33 +419,6 @@ def find_trigger_phrase_in_sentence(sentence, triggerphrase):
     return -1
 
 
-def scan_sentence_for_any_one_of_these_trigger_phrases(sentence, triggerphrases):
-    if sentence == '':
-        return -1
-    for tp in triggerphrases:
-        cutoff_point = find_trigger_phrase_in_sentence(sentence, tp)
-        if cutoff_point >= 0:
-            cutoff_point += len(tp)
-            return min(cutoff_point + 1, len(sentence))  # to allow for a trailing space
-    return -1
-
-
-def trim_away_the_trigger_and_locate_the_command_if_there_is_one(sentence, triggerphrases):
-    cutoff_point = scan_sentence_for_any_one_of_these_trigger_phrases(sentence, triggerphrases)
-    limiter = 16
-    if cutoff_point >= 0:
-        while True:
-            another_cup = cutoff_point + scan_sentence_for_any_one_of_these_trigger_phrases(sentence[cutoff_point:cutoff_point + limiter].rstrip(), triggerphrases)
-#            print("another cup =", another_cup)
-            if another_cup >= cutoff_point:
-#                print("Why'd you say it twice?", sentence[cutoff_point:], "...becomes...", sentence[cutoff_point + another_cup:])
-                cutoff_point = another_cup
-            else:
-                break
-    return cutoff_point
-
-
-
 def pathname_of_phrase_audio(voice, text):
     if len(text) > 0 and text[0] == '.':
         text = text[1:]
