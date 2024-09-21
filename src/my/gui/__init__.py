@@ -55,4 +55,3 @@ def set_background_translucent(q):
     q.setAttribute(Qt.WA_TranslucentBackground)  # Turn background of window transparent
     q.setWindowFlags(Qt.FramelessWindowHint)
 
-

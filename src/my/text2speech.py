@@ -40,9 +40,7 @@ from my.classes.exceptions import NoProfessionalVoicesError, MissingFromCacheErr
 from my.consts import hours_lst, minutes_lst, Cmaj, farting_msgs_lst
 from my.stringutils import generate_random_alarm_message, generate_detokenized_message, pathname_of_phrase_audio, generate_random_string
 from my.tools.sound.sing import songify_this_mp3
-from my.tools.sound.trim import convert_audio_recordings_list_into_one_audio_recording,\
-    convert_audio_recordings_list_into_an_mp3_file
-import time
+from my.tools.sound.trim import convert_audio_recordings_list_into_one_audio_recording
 
 try:
     from my.classes.text2speechclass import _Text2SpeechClass
