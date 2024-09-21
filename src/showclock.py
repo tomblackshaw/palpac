@@ -94,17 +94,18 @@ class MainWindow(QMainWindow):
         finally:
             self.__face_lock.release_write()    
 
-
-app = QApplication(sys.argv)
-#os.system('''amixer set "Master" 80%''')
-#os.system('''mpv audio/startup.mp3 &''')
-#set_vdu_brightness(80)
-# clockface = ClockFace('ui/clocks/braun-clock/dist/index.html' if len(sys.argv) < 2 else sys.argv[1])  # 3d-clock
-# confwindow = ConfiguratorWindow()
-# clickme = InvisibleButClickableOverlayWindow(confwindow)
-win = MainWindow()
-win.clockface.load('ui/clocks/braun-clock/dist/index.html' if len(sys.argv) < 2 else sys.argv[1])  # 3d-clock
-app.exec_()
+if __name__ == '__main__':
+    
+    app = QApplication(sys.argv)
+    #os.system('''amixer set "Master" 80%''')
+    #os.system('''mpv audio/startup.mp3 &''')
+    #set_vdu_brightness(80)
+    # clockface = ClockFace('ui/clocks/braun-clock/dist/index.html' if len(sys.argv) < 2 else sys.argv[1])  # 3d-clock
+    # confwindow = ConfiguratorWindow()
+    # clickme = InvisibleButClickableOverlayWindow(confwindow)
+    win = MainWindow()
+    win.clockface.load('ui/clocks/braun-clock/dist/index.html' if len(sys.argv) < 2 else sys.argv[1])  # 3d-clock
+    app.exec_()
 
 
 

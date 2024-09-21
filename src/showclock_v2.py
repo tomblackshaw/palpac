@@ -127,10 +127,12 @@ class MainWindow(QMainWindow):
         self.confwindow.lswFaces.currentTextChanged.connect(lambda x: self.clockface.c.changeFace.emit(FACES_DCT[x]))
         [self.confwindow.lswFaces.setCurrentItem(x) for x in self.confwindow.lswFaces.findItems(DEFAULT_CLOCK_NAME, Qt.MatchExactly)]
 
-#os.system('''mpv audio/startup.mp3 &''')
-app = QApplication(sys.argv)
-win = MainWindow()
-app.exec_()
+
+if __name__ == '__main__':
+    #os.system('''mpv audio/startup.mp3 &''')
+    app = QApplication(sys.argv)
+    win = MainWindow()
+    app.exec_()
 
 
 
