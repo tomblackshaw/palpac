@@ -132,7 +132,7 @@ def play_dialogue_lst(tts, dialogue_lst):  # , stability=0.5, similarity_boost=0
         n/a
 
     Raises:
-        unknown. FIXME: list the potential exceptions
+        On its own? None. However, tts may raise various exceptions.
 
     """
     data_to_play = []
