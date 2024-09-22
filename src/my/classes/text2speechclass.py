@@ -64,18 +64,18 @@ from my.tools.sound.trim import convert_audio_recordings_list_into_an_mp3_file
 
 
 # import random
-def get_elevenlabs_clientclass(key_filename):
+def get_elevenlabs_clientclass(key_filename:str) -> ElevenLabs:
     """Retrieve the API class instance for interacting with the API.
 
     Using the key from the named filename, contact the Eleven Labs
     API and ask for the client class instance. This is how we
     communicate with the API.
 
-    Args:
-        key_filename (str): The pathname of the API key filename.
+    Arguments:
+        key_filename: The pathname of the API key filename.
 
     Returns:
-        client (elevenlabs.client.ElevenLabs): The client with which
+        client: The client with which
             we communicate with the Eleven Labs API.
 
     Raises:
@@ -159,200 +159,247 @@ class _Text2SpeechClass:
         super().__init__()
 
     @property
-    def api_models(self):
+    def api_models(self) -> list:
         self.__api_models_lock.acquire_read()
-        retval = self.__api_models
-        self.__api_models_lock.release_read()
-        return retval
+        try:
+            retval = self.__api_models
+            return retval
+        finally:
+            self.__api_models_lock.release_read()
 
     @api_models.setter
-    def api_models(self, value):
+    def api_models(self, value:list):
         self.__api_models_lock.acquire_write()
-        self.__api_models = value
-        self.__api_models_lock.release_write()
+        try:
+            if value is None or type(value) is not str:
+                raise ValueError("When setting api_models, specify a string & not a {t}".format(t=str(type(value))))
+            self.__api_models = value
+        finally:
+            self.__api_models_lock.release_write()
+            
+    @api_models.deleter
+    def api_models(self):
+        del self.__api_models
 
     @property
-    def api_voices(self):
+    def api_voices(self) -> list:
         self.__api_voices_lock.acquire_read()
-        retval = self.__api_voices
-        self.__api_voices_lock.release_read()
-        return retval
+        try:
+            retval = self.__api_voices
+            return retval
+        finally:
+            self.__api_voices_lock.release_read()
 
     @api_voices.setter
-    def api_voices(self, value):
+    def api_voices(self, value:list):
         self.__api_voices_lock.acquire_write()
-        self.__api_voices = value
-        self.__api_voices_lock.release_write()
+        try:
+            if value is None or type(value) is not str:
+                raise ValueError("When setting api_voices, specify a string & not a {t}".format(t=str(type(value))))
+            self.__api_voices = value
+        finally:
+            self.__api_voices_lock.release_write()    
+
+    @api_voices.deleter
+    def api_voices(self):
+        del self.__api_voices
 
     @property
-    def advanced(self):
+    def advanced(self) -> bool:
         self.__advanced_lock.acquire_read()
-        retval = self.__advanced
-        self.__advanced_lock.release_read()
-        return retval
+        try:
+            retval = self.__advanced
+            return retval
+        finally:
+            self.__advanced_lock.release_read()
 
     @advanced.setter
-    def advanced(self, value):
-        if type(value) is not bool:
-            raise TypeError("When setting advanced=X, ensure X is a boolean.")
+    def advanced(self, value:bool):
         self.__advanced_lock.acquire_write()
-        self.__advanced = value
-        self.__advanced_lock.release_write()
+        try:
+            if value is None or type(value) is not bool:
+                raise ValueError("When setting advanced, specify a bool & not a {t}".format(t=str(type(value))))
+            self.__advanced = value
+        finally:
+            self.__advanced_lock.release_write()    
 
     @advanced.deleter
     def advanced(self):
         del self.__advanced
 
     @property
-    def model(self):
+    def model(self) -> list:
         self.__model_lock.acquire_read()
-        retval = self.__model
-        self.__model_lock.release_read()
-        return retval
+        try:
+            retval = self.__model
+            return retval
+        finally:
+            self.__model_lock.release_read()
 
     @model.setter
-    def model(self, value):
-        if type(value) is not str:
-            raise TypeError("When setting advanced=X, ensure X is a string.")
-        if value not in [r for r in self.all_models]:
-            raise ValueError("model {model} is not a recognized model, according to the API".format(model=value))
+    def model(self, value:list):
         self.__model_lock.acquire_write()
-        self.__model = value
-        self.__model_lock.release_write()
+        try:
+            if value is None or type(value) is not str:
+                raise ValueError("When setting models, specify a string & not a {t}".format(t=str(type(value))))
+            self.__model = value
+        finally:
+            self.__model_lock.release_write()    
 
     @model.deleter
     def model(self):
         del self.__model
 
     @property
-    def stability(self):
+    def stability(self) -> list:
         self.__stability_lock.acquire_read()
-        retval = self.__stability
-        self.__stability_lock.release_read()
-        return retval
+        try:
+            retval = self.__stability
+            return retval
+        finally:
+            self.__stability_lock.release_read()
 
     @stability.setter
-    def stability(self, value):
-        if type(value) is not float:
-            raise TypeError("When setting stability=X, ensure X is a float.")
+    def stability(self, value:list):
         self.__stability_lock.acquire_write()
-        self.__stability = value
-        self.__stability_lock.release_write()
+        try:
+            if value is None or type(value) is not float:
+                raise ValueError("When setting stability, specify a floating & not a {t}".format(t=float(type(value))))
+            self.__stability = value
+        finally:
+            self.__stability_lock.release_write()    
 
     @stability.deleter
     def stability(self):
         del self.__stability
 
     @property
-    def similarity(self):
+    def similarity(self) -> list:
         self.__similarity_lock.acquire_read()
-        retval = self.__similarity
-        self.__similarity_lock.release_read()
-        return retval
+        try:
+            retval = self.__similarity
+            return retval
+        finally:
+            self.__similarity_lock.release_read()
 
     @similarity.setter
-    def similarity(self, value):
-        if type(value) is not float:
-            raise TypeError("When setting similarity=X, ensure value is a float.")
+    def similarity(self, value:list):
         self.__similarity_lock.acquire_write()
-        self.__similarity = value
-        self.__similarity_lock.release_write()
+        try:
+            if value is None or type(value) is not float:
+                raise ValueError("When setting similarity, specify a floating & not a {t}".format(t=float(type(value))))
+            self.__similarity = value
+        finally:
+            self.__similarity_lock.release_write()    
+
 
     @similarity.deleter
     def similarity(self):
         del self.__similarity
 
     @property
-    def style(self):
+    def style(self) -> list:
         self.__style_lock.acquire_read()
-        retval = self.__style
-        self.__style_lock.release_read()
-        return retval
+        try:
+            retval = self.__style
+            return retval
+        finally:
+            self.__style_lock.release_read()
 
     @style.setter
-    def style(self, value):
-        if type(value) is not float:
-            raise TypeError("When setting style=X, ensure X is a float.")
+    def style(self, value:list):
         self.__style_lock.acquire_write()
-        self.__style = value
-        self.__style_lock.release_write()
+        try:
+            if value is None or type(value) is not float:
+                raise ValueError("When setting style, specify a floating & not a {t}".format(t=float(type(value))))
+            self.__style = value
+        finally:
+            self.__style_lock.release_write()    
 
     @style.deleter
     def style(self):
         del self.__style
 
     @property
-    def boost(self):
+    def boost(self) -> list:
         self.__boost_lock.acquire_read()
-        retval = self.__boost
-        self.__boost_lock.release_read()
-        return retval
+        try:
+            retval = self.__boost
+            return retval
+        finally:
+            self.__boost_lock.release_read()
 
     @boost.setter
-    def boost(self, value):
-        if type(value) is not bool:
-            raise TypeError("When setting boost=X, ensure X is a boolean.")
+    def boost(self, value:list):
         self.__boost_lock.acquire_write()
-        self.__boost = value
-        self.__boost_lock.release_write()
+        try:
+            if value is None or type(value) is not bool:
+                raise ValueError("When setting boost, specify a booling & not a {t}".format(t=bool(type(value))))
+            self.__boost = value
+        finally:
+            self.__boost_lock.release_write()    
 
     @boost.deleter
     def boost(self):
         del self.__boost
 
     @property
-    def all_voices(self):
+    def all_voices(self) -> list:
         return [r.name for r in self.api_voices]
 
     @property
-    def all_models(self):
+    def all_models(self) -> list:
         return [r.model_id for r in self.api_models]
 
     @property
-    def api_voicelabels(self):
+    def api_voicelabels(self) -> list:
         return list(set(flatten([[k for k in r.labels.keys()] for r in self.api_voices])))
 
     @property
-    def api_voicecategories(self):
+    def api_voicecategories(self) -> list:
         return list(set([r.category for r in self.api_voices]))
 
     @property
-    def random_voice(self):
+    def random_voice(self) -> str:
         return choice([r for r in self.all_voices])
 
     @property
-    def voice(self):
+    def voice(self) -> str:
         self.__voice_lock.acquire_read()
-        retval = self.__voice
-        self.__voice_lock.release_read()
-        return retval
+        try:
+            retval = self.__voice
+            return retval
+        finally:
+            self.__voice_lock.release_read()
 
     @voice.setter
-    def voice(self, value):
+    def voice(self, value:str):
         if type(value) is not str:
             raise TypeError("When setting name=X, ensure X is a string.")
+        self.__voice_lock.acquire_write()
         try:
             if value in [r.name for r in self.api_voices if r.samples is not None]:
                 self.advanced = True
         except IndexError:
             self.advanced = False  # print("Okay. This is not a professional voice. We do not need to use advanced settings.")
-        if value not in self.all_voices:
-            raise ValueError("{name} is not a recognized voice name.".format(name=value))
-        self.__voice_lock.acquire_write()
-        self.__voice = value
-        self.__voice_lock.release_write()
+        try:
+            if value not in self.all_voices:
+                raise ValueError("{name} is not a recognized voice name.".format(name=value))
+            self.__voice = value
+        finally:
+            self.__voice_lock.release_write()    
 
     @voice.deleter
     def voice(self):
         del self.__voice
 
-    def id_of_a_name(self, a_name):
+    def id_of_a_name(self, a_name:str):
         return [r for r in self.api_voices if r.name == a_name][0].voice_id
 
-    def name_of_an_id(self, an_id):
+    def name_of_an_id(self, an_id:str):
         return [r for r in self.api_voices if r.voice_id == an_id][0].name
 
-    def audio(self, text, getgenerator=False, stream=False):
+    def audio(self, text:str, getgenerator:bool=False, stream:bool=False):
         if self.advanced is False:
             audio = self.client.generate(text=text, voice=self.voice, stream=stream)
         else:
@@ -372,7 +419,7 @@ class _Text2SpeechClass:
         except ApiError as e:
             raise ElevenLabsAPIError("Unable to retrieve audio from the ElevenLabs egine. Did you pay your subscription?") from e
 
-    def play(self, data, force_mpv=True, trim_level=0):
+    def play(self, data, force_mpv:bool=True, trim_level:int=0): # 
         if type(data) is str:
             raise ValueError("Please supply audio data, not a string, when calling me.")
         if type(data) not in (list, tuple):
@@ -387,13 +434,13 @@ class _Text2SpeechClass:
             for d in data:
                 play(d)
 
-    def stream(self, data):
+    def stream(self, data:bytes): # FIXME: What type is data?
         from elevenlabs import stream
         if type(data) is str:
             raise ValueError("Please supply audio data, not a string, when calling me.")
         stream(data)
 
-    def say(self, txt, stream=False):
+    def say(self, txt:str, stream:bool=False):
         # TODO: WRITE ME
         if type(txt) is not str:
             raise ValueError("Please supply a string, when calling me.")
@@ -414,7 +461,7 @@ class _Text2SpeechClass:
                 )
             self.stream(audio_stream)
 
-    def sing(self, txt, notes, squelch):
+    def sing(self, txt:str, notes:list, squelch:int):
         # TODO: WRITE ME
         audio = [self.audio(text=txt)]
         rndstr = generate_random_string(42)
