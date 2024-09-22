@@ -15,10 +15,7 @@ from PyQt5.QtWidgets import QApplication, QMainWindow, QDesktopWidget
 from my.gui import set_vdu_brightness
 from my.classes import ReadWriteLock
 
-try:
-    from PyQt5.QtWebKitWidgets import QWebView as Browser
-except ImportError:
-    from PyQt5.QtWebEngineWidgets import QWebEngineView as Browser
+from my.gui import Browser
 
 BASEDIR = os.path.dirname(__file__)
 
@@ -94,8 +91,8 @@ class MainWindow(QMainWindow):
         finally:
             self.__face_lock.release_write()    
 
+
 if __name__ == '__main__':
-    
     app = QApplication(sys.argv)
     #os.system('''amixer set "Master" 80%''')
     #os.system('''mpv audio/startup.mp3 &''')
