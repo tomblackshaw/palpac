@@ -4,8 +4,6 @@ import datetime
 import os
 import sys
 
-from PyQt5.QtWidgets import QWidget
-
 from my.classes.exceptions import MainAppStartupError
 from my.gui import set_audio_volume
 from my.text2speech import speak_a_random_alarm_message
