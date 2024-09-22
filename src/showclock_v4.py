@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 """Sheepdip for a clock display.
 
-This module contains classes and a main function to display a Javascript-based
+This module contains classes and a main function to display a JavaScript-based
 clock of the user's choosing. It also provides a configurator window, which is
 accessed when the user clicks on the clock. Ordinarily, this wouldn't be much
 of an achievement. However, in this case, the clock is displayed by a rudimentary
@@ -77,6 +77,14 @@ class ConfiguratorWindow(QMainWindow):
 
 
 class ClockFace(Browser):
+    """The browser widget in which the JavaScript clock is displayed.
+    
+    This clockface displays whichever clockface it's told to display. The
+    files are stored locally and probably in a nearby directory. That's
+    why it accepts a local path for load() and turns it into a QUrl(file:///)
+    etc. etc.
+
+    """
     changeFace = pyqtSignal(str)
     def __init__(self):
         super().__init__()
@@ -95,30 +103,47 @@ class ClockFace(Browser):
 
 
 class MainWindow(QMainWindow):
-    # FIXME: WRITE THESE DOX
+    """The main window for the PALPAC app.
+    
+    This will stack the clockface, its overlay window, and the configurator window.
+    Then it hides the configurator window, leaving the overlay where it can be
+    clicked. If the user tries to click on the clockface, they actually click on
+    the overlay window, which will trigger the configurator window. Then, if the
+    user clicks outside the configurator window, the overlay window will hide it
+    again.
+
+    In this way, the overlay window reveals and hides the configurator window.
+
+    Attributes:
+        clockface: The clockface to be displayed and used.
+        confwindow: The configurator window to be displayed/hidden/used.
+        clickbeard: The clickable overlay window. I call it a 'beard' because
+            it acts as a beard for the clockface.
+
+    """    
     def __init__(self, parent=None):
         super().__init__(parent)
         self.our_layout = QStackedLayout()
         self.clockface = ClockFace()
         self.clockface.load(DEFAULT_CLOCK_NAME)
         self.config_win = ConfiguratorWindow(self.clockface)
-        self.clockbeard = QLabel("") # This label (which is invisible) is *stacked* in front of the clock, making it clickable.
-        make_background_translucent(self.clockbeard)
-        for w in (self.config_win, self.clockface, self.clockbeard):
+        self.clickbeard = QLabel("") # This label (which is invisible) is *stacked* in front of the clock, making it clickable.
+        make_background_translucent(self.clickbeard)
+        for w in (self.config_win, self.clockface, self.clickbeard):
             self.our_layout.addWidget(w)
-        self.our_layout.setCurrentWidget(self.clockbeard)
+        self.our_layout.setCurrentWidget(self.clickbeard)
         self.our_layout.setStackingMode(QStackedLayout.StackAll) # Ensure that ALL the stack is visible at once.
         strawman = QWidget()
         strawman.setLayout(self.our_layout)
         self.setCentralWidget(strawman) # Apparently, it's necessary to create a straw-man widget and give it this burden.
 
     def mousePressEvent(self, event):
-        if self.our_layout.currentWidget() == self.clockbeard:
+        if self.our_layout.currentWidget() == self.clickbeard:
             self.our_layout.setCurrentWidget(self.config_win)
             self.config_win.show()
         else:
             self.config_win.hide()
-            self.our_layout.setCurrentWidget(self.clockbeard)
+            self.our_layout.setCurrentWidget(self.clickbeard)
         super().mousePressEvent(event)
 
 
