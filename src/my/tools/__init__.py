@@ -39,7 +39,7 @@ def timeit(method):
     return timed
 
 
-def logit(s, logfile_fname='/tmp/null.txt'):
+def logit(s:str, logfile_fname:str='/tmp/null.txt'):
     """Log the supplied text to the specified logfile.
 
     Append the supplied text to the logfile whose pathname is supplied to this
@@ -64,7 +64,7 @@ def logit(s, logfile_fname='/tmp/null.txt'):
 
 
 
-def object_from_dictionary(dct):
+def object_from_dictionary(dct:dict):
     '''Turn a dictionary into a simple object'''
 
     class MySimpleObject:

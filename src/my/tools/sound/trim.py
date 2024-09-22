@@ -16,16 +16,16 @@ from my.globals import DEFAULT_SILENCE_THRESHOLD, SNIPPY_SILENCE_THRESHOLD, LAZY
 from my.stringutils import generate_random_string
 
 
-def detect_leading_silence(sound, silence_threshold=DEFAULT_SILENCE_THRESHOLD, chunk_size=10):
+def detect_leading_silence(sound:AudioSegment, silence_threshold:float=DEFAULT_SILENCE_THRESHOLD, chunk_size:int=10) -> int:
     """Detect the leading silence in a sound sample.
 
     If there's silence at the start of the sound sample, find it. Iterate over\
     chunks until you find the first one with sound
 
     Args:
-        sound (AudioSegment): The audio data.
-        silence_threshold (float): The silence threshold, for 'squelching', in decibels.
-        chunk_size (int): How many milliseconds should we examine at a time.
+        sound: The audio data.
+        silence_threshold: The silence threshold, for 'squelching', in decibels.
+        chunk_size: How many milliseconds should we examine at a time.
 
     Returns:
         int: Number of milliseconds of leading silence that we found.
@@ -41,7 +41,7 @@ def detect_leading_silence(sound, silence_threshold=DEFAULT_SILENCE_THRESHOLD, c
     return trim_ms
 
 
-def convert_audio_recordings_list_into_one_audio_recording(data, trim_level=0):
+def convert_audio_recordings_list_into_one_audio_recording(data:list[bytes()], trim_level:int=0) -> AudioSegment:
     """Convert a list of audio data into one AudioSegment instance.
 
     Write the supplied list of data (probably MP3 to individual files.
@@ -49,12 +49,11 @@ def convert_audio_recordings_list_into_one_audio_recording(data, trim_level=0):
     instance.
 
     Args:
-        data (list[bytes()]): The list of MP3 data. I say 'list' because
+        data: The list of MP3 data. I say 'list' because
             this is a *list* of several bytes, not several *bytes*. To
             access MP3 data #0, read data[0]. That's the first MP3 file.
             The second is data[1]. You get the picture, I hope.
-        trim_level (int): If 0, don't trim. If 1, trim. If 2, trim aggressively.
-        exportfile (str): The pathname of the output file.
+        trim_level: If 0, don't trim. If 1, trim. If 2, trim aggressively.
 
     Returns:
         AudioSegment: An instance of an AudioSegment, ready to be exported
@@ -84,14 +83,14 @@ def convert_audio_recordings_list_into_one_audio_recording(data, trim_level=0):
     return sounds
 
 
-def trim_my_audio(untrimmed_audio, trim_level):
+def trim_my_audio(untrimmed_audio:AudioSegment, trim_level:int) -> AudioSegment:
     """Trim the suppiled audio.
 
     If there's silence at the start and/or end of the sound sample, trim it off.
 
     Args:
-        untrimmed_audio (AudioSegment): The untrimmed audio data.
-        trim_level (int): How much trimming should we do?
+        untrimmed_audio: The untrimmed audio data.
+        trim_level: How much trimming should we do?
             0=nearly none; 1=normal; 2=aggressive.
 
     Returns:
@@ -110,7 +109,7 @@ def trim_my_audio(untrimmed_audio, trim_level):
     return trimmed_aud
 
 
-def convert_audio_recordings_list_into_an_mp3_file(data, exportfile, trim_level=0):
+def convert_audio_recordings_list_into_an_mp3_file(data:list[bytes()], exportfile:str, trim_level:int=0):
     """Convert a list of audio data into an MP3 file.
 
     Write the supplied list of data (probably MP3 to individual files.
@@ -118,12 +117,12 @@ def convert_audio_recordings_list_into_an_mp3_file(data, exportfile, trim_level=
     to the specified pathname.
 
     Args:
-        data (list[bytes()]): The list of MP3 data. I say 'list' because
+        data: The list of MP3 data. I say 'list' because
             this is a *list* of several bytes, not several *bytes*. To
             access MP3 data #0, read data[0]. That's the first MP3 file.
             The second is data[1]. You get the picture, I hope.
-        trim_level (int): If 0, don't trim. If 1, trim. If 2, trim aggressively.
-        exportfile (str): The pathname of the output file.
+        trim_level: If 0, don't trim. If 1, trim. If 2, trim aggressively.
+        exportfile: The pathname of the output file.
 
     Returns:
         n/a

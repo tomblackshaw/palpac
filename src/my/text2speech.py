@@ -41,6 +41,7 @@ from my.consts import hours_lst, minutes_lst, Cmaj, farting_msgs_lst
 from my.stringutils import generate_random_alarm_message, generate_detokenized_message, pathname_of_phrase_audio, generate_random_string
 from my.tools.sound.sing import songify_this_mp3
 from my.tools.sound.trim import convert_audio_recordings_list_into_one_audio_recording
+from pydub.audio_segment import AudioSegment
 
 try:
     from my.classes.text2speechclass import _Text2SpeechClass
@@ -51,7 +52,7 @@ except (ModuleNotFoundError, ImportError) as my_e:
     Text2SpeechSingleton = None  # compatibility w/ Python 3.8
 
 
-def get_first_prof_name(tts):
+def get_first_prof_name(tts:Text2SpeechSingleton) -> str:
     """Get the name of the first professional-grade voice.
 
     On the programmer's Eleven Labs account, there may be a professional-
@@ -60,7 +61,7 @@ def get_first_prof_name(tts):
     there are none, raise a NoProfessionalVoicesError exception.
 
     Args:
-        tts (Text2SpeechSingleton): The singleton by which to access
+        tts: The singleton by which to access
             the Eleven Labs API.
 
     Returns:
@@ -77,17 +78,17 @@ def get_first_prof_name(tts):
         raise NoProfessionalVoicesError("There are no professional-grade voices available from your Eleven Labs account.") from e
 
 
-def speak_random_alarm(owner_name, time_24h, time_minutes, voice=None, tts=Text2SpeechSingleton):
+def speak_random_alarm(owner_name:str, time_24h:int, time_minutes:int, voice:str=None, tts:_Text2SpeechClass=Text2SpeechSingleton):
     """Speak an alarm warning.
 
     In the specified voice, to the specified owner of the alarm clock, speak an alarm
     to alert the alarm clock user that a specific time has come.
 
     Args:
-        owner_name (str): First name of the owner of the alarm clock.
-        time_24h (int): The time that has come (hours).
-        time_minutes (int): The time that has come (minutes).
-        voice (str): The name of the voice that I am to use.
+        owner_name: First name of the owner of the alarm clock.
+        time_24h: The time that has come (hours).
+        time_minutes: The time that has come (minutes).
+        voice: The name of the voice that I am to use.
 
     """
     if voice is None:
@@ -101,14 +102,14 @@ def speak_random_alarm(owner_name, time_24h, time_minutes, voice=None, tts=Text2
     tts.play(d)
 
 
-def speak_totally_randomized_alarm_and_time(owner_of_clock):
+def speak_totally_randomized_alarm_and_time(owner_of_clock:str):
     """It does what it says on the tin."""
     time_24h = random.randint(0, 24)
     time_minutes = random.randint(0, 60)
     speak_random_alarm(owner_of_clock, time_24h, time_minutes)
 
 
-def play_dialogue_lst(tts, dialogue_lst):  # , stability=0.5, similarity_boost=0.01, style=0.5):
+def play_dialogue_lst(tts:_Text2SpeechClass, dialogue_lst:list):  # , stability=0.5, similarity_boost=0.01, style=0.5):
     """Recites dialogue.
 
     Using the Eleven Labs website's API, their Python module, and mpv/ffmpeg, I play
@@ -119,9 +120,6 @@ def play_dialogue_lst(tts, dialogue_lst):  # , stability=0.5, similarity_boost=0
         tts: Text-to-speech singleton Text2SpeechSingleton.
         dialogue_lst: List of dialogue tuples. The first item is the name of the voice
             to be used. The second item is the text to be recited.
-        stability: The stability level (between 0.3 and 1.0 recommended).
-        similarity_boost: The similarity level (between 0.01 and 1.0 recommended).
-        style: The similarity level (between 0.0 and 0.5 recommended).
 
     Example:
         $ python3
@@ -145,7 +143,7 @@ def play_dialogue_lst(tts, dialogue_lst):  # , stability=0.5, similarity_boost=0
 
 
 
-def phrase_audio(voice, text, raise_exception_if_not_cached=False):
+def phrase_audio(voice:str, text:str, raise_exception_if_not_cached:bool=False) -> bytes:
     # FIXME WRITE DOX
     text = text.lower().strip(' ')
     if len(text) > 1:
@@ -174,7 +172,7 @@ def phrase_audio(voice, text, raise_exception_if_not_cached=False):
         return f.read()
 
 
-def list_phrases_to_handle(smart_phrase):
+def list_phrases_to_handle(smart_phrase:list[str]):
     # FIXME WRITE DOX
     phrases_to_handle = []
     while len(smart_phrase) > 0:
@@ -189,7 +187,7 @@ def list_phrases_to_handle(smart_phrase):
     return phrases_to_handle
 
 
-def decoded_token(token, hello_owner, owner, shorttime, one_minute_ago, one_minute_later, morning_or_afternoon_or_evening):
+def decoded_token(token:str, hello_owner:str, owner:str, shorttime:str, one_minute_ago:str, one_minute_later:str, morning_or_afternoon_or_evening:str) -> str:
     # FIXME WRITE DOX
     newval = token
     for _ in range(0, 5):
@@ -199,7 +197,7 @@ def decoded_token(token, hello_owner, owner, shorttime, one_minute_ago, one_minu
     return newval
 
 
-def deliberately_cache_a_smart_phrase(voice, smart_phrase):
+def deliberately_cache_a_smart_phrase(voice:str, smart_phrase:str):
     # FIXME WRITE DOX
     phrases_to_handle = list_phrases_to_handle(smart_phrase)
     for phrase in phrases_to_handle:
@@ -214,7 +212,7 @@ def deliberately_cache_a_smart_phrase(voice, smart_phrase):
             print('"%s" (%s) regenerated successfully.' % (phrase, voice))
 
 
-def smart_phrase_audio(voice, smart_phrase, owner=None, time_24h=None, time_minutes=None, trim_level=1):
+def smart_phrase_audio(voice:str, smart_phrase:str, owner:str=None, time_24h:int=None, time_minutes:int=None, trim_level:int=1) -> AudioSegment:
     # FIXME WRITE DOX
     # FIXME This is a badly written subroutine. Clean it up. Document it. Thank you.
     if owner is not None and time_24h is not None and time_minutes is not None:
@@ -292,7 +290,7 @@ def speak_a_random_alarm_message(owner, hour, minute, voice, snoozed=False):
     os.unlink(flat_filename)
 
 
-def fart_and_apologize(voice, delay_before_apologizing=None, fart_vol=75, voice_vol=80):
+def fart_and_apologize(voice:str, fart_vol:int=75, voice_vol:int=80):
     data_apologize = smart_phrase_audio(voice, random.choice(farting_msgs_lst))
     from os import listdir
     from os.path import isfile, join
@@ -309,7 +307,7 @@ def fart_and_apologize(voice, delay_before_apologizing=None, fart_vol=75, voice_
         os.system(cmd_apologize + ' &')
 
 
-def sing_a_random_alarm_message(owner, hour, minute, voice, snoozed=False, noof_singers=4, keys=None, len_per=4, squelch=3, speed=0.8):
+def sing_a_random_alarm_message(owner:str, hour:int, minute:int, voice:str, snoozed:bool=False, noof_singers:int=4, keys=None, len_per:int=4, squelch:int=3, speed:int=0.8):
     # FIXME WRITE DOX
     '''
     keys = [r.split(' ') for r in ('C4 C4 C4 C4', 'G4 G4 G4 G4', 'C5 C5 C5 C5', 'C4 G4 C5 E5 C3 G4 C5 E5', 'C3 G4 C5 E5 C3 G4 C5 D#5')]

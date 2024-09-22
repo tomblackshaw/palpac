@@ -14,7 +14,7 @@ This module contains GUI-related tools.
 
 import os
 from my.classes.exceptions import PyQtUICompilerError
-from PyQt5.QtCore import Qt
+from PyQt5.QtCore import Qt, QObject
 
 
 try:
@@ -23,7 +23,7 @@ except ImportError:
     from PyQt5.QtWebEngineWidgets import QWebEngineView as Browser
     
 
-def set_vdu_brightness(brightness):
+def set_vdu_brightness(brightness:int):
     # Technically, brightness>100 will be ignored by the hardware.
     if type(brightness) is not int:
         raise TypeError("Brightness parameter must be an integer")
@@ -34,7 +34,7 @@ def set_vdu_brightness(brightness):
     return res
 
 
-def set_audio_volume(volume, mixer="Master"):
+def set_audio_volume(volume:int, mixer:str="Master"):
     """Set the volume of the principal ALSA device.
 
     Args:
@@ -52,12 +52,12 @@ def set_audio_volume(volume, mixer="Master"):
     os.system('''amixer set "{mixer}" {volume}%'''.format(mixer=mixer, volume=real_vol_list[volume]))
 
 
-def make_window_transparent(q):
+def make_window_transparent(q:QObject):
     q.setWindowOpacity(0.)  # Turn entire window transparent
     q.setStyleSheet('QWidget{background: #000000}')  # Turn background transparent too
 
     
-def make_background_translucent(q):
+def make_background_translucent(q:QObject):
     q.setAttribute(Qt.WA_TranslucentBackground)  # Turn background of window transparent
     q.setWindowFlags(Qt.FramelessWindowHint)
 

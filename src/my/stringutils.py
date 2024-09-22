@@ -30,31 +30,14 @@ from my.tools import logit
 MAX_RANDGENSTR_LEN = 99999  # used by generate_random_string()
 
 
-def generate_triggerphrase_permutations(listA, listB):
-    if type(listA) not in (tuple, list) or type(listB) not in (tuple, list):
-        raise TypeError("Both parameters must be either lists or tuples")
-    if [] != list(set([type(r) for r in listA if type(r) is not str])) or [] != list(set([type(r) for r in listB if type(r) is not str])):
-        raise TypeError("All values within the lists (the parameters) must be strings")
-    if [] != list(set([type(r) for r in listA if type(r) is not str or r == ''])) or [] != list(set([type(r) for r in listB if type(r) is not str or r == ''])):
-        raise ValueError("All values within the lists (the parameters) must be NON-EMPTY strings")
-    if listA in ([], ()) or listB in ([], ()):
-        raise ValueError("Both lists must be non-empty")
-    lst = []
-    for wordA in listA:
-        for wordB in listB:
-            s = wordA + ' ' + wordB
-            lst.append(s)
-    return lst
-
-
-def url_validator(url):
+def url_validator(url:str) -> bool:
     """Validate URL.
 
     Examine the supplied string. If it is a valid URL, return True. Otherwise,
     return False.
 
     Args:
-        url (str): The URL to evaluate.
+        url: The URL to evaluate.
 
     Returns:
         bool: Is it a valid URL? True for yes. False for no.
@@ -74,7 +57,7 @@ def url_validator(url):
         return False
 
 
-def add_to_os_path_if_existent(a_path, strict=True):
+def add_to_os_path_if_existent(a_path:str, strict:bool=True):
     """If path exists, add it to the PATH environmental variable.
 
     I add the specified path to the PATH environmental variable. If the
@@ -82,10 +65,10 @@ def add_to_os_path_if_existent(a_path, strict=True):
     exception.
 
     Args:
-        a_path (str): path to be added.
+        a_path: path to be added.
             The path should exist. If it does not, I do not
             add it to PATH.
-        strict (bool, optional): enforce rules.
+        strict (optional): enforce rules.
             If True *and* path 'a_path' does not exist, raise an exception.
             If False, merely write a warning w/ logit() and do not add
             the path to PATH.
@@ -106,14 +89,14 @@ def add_to_os_path_if_existent(a_path, strict=True):
         os.environ['PATH'] += os.pathsep + a_path
 
 
-def get_random_zenquote(timeout=10):
+def get_random_zenquote(timeout:int=10) -> str:
     """Return an uplifting quote.
 
     Using the API at https://zenquotes.io, I retrieve a random quote --
     something uplifting -- and return it as a string.
 
     Args:
-        n/a
+        timeout (optional): Timeout before returning string (or failing).
 
     Returns:
         str: Random uplifting message string.
@@ -139,7 +122,7 @@ def flatten(xss):
     return [x for xs in xss for x in xs]
 
 
-def wind_direction_str(degrees):
+def wind_direction_str(degrees:int) -> str:
     """Return the wind direction string, based on the degrees field.
 
     The supplied number of degrees will be turned into a string that describes
@@ -178,7 +161,7 @@ def wind_direction_str(degrees):
         raise ValueError()
 
 
-def generate_random_string(length):
+def generate_random_string(length:int) -> str:
     """Generate a N-chars-long random alphanumeric string.
 
     Generate a random string, composed of digits and lowercase letters and digits.
@@ -214,13 +197,13 @@ def generate_random_string(length):
     return x
 
 
-def convert_24h_and_mins_to_shorttime(time_24h, time_minutes, diff=0):
+def convert_24h_and_mins_to_shorttime(time_24h:int, time_minutes:int, diff:int=0) -> str:
     """Convert the supplied time to a human-readable & pronounceable string.
 
     Args:
-        time_24h (int): The time that has come (hours).
-        time_minutes (int): The time that has come (minutes).
-        diff (int): How many minutes before/after the specified time
+        time_24h: The time that has come (hours).
+        time_minutes: The time that has come (minutes).
+        diff: How many minutes before/after the specified time
             should I calculate?
 
     Returns:
@@ -278,7 +261,7 @@ def convert_24h_and_mins_to_shorttime(time_24h, time_minutes, diff=0):
             return '%d:%02d P.M.' % (12 if time_24h in (0, 12, 24) else time_24h % 12, time_minutes)
 
 
-def generate_detokenized_message(owner, time_24h, time_minutes, message_template):
+def generate_detokenized_message(owner:str, time_24h:int, time_minutes:int, message_template:str) -> str:
     """Generate the text of an alarm or otherwise tokenized message.
 
     Using the specified time and template, generate a human-readable,
@@ -292,10 +275,10 @@ def generate_detokenized_message(owner, time_24h, time_minutes, message_template
         >>> msg = generate_alarm_message('Chuckles', 12, 30, message_template)
 
     Args:
-        time_24h (int): The time that has come (hours).
-        time_minutes (int): The time that has come (minutes).
-        voice (str): The name of the voice that I am to use.
-        message_template (str): Template to be populated by the
+        time_24h: The time that has come (hours).
+        time_minutes: The time that has come (minutes).
+        voice: The name of the voice that I am to use.
+        message_template: Template to be populated by the
             values from the parameters.
 
     Returns:
@@ -330,7 +313,7 @@ def generate_detokenized_message(owner, time_24h, time_minutes, message_template
     return newval
 
 
-def generate_random_alarm_message(owner_of_clock, time_24h, time_minutes, snoozed=False):
+def generate_random_alarm_message(owner_of_clock:str, time_24h:int,  time_minutes:int, snoozed:bool=False) -> str:
     """Example function with types documented in the docstring.
 
     `PEP 484`_ type annotations are supported. If attribute, parameter, and
@@ -338,11 +321,13 @@ def generate_random_alarm_message(owner_of_clock, time_24h, time_minutes, snooze
     included in the docstring:
 
     Args:
-        param1 (int): The first parameter.
-        param2 (str): The second parameter.
+        owner_of_clock: The person whose alarm clock it is.
+        time_24h: hour.
+        time_minutes: minutes.
+        snoozed: If we're snoozing or not.
 
     Returns:
-        bool: The return value. True for success, False otherwise.
+        str: Alarm message.
 
     TODO: Write me
 

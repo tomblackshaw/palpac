@@ -51,7 +51,7 @@ class _RandomQuoteClass:
         self._our_zenquote_caching_call.update_me()
 
     @property
-    def quote(self):
+    def quote(self) -> str:
         """Obtain a (locally cached) uplifting quote from ZenQuote.
 
         Using a locally cached copy of the most recent quote, return an inspirational
