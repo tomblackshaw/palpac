@@ -228,6 +228,8 @@ farting_msgs_lst = [
     """Whoops.""",
     """That wasn't me.""",
     """Who was that?""",
+    """Who farted?""",
+    """It was me!""",
     """Uh-oh.""",
     """I'm sorry.""",
     """Excuse me...""",
@@ -235,5 +237,9 @@ farting_msgs_lst = [
     """My party trick!""",
     """I made that just for you.""",
     """Clear the area!""",
+    """Thank you for coming to me toot talk.""",
+    """Gesundh toot!""",
+    """Next time, you'll have to pull my finger.""",
+    """Did you hear what that asshole just said?""",
     ]
 
