@@ -60,7 +60,7 @@ class ReadWriteLock:
     be modified by only one thread.
 
     Attributes:
-        locked (bool): Returns status of lock: True if locked, False if not.
+        locked: Status of lock. True if locked, False if not.
     
     """
     def __init__(self):
@@ -68,7 +68,8 @@ class ReadWriteLock:
         self._read_ready = Condition(self._read_ready_lck)
         self._readers = 0
 
-    def locked(self):
+    @property
+    def locked(self) -> bool:
         """bool: Return True if the underlying Lock is locked."""
         return self._read_ready_lck.locked()
 
