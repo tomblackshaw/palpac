@@ -340,69 +340,8 @@ def generate_random_alarm_message(owner_of_clock:str, time_24h:int,  time_minute
     return message
 
 
-def find_trigger_phrase_in_sentence(sentence, triggerphrase):
-    """Find trigger phrase in sentence, if it's there.
 
-    Scan the supplied sentence (a string) for the supplied trigger phrase
-    (also a string). If the trigger phrase starts at the first or second word
-    of the sentence, return its position (an int). Otherwise, return -1.
-
-    Note:
-        If the sentence is an empty string (""), that is *not* grounds
-        to throw an exception. However, an empty triggerphrase ("")
-        *is* grounds for an exception.
-
-    Example:
-        $ python3
-        >>> from my.stringutils import find_trigger_phrase_in_sentence
-        >>> find_trigger_phrase_in_sentence("
-
-    Args:
-        sentence (str): The sentence to be scanned.
-        triggerphrase (str): The trigger word for which we are searching.
-
-    Returns:
-        int: Location of the trigger phrase, if found. Otherwise, -1.
-
-    Raises:
-        TypeError: A supplied parameter isn't a string.
-        ValueError: A supplied parameter isn't a non-empty string,
-            or there are spaces at the start/end of the strings.
-
-    TODO: Write me
-
-    """
-    if type(sentence) is not str or type(triggerphrase) is not str:
-        raise TypeError("sentence and triggerphrase must be strings")
-    if sentence == '':
-        return -1
-    sentence = sentence.lower()
-    triggerphrase = triggerphrase.lower()
-    if sentence != sentence.strip() or triggerphrase != triggerphrase.strip():
-#        print("Sentence: ==>{sentence}<==".format(sentence=sentence))
-#        print("Triggerp: ==>{triggerp}<==".format(triggerp=triggerphrase))
-        raise ValueError("sentence and triggerphrase must be strings WITHOUT spaces at start or end")
-    if triggerphrase == '':
-        raise ValueError("I need a triggerphrase that is at least one character long")
-    i = sentence.find(triggerphrase)
-    if i >= 0:
-#        print("Found triggerphrase in sentence")
-        if i == 0 or sentence[i - 1] == ' ':
-#            print("Triggerphrase begins at the start of the sentence *or* in front of a space")
-            j = i + len(triggerphrase)
-            if j >= len(sentence) or sentence[j] == ' ':
-#                print("Triggerphrase ends at the end of the sentence *or* at a space")
-                return i
-    # words_lst = sentence.split(' ')
-    # noof_words = len(words_lst)
-    # upperlimit = noof_words if scan_first_N_words is None else min(noof_words, scan_first_N_words)
-    # for wordnum in range(0, upperlimit):
-    #     if words_lst[wordnum] == triggerphrase:
-    #         return sentence.index(' ' + triggerphrase) + 1 if wordnum > 0 else 0
-    return -1
-
-
-def pathname_of_phrase_audio(voice, text):
+def pathname_of_phrase_audio(voice:str, text:str) -> str:
     if len(text) > 0 and text[0] == '.':
         text = text[1:]
     return 'audio/cache/{voice}/{text}.mp3'.format(voice=voice, text=text.lower().replace(' ', '_'))

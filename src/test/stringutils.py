@@ -9,7 +9,7 @@ import random
 import unittest
 from my.stringutils import convert_24h_and_mins_to_shorttime, url_validator, generate_random_string, MAX_RANDGENSTR_LEN
 
-G_triggers = ['doc', 'Dad', 'there', 'that', 'tad', 'thad', 'than', 'Dan', 'either doc', 'either Dad', 'either there', 'either that', 'either tad', 'either thad', 'either than', 'either Dan', 'hate doc', 'hate Dad', 'hate there', 'hate that', 'hate tad', 'hate thad', 'hate than', 'hate Dan', 'hey doc', 'hey Dad', 'hey there', 'hey that', 'hey tad', 'hey thad', 'hey than', 'hey Dan', 'hay doc', 'hay Dad', 'hay there', 'hay that', 'hay tad', 'hay thad', 'hay than', 'hay Dan', 'they doc', 'they Dad', 'they there', 'they that', 'they tad', 'they thad', 'they than', 'they Dan', 'a doc', 'a Dad', 'a there', 'a that', 'a tad', 'a thad', 'a than', 'a Dan', 'heh doc', 'heh Dad', 'heh there', 'heh that', 'heh tad', 'heh thad', 'heh than', 'heh Dan', 'eight doc', 'eight Dad', 'eight there', 'eight that', 'eight tad', 'eight thad', 'eight than', 'eight Dan', 'i doc', 'i Dad', 'i there', 'i that', 'i tad', 'i thad', 'i than', 'i Dan', 'Freya doc', 'Freya Dad', 'Freya there', 'Freya that', 'Freya tad', 'Freya thad', 'Freya than', 'Freya Dan', 'up doc', 'up Dad', 'up there', 'up that', 'up tad', 'up thad', 'up than', 'up Dan', 'great doc', 'great Dad', 'great there', 'great that', 'great tad', 'great thad', 'great than', 'great Dan', 'the doc', 'the Dad', 'the there', 'the that', 'the tad', 'the thad', 'the than', 'the Dan']
+
 
 class TestGenerateRandomString(unittest.TestCase):
 
