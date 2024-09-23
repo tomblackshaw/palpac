@@ -290,7 +290,7 @@ def speak_a_random_alarm_message(owner, hour, minute, voice, snoozed=False):
     os.unlink(flat_filename)
 
 
-def just_fart(voice:str, fart_vol:int=100):
+def just_fart(fart_vol:int=100):
     from os import listdir
     from os.path import isfile, join
     path = 'audio/farts'
@@ -299,7 +299,7 @@ def just_fart(voice:str, fart_vol:int=100):
     os.system('mpv --volume={vol} {fart}'.format(vol=fart_vol, fart=fart_mp3file))
 
 def fart_and_apologize(voice:str, fart_vol:int=75, voice_vol:int=80):
-    just_fart(voice, fart_vol)
+    just_fart(fart_vol)
     data_apologize = smart_phrase_audio(voice, random.choice(farting_msgs_lst))
     apologize_mp3file = '/tmp/tts{rnd}'.format(rnd=generate_random_string(32))
     data_apologize.export(apologize_mp3file, format="mp3")
