@@ -41,7 +41,7 @@ def detect_leading_silence(sound:AudioSegment, silence_threshold:float=DEFAULT_S
     return trim_ms
 
 
-def convert_audio_recordings_list_into_one_audio_recording(data:list[bytes()], trim_level:int=0) -> AudioSegment:
+def convert_audio_recordings_list_into_one_audio_recording(data:list[bytes], trim_level:int=0) -> AudioSegment:
     """Convert a list of audio data into one AudioSegment instance.
 
     Write the supplied list of data (probably MP3 to individual files.
