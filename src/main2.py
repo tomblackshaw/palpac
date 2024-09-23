@@ -20,6 +20,16 @@ it again will hide the configuration tools.
 
 .. _Google Python Style Guide:
    http://google.github.io/styleguide/pyguide.html
+   
+Configuration screen
+- click on the center of the clock to get it
+- when you've got it
+    - you'll see three buttons
+    - click 1/2/3 for a different config thing
+        - brightness
+        - volume
+        - clock face
+    - click anywhere to hide it again
 
 """
 
@@ -51,7 +61,6 @@ class SetBrightnessWindow(QMainWindow):
 
         uic.loadUi(os.path.join(BASEDIR, "ui/setbrightness.ui"), self)
         make_background_translucent(self)
-#        make_window_transparent(self)
         
 
 
@@ -61,7 +70,7 @@ class SetVolumeWindow(QMainWindow):
 
         uic.loadUi(os.path.join(BASEDIR, "ui/setvolume.ui"), self)
         make_background_translucent(self)
-#        make_window_transparent(self)
+
         
 
 
@@ -71,74 +80,21 @@ class ChooseClockfaceWindow(QMainWindow):
 
         uic.loadUi(os.path.join(BASEDIR, "ui/chooseclockface.ui"), self)
         make_background_translucent(self)
-#        make_window_transparent(self)
-        
 
 
 
 
-# class ConfiguratorWindow(QMainWindow):
-#     """The configurator window, with which the clock is reconfigured/adjusted.
-#
-#     This subclass is instanced (instantiated?) once. Its instance is displayed
-#     whenever the user clicks on the clock (or rather, on the invisible window
-#     in front of the clock). It lets the user adjust the time, date, volume,
-#     screen brightness, etc.
-#
-#     When the user adjusts the volume or brightness, those changes are made
-#     instantly by calling the appropriate subroutine.
-#
-#     When a different *clock face* is chosen, that's different. A signal is sent
-#     to the clock face itself.
-#
-#     """    
-#     def __init__(self, clockface):
-#         super().__init__()
-#         self.clockface = clockface
-#         uic.loadUi(os.path.join(BASEDIR, "ui/configuratorwindow.ui"), self)
-#         make_background_translucent(self)
-#         self.one_button.clicked.connect(self.button_one_clicked)
-#
-#     def button_one_clicked(self):
-#         print("Button one was clicked")
-#         self.central_frame_layout.setStackingMode(QStackedLayout.StackOne)
-#         self.central_frame_layout.setCurrentWidget(self.chooseclockface_win)
-#
-#
-#     def button_two_clicked(self):
-#         print("Button two was clicked")
-#         self.central_frame_layout.setCurrentWidget(self.setbrightness_win)
-#
-#
-#     def button_three_clicked(self):
-#         print("Button three was clicked")
-#         self.central_frame_layout.setCurrentWidget(self.setvolume_win)
+
+class ConfiguratorWindow(QMainWindow):    
+    def __init__(self):
+        super().__init__()
+
+        uic.loadUi(os.path.join(BASEDIR, "ui/configuratorwindow.ui"), self)
+        make_background_translucent(self)
 
 
-#        strawman = QWidget()
-#        strawman.setLayout(self.our_layout)
-#        self.setCentralWidget(strawman) # Apparently, it's necessary to create a straw-man widget and give it this burden.
 
-        
-    #     self.sliBrightness.valueChanged.connect(set_vdu_brightness)
-    #     self.sliVolume.valueChanged.connect(set_audio_volume)
-    #     [self.lswFaces.addItem(k) for k in FACES_DCT.keys()]
-    #     self.lswFaces.currentTextChanged.connect(lambda x: self.clockface.changeFace.emit(x)) 
-    #     [self.lswFaces.setCurrentItem(x) for x in self.lswFaces.findItems(DEFAULT_CLOCK_NAME, Qt.MatchExactly)]
-    #     self.sliVolume.hide()
-    #     self.show()
-    #     self.btnVol.clicked.connect(self.adjust_volume)
-    #
-    # def clicked(self):
-    #     print("Configuration window -- hiding!")
-    #     self.hide()
-    #
-    # def adjust_volume(self):
-    #     print("Adjusting volume")
-    #     if self.
-    #     self.sliVolume.
-    #
-    #     isVisibletVisible() = not self.sliVolume.isVisible()
+
 
 
 class ClockFace(Browser):
@@ -168,6 +124,8 @@ class ClockFace(Browser):
         self.setStyleSheet('QScrollBar {height:0px;}; QScrollBar {width:0px;}')  # Turn background transparent too
 
 
+
+
 class MainWindow(QMainWindow):
     """The main window for the PALPAC app.
     
@@ -183,39 +141,64 @@ class MainWindow(QMainWindow):
     Attributes:
         clockface: The clockface to be displayed and used.
         confwindow: The configurator window to be displayed/hidden/used.
-        clickbeard: The clickable overlay window. I call it a 'beard' because
+        beard: The clickable overlay window. I call it a 'beard' because
             it acts as a beard for the clockface.
 
     """    
     def __init__(self, parent=None):
         super().__init__(parent)
         self.our_layout = QStackedLayout()
-        self.clockface = ClockFace()
-        self.clockface.load(DEFAULT_CLOCK_NAME)
-        self.config_win_1 = SetBrightnessWindow()
-        self.config_win_2 = SetVolumeWindow()
-        self.config_win_3 = ChooseClockfaceWindow()
-        self.clickbeard = QLabel("") # This label (which is invisible) is *stacked* in front of the clock, making it clickable.
-        make_background_translucent(self.clickbeard)
-        for w in (self.clockface, self.clickbeard, self.config_win): # _1, self.config_win_2, self.config_win_3):
+        self.clockface = ClockFace() # The clock itself, on display
+        self.clockface.load(DEFAULT_CLOCK_NAME) 
+        self.beard = QLabel("") # This label (which is invisible) is *stacked* in front of the clock, making it clickable.
+        self.settings = ConfiguratorWindow() # The configuration window that appears when the user clicks on the beard/clock.
+        make_background_translucent(self.beard)
+        for w in (self.clockface, self.beard, self.settings):
             self.our_layout.addWidget(w)
-        self.our_layout.setCurrentWidget(self.clickbeard)
+        self.our_layout.setCurrentWidget(self.beard)
         self.our_layout.setStackingMode(QStackedLayout.StackAll) # Ensure that ALL the stack is visible at once.
-        for w in (self.config_win_1,): # , self.config_win_2, self.config_win_3):
-            w.hide()
         strawman = QWidget()
         strawman.setLayout(self.our_layout)
-        self.setCentralWidget(strawman) # Apparently, it's necessary to create a straw-man widget and give it this burden.
-#        self.config_win.hide()
+        self.setCentralWidget(strawman)
+        self.settings.hide()
+        self.settings.volume_button.clicked.connect(self.volume_button_clicked)
+        self.settings.brightness_button.clicked.connect(self.brightness_button_clicked)
+        self.settings.clocks_button.clicked.connect(self.clocks_button_clicked)
+        self.volume_widget = SetVolumeWindow()
+        self.brightness_widget = SetBrightnessWindow()
+        self.clocks_widget = ChooseClockfaceWindow()
+        
+    def volume_button_clicked(self):
+        print("VOLUME")
+        self.volume_widget.setVisible(not self.volume_widget.isVisible())
+        self.brightness_widget.hide()
+        self.clocks_widget.hide()
+        
+        
+    def brightness_button_clicked(self):
+        print("BRIGHTNESS")
+        self.volume_widget.hide()
+        self.brightness_widget.setVisible(not self.brightness_widget.isVisible())
+        self.clocks_widget.hide()
+        
+    def clocks_button_clicked(self):
+        print("CLOCKS ")
+        self.volume_widget.hide()
+        self.brightness_widget.hide()
+        self.clocks_widget.setVisible(not self.clocks_widget.isVisible())
 
     def mousePressEvent(self, event):
-        print("You clicked on the backdrop")
-        if self.our_layout.currentWidget() == self.clickbeard:
-            self.our_layout.setCurrentWidget(self.config_win_1)
-            self.config_win_1.show()
+        if self.our_layout.currentWidget() == self.beard:
+            print("Activating the settings screen")
+            self.settings.show()
+            self.our_layout.setCurrentWidget(self.settings)
         else:
-            self.config_win_1.hide()
-            self.our_layout.setCurrentWidget(self.clickbeard)
+            print("Hiding the settings screen")
+            self.volume_widget.hide()
+            self.brightness_widget.hide()
+            self.clocks_widget.hide()
+            self.settings.hide()
+            self.our_layout.setCurrentWidget(self.beard)
         super().mousePressEvent(event)
 
 
