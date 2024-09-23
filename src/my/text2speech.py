@@ -259,7 +259,7 @@ def smart_phrase_audio(voice:str, smart_phrase:str, owner:str=None, time_24h:int
     return convert_audio_recordings_list_into_one_audio_recording(data=data, trim_level=trim_level)
 
 
-def generate_timedate_phrases_list(timedate_str):
+def generate_timedate_phrases_list(timedate_str:str) -> str:
     # FIXME WRITE DOX
     the_hr, the_min = timedate_str.split(':')
     the_hr = the_hr.strip('.')
