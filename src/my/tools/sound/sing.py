@@ -41,13 +41,13 @@ from pydub.audio_segment import AudioSegment
 try:
     import librosa
     import psola
+    import numpy as np
 except ImportError as e:
     print("Warning -- I can't sing. Such infernal purposes...")
     librosa = None  # hack, to silence the main subroutine. We don't want to sing anyway: it's not very good when we do.
 
 from my.stringutils import generate_random_string
 from my.tools.sound.trim import convert_audio_recordings_list_into_an_mp3_file
-import numpy as np
 import soundfile as sf
 
 
