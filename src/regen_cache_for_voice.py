@@ -26,7 +26,22 @@ from my.consts import hello_owner_lst, alarm_messages_lst, hours_lst, minutes_ls
 from my.text2speech import smart_phrase_audio, deliberately_cache_a_smart_phrase
 
 
-def cache_this_smart_phrase(voice, smart_phrase, add_punctuation=True):
+def cache_this_smart_phrase(voice:str, smart_phrase:str, add_punctuation:bool=True):
+    """With this voice, generate the audio for speaking this phrase.
+
+    
+    
+    Args:
+        param1 (int): The first parameter.
+        param2 (str): The second parameter.
+
+    Returns:
+        bool: The return value. True for success, False otherwise.
+
+    .. _PEP 484:
+        https://www.python.org/dev/peps/pep-0484/
+
+    """
     deliberately_cache_a_smart_phrase(voice, smart_phrase)
     if add_punctuation:
         for x in ('.', ',', '?', '!'):
@@ -37,12 +52,12 @@ def cache_this_smart_phrase(voice, smart_phrase, add_punctuation=True):
     _ = smart_phrase_audio(voice, smart_phrase)
 
 
-def cache_this_list_of_smart_phrases_for_voice(voice, lst, add_punctuation=True):
+def cache_this_list_of_smart_phrases_for_voice(voice:str, lst:list[str], add_punctuation=True):
     for smart_phrase in lst:
         cache_this_smart_phrase(voice, smart_phrase, add_punctuation=add_punctuation)
 
 
-def cache_phrases_for_voice(voice):
+def cache_phrases_for_voice(voice:str):
     cache_this_list_of_smart_phrases_for_voice(voice, hours_lst)
     cache_this_list_of_smart_phrases_for_voice(voice, minutes_lst, add_punctuation=False)
     cache_this_list_of_smart_phrases_for_voice(voice, hello_owner_lst)
