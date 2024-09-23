@@ -297,14 +297,19 @@ def just_fart(fart_vol:int=100):
     fartfiles = [f for f in listdir(path) if isfile(join(path, f))]
     fart_mp3file = '{path}/{chx}'.format(path=path, chx=random.choice(fartfiles))
     os.system('mpv --volume={vol} {fart}'.format(vol=fart_vol, fart=fart_mp3file))
-
-def fart_and_apologize(voice:str, fart_vol:int=75, voice_vol:int=80):
-    just_fart(fart_vol)
+    
+    
+def just_apologize(voice:str, voice_vol:int=100):
     data_apologize = smart_phrase_audio(voice, random.choice(farting_msgs_lst))
     apologize_mp3file = '/tmp/tts{rnd}'.format(rnd=generate_random_string(32))
     data_apologize.export(apologize_mp3file, format="mp3")
     os.system('mpv --volume={vol} {playme}'.format(vol=voice_vol, playme=apologize_mp3file))
     os.unlink(apologize_mp3file)
+
+
+def fart_and_apologize(voice:str, fart_vol:int=75,voice_vol:int=80):
+    just_fart(fart_vol)
+    just_apologize(voice, voice_vol)
 
 
 def sing_a_random_alarm_message(owner:str, hour:int, minute:int, voice:str, snoozed:bool=False, noof_singers:int=4, keys=None, len_per:int=4, squelch:int=3, speed:int=0.8):

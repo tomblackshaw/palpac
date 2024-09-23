@@ -241,6 +241,5 @@ farting_msgs_lst = [
     """Gesundh toot!""",
     """Next time, you'll have to pull my finger.""",
     """Did you hear what that asshole just said?""",
-    """""",
     ]
 

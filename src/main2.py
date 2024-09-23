@@ -43,59 +43,138 @@ from PyQt5.QtWidgets import QApplication, QMainWindow, QVBoxLayout, QSizePolicy,
 from my.gui import set_vdu_brightness, set_audio_volume, make_background_translucent, make_window_transparent
 from my.globals import FACES_DCT, TOUCHSCREEN_SIZE_X, TOUCHSCREEN_SIZE_Y, ZOOMS_DCT
 import time
+from os.path import join, isdir
+from os import listdir
 
 from my.gui import Browser
+from my.consts import all_potential_owner_names
+from my.text2speech import smart_phrase_audio, speak_a_random_alarm_message, just_apologize, fart_and_apologize
+from my.stringutils import generate_random_string
+import datetime
 BASEDIR = os.path.dirname(__file__) # Base directory of me, the executable script
 DEFAULT_CLOCK_NAME = 'braun' # list(FACES_DCT.keys())[0]
 # find ui | grep index.html | grep -v /src/ | grep -v original
 
+OWNER_NAME = all_potential_owner_names[0]
+VOICE_NAME = [f for f in listdir('audio/cache') if isdir(join('audio/cache', f))][0]
+print("VOICE_NAME =", VOICE_NAME)
 
 
+class BrightnessWindow(QMainWindow):    
+    def __init__(self, parent=None):
+        super().__init__(parent)
 
-
-
-
-class SetBrightnessWindow(QMainWindow):    
-    def __init__(self):
-        super().__init__()
-
-        uic.loadUi(os.path.join(BASEDIR, "ui/setbrightness.ui"), self)
+        uic.loadUi(os.path.join(BASEDIR, "ui/brightness.ui"), self)
         make_background_translucent(self)
+        self.brightness_slider.valueChanged.connect(set_vdu_brightness)
         
 
+class VolumeWindow(QMainWindow):    
+    def __init__(self, parent=None):
+        super().__init__(parent)
 
-class SetVolumeWindow(QMainWindow):    
-    def __init__(self):
-        super().__init__()
-
-        uic.loadUi(os.path.join(BASEDIR, "ui/setvolume.ui"), self)
+        uic.loadUi(os.path.join(BASEDIR, "ui/volume.ui"), self)
         make_background_translucent(self)
+        self.volume_slider.valueChanged.connect(set_audio_volume)
 
         
-
-
-class ChooseClockfaceWindow(QMainWindow):    
-    def __init__(self):
-        super().__init__()
-
-        uic.loadUi(os.path.join(BASEDIR, "ui/chooseclockface.ui"), self)
+class ClocksWindow(QMainWindow):    
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        self.clockface = parent.clockface
+        uic.loadUi(os.path.join(BASEDIR, "ui/clocks.ui"), self)
         make_background_translucent(self)
+        [self.faces_qlist.addItem(k) for k in FACES_DCT.keys()]
+        self.faces_qlist.currentTextChanged.connect(lambda x: self.clockface.changeFace.emit(x)) 
+        [self.faces_qlist.setCurrentItem(x) for x in self.faces_qlist.findItems(DEFAULT_CLOCK_NAME, Qt.MatchExactly)]
 
 
-
-
-
-class ConfiguratorWindow(QMainWindow):    
-    def __init__(self):
-        super().__init__()
-
-        uic.loadUi(os.path.join(BASEDIR, "ui/configuratorwindow.ui"), self)
+class VoicesWindow(QMainWindow):    
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        uic.loadUi(os.path.join(BASEDIR, "ui/voices.ui"), self)
         make_background_translucent(self)
+        self.hello_button.clicked.connect(self.hello_button_clicked)
+        self.wakeup_button.clicked.connect(self.wakeup_button_clicked)
+        path = 'audio/cache'
+        [self.voices_qlist.addItem(f,) for f in listdir(path) if isdir(join(path, f))]
+        [self.voices_qlist.setCurrentItem(x) for x in self.voices_qlist.findItems(VOICE_NAME, Qt.MatchExactly)]
+        self.voices_qlist.currentTextChanged.connect(self.new_voice_chosen)
 
 
+    def hello_button_clicked(self):
+        fart_and_apologize(voice=VOICE_NAME)
+        
+    def wakeup_button_clicked(self):
+        speak_a_random_alarm_message(owner=OWNER_NAME, voice=VOICE_NAME, 
+                                     hour=datetime.datetime.now().hour, minute=datetime.datetime.now().minute, 
+                                     snoozed=False)
+        
+    def new_voice_chosen(self, voice):
+        global VOICE_NAME
+        VOICE_NAME = voice
+        rndstr = generate_random_string(32)
+        flat_filename = '/tmp/tts{rndstr}.flat.mp3'.format(rndstr=rndstr)
+        data = smart_phrase_audio(VOICE_NAME, OWNER_NAME) # "I shall call you {nom}. Hello, {nom}.".format(nom=nom)) # x)
+        data.export(flat_filename, format="mp3")
+        os.system("$(which mpv) %s" % flat_filename)
+        os.unlink(flat_filename)
+        
+
+class OwnersWindow(QMainWindow):    
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        uic.loadUi(os.path.join(BASEDIR, "ui/owners.ui"), self)
+        make_background_translucent(self)
+        [self.owners_qlist.addItem(s) for s in all_potential_owner_names]
+        self.owners_qlist.setCurrentRow(all_potential_owner_names.index(OWNER_NAME))
+        self.owners_qlist.currentTextChanged.connect(self.new_owner_chosen)
+    
+    def new_owner_chosen(self, nom):
+        global OWNER_NAME
+        OWNER_NAME = nom
+        rndstr = generate_random_string(32)
+        flat_filename = '/tmp/tts{rndstr}.flat.mp3'.format(rndstr=rndstr)
+        data = smart_phrase_audio(VOICE_NAME, nom) # "I shall call you {nom}. Hello, {nom}.".format(nom=nom)) # x)
+        data.export(flat_filename, format="mp3")
+        os.system("$(which mpv) %s" % flat_filename)
+        os.unlink(flat_filename)
 
 
-
+class SettingsWindow(QMainWindow):
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        self.clockface = parent.clockface
+        uic.loadUi(os.path.join(BASEDIR, "ui/settings.ui"), self)
+        make_background_translucent(self)
+        self.volume_window = VolumeWindow(self)
+        self.volume_window.hide()
+        self.volume_button.clicked.connect(lambda: self.chosen(self.volume_window))
+        self.brightness_window = BrightnessWindow(self)
+        self.brightness_window.hide()
+        self.brightness_button.clicked.connect(lambda: self.chosen(self.brightness_window))
+        self.owners_window = OwnersWindow(self)
+        self.owners_window.hide()
+        self.owners_button.clicked.connect(lambda: self.chosen(self.owners_window))
+        self.clocks_window = ClocksWindow(self)
+        self.clocks_window.hide()
+        self.clocks_button.clicked.connect(lambda: self.chosen(self.clocks_window))
+        self.voices_window = VoicesWindow(self)
+        self.voices_window.hide()
+        self.voices_button.clicked.connect(lambda: self.chosen(self.voices_window))
+    
+    def chosen(self, subwindow=None):
+        print("User chose", subwindow)
+        for w in (self.volume_window, self.brightness_window, self.owners_window, self.clocks_window, self.voices_window):
+            if w == subwindow:
+                w.setVisible(not w.isVisible())
+            else:
+                w.hide()
+    
+    def hide(self):
+        self.chosen(None)
+        super().hide()
+        
 
 class ClockFace(Browser):
     """The browser widget in which the JavaScript clock is displayed.
@@ -108,8 +187,8 @@ class ClockFace(Browser):
     """
     changeFace = pyqtSignal(str)
 
-    def __init__(self):
-        super().__init__()
+    def __init__(self, parent=None):
+        super().__init__(parent)
         self.changeFace.connect(self.load)
         self.setWindowFlags(Qt.FramelessWindowHint)
         self.setFixedSize(TOUCHSCREEN_SIZE_X, TOUCHSCREEN_SIZE_Y)
@@ -122,8 +201,6 @@ class ClockFace(Browser):
     def adjust_zoom_etc(self, _ok_or_nah):
         self.setZoomFactor(ZOOMS_DCT[self.face_name] if self.face_name in ZOOMS_DCT.keys() else 1)
         self.setStyleSheet('QScrollBar {height:0px;}; QScrollBar {width:0px;}')  # Turn background transparent too
-
-
 
 
 class MainWindow(QMainWindow):
@@ -151,7 +228,7 @@ class MainWindow(QMainWindow):
         self.clockface = ClockFace() # The clock itself, on display
         self.clockface.load(DEFAULT_CLOCK_NAME) 
         self.beard = QLabel("") # This label (which is invisible) is *stacked* in front of the clock, making it clickable.
-        self.settings = ConfiguratorWindow() # The configuration window that appears when the user clicks on the beard/clock.
+        self.settings = SettingsWindow(self) # The configuration window that appears when the user clicks on the beard/clock.
         make_background_translucent(self.beard)
         for w in (self.clockface, self.beard, self.settings):
             self.our_layout.addWidget(w)
@@ -161,31 +238,6 @@ class MainWindow(QMainWindow):
         strawman.setLayout(self.our_layout)
         self.setCentralWidget(strawman)
         self.settings.hide()
-        self.settings.volume_button.clicked.connect(self.volume_button_clicked)
-        self.settings.brightness_button.clicked.connect(self.brightness_button_clicked)
-        self.settings.clocks_button.clicked.connect(self.clocks_button_clicked)
-        self.volume_widget = SetVolumeWindow()
-        self.brightness_widget = SetBrightnessWindow()
-        self.clocks_widget = ChooseClockfaceWindow()
-        
-    def volume_button_clicked(self):
-        print("VOLUME")
-        self.volume_widget.setVisible(not self.volume_widget.isVisible())
-        self.brightness_widget.hide()
-        self.clocks_widget.hide()
-        
-        
-    def brightness_button_clicked(self):
-        print("BRIGHTNESS")
-        self.volume_widget.hide()
-        self.brightness_widget.setVisible(not self.brightness_widget.isVisible())
-        self.clocks_widget.hide()
-        
-    def clocks_button_clicked(self):
-        print("CLOCKS ")
-        self.volume_widget.hide()
-        self.brightness_widget.hide()
-        self.clocks_widget.setVisible(not self.clocks_widget.isVisible())
 
     def mousePressEvent(self, event):
         if self.our_layout.currentWidget() == self.beard:
@@ -194,9 +246,6 @@ class MainWindow(QMainWindow):
             self.our_layout.setCurrentWidget(self.settings)
         else:
             print("Hiding the settings screen")
-            self.volume_widget.hide()
-            self.brightness_widget.hide()
-            self.clocks_widget.hide()
             self.settings.hide()
             self.our_layout.setCurrentWidget(self.beard)
         super().mousePressEvent(event)

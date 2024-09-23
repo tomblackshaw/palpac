@@ -75,7 +75,6 @@ def cache_phrases_for_voice(voice:str):
                                                        "midnight", "hours", "in the afternoon", "in the morning",
                                                        "in the evening"])
 
-
 if __name__ == '__main__':
     potential_owner_names = all_potential_owner_names
     from my.text2speech import Text2SpeechSingleton as tts

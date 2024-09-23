@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>MainWindow</class>
- <widget class="QMainWindow" name="MainWindow">
+ <class>QVoicesWindow</class>
+ <widget class="QMainWindow" name="QVoicesWindow">
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>480</width>
-    <height>479</height>
+    <width>388</width>
+    <height>234</height>
    </rect>
   </property>
   <property name="sizePolicy">
-   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+   <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
     <horstretch>0</horstretch>
     <verstretch>0</verstretch>
    </sizepolicy>
@@ -26,80 +26,35 @@
    <string>MainWindow</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <widget class="QPushButton" name="clocks_button">
+   <widget class="QListWidget" name="voices_qlist">
     <property name="geometry">
      <rect>
-      <x>340</x>
-      <y>280</y>
-      <width>64</width>
-      <height>64</height>
+      <x>30</x>
+      <y>10</y>
+      <width>221</width>
+      <height>191</height>
      </rect>
     </property>
     <property name="sizePolicy">
-     <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-      <horstretch>0</horstretch>
-      <verstretch>0</verstretch>
-     </sizepolicy>
-    </property>
-    <property name="text">
-     <string/>
-    </property>
-    <property name="icon">
-     <iconset>
-      <normaloff>icons/clocks.png</normaloff>icons/clocks.png</iconset>
-    </property>
-    <property name="iconSize">
-     <size>
-      <width>64</width>
-      <height>64</height>
-     </size>
-    </property>
-    <property name="flat">
-     <bool>true</bool>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="brightness_button">
-    <property name="geometry">
-     <rect>
-      <x>220</x>
-      <y>360</y>
-      <width>64</width>
-      <height>64</height>
-     </rect>
-    </property>
-    <property name="sizePolicy">
-     <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+     <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
       <horstretch>0</horstretch>
       <verstretch>0</verstretch>
      </sizepolicy>
     </property>
     <property name="font">
      <font>
-      <pointsize>9</pointsize>
+      <pointsize>36</pointsize>
      </font>
     </property>
-    <property name="text">
-     <string/>
-    </property>
-    <property name="icon">
-     <iconset>
-      <normaloff>icons/setbright.png</normaloff>icons/setbright.png</iconset>
-    </property>
-    <property name="iconSize">
-     <size>
-      <width>64</width>
-      <height>64</height>
-     </size>
-    </property>
-    <property name="flat">
-     <bool>true</bool>
+    <property name="tabletTracking">
+     <bool>false</bool>
     </property>
    </widget>
-   <widget class="QPushButton" name="volume_button">
+   <widget class="QPushButton" name="hello_button">
     <property name="geometry">
      <rect>
-      <x>90</x>
-      <y>290</y>
+      <x>280</x>
+      <y>30</y>
       <width>64</width>
       <height>64</height>
      </rect>
@@ -115,7 +70,39 @@
     </property>
     <property name="icon">
      <iconset>
-      <normaloff>icons/volume.png</normaloff>icons/volume.png</iconset>
+      <normaloff>icons/hello.png</normaloff>icons/hello.png</iconset>
+    </property>
+    <property name="iconSize">
+     <size>
+      <width>64</width>
+      <height>64</height>
+     </size>
+    </property>
+    <property name="flat">
+     <bool>true</bool>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="wakeup_button">
+    <property name="geometry">
+     <rect>
+      <x>280</x>
+      <y>140</y>
+      <width>64</width>
+      <height>64</height>
+     </rect>
+    </property>
+    <property name="sizePolicy">
+     <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+      <horstretch>0</horstretch>
+      <verstretch>0</verstretch>
+     </sizepolicy>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+    <property name="icon">
+     <iconset>
+      <normaloff>icons/wakeup.png</normaloff>icons/wakeup.png</iconset>
     </property>
     <property name="iconSize">
      <size>
