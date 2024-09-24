@@ -46,7 +46,7 @@ import time
 from os.path import join, isdir
 from os import listdir
 
-from my.gui import Browser
+from my.gui import BrowserView, BrowserSettings
 from my.consts import all_potential_owner_names
 from my.text2speech import smart_phrase_audio, speak_a_random_alarm_message, just_apologize, fart_and_apologize
 from my.stringutils import generate_random_string
@@ -101,7 +101,6 @@ class VoicesWindow(QMainWindow):
         [self.voices_qlist.setCurrentItem(x) for x in self.voices_qlist.findItems(VOICE_NAME, Qt.MatchExactly)]
         self.voices_qlist.currentTextChanged.connect(self.new_voice_chosen)
 
-
     def hello_button_clicked(self):
         fart_and_apologize(voice=VOICE_NAME)
         
@@ -109,7 +108,7 @@ class VoicesWindow(QMainWindow):
         speak_a_random_alarm_message(owner=OWNER_NAME, voice=VOICE_NAME, 
                                      hour=datetime.datetime.now().hour, minute=datetime.datetime.now().minute, 
                                      snoozed=False)
-        
+
     def new_voice_chosen(self, voice):
         global VOICE_NAME
         VOICE_NAME = voice
@@ -119,7 +118,27 @@ class VoicesWindow(QMainWindow):
         data.export(flat_filename, format="mp3")
         os.system("$(which mpv) %s" % flat_filename)
         os.unlink(flat_filename)
+
         
+class TestingWindow(QMainWindow):    
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        self.clockface = parent.clockface
+        uic.loadUi(os.path.join(BASEDIR, "ui/testing.ui"), self)
+        make_background_translucent(self)
+        self.stopjs_button.clicked.connect(self.stop_jsbutton_clicked)
+        self.startjs_button.clicked.connect(self.start_jsbutton_clicked)
+    
+    def start_jsbutton_clicked(self):
+        print("START JS button was clicked")
+        s = self.clockface.settings()
+        s.setAttribute(BrowserSettings.JavascriptEnabled, True)
+
+    def stop_jsbutton_clicked(self):
+        print("STOP JS button was clicked")
+        s = self.clockface.settings()
+        s.setAttribute(BrowserSettings.JavascriptEnabled, False)
+
 
 class OwnersWindow(QMainWindow):    
     def __init__(self, parent=None):
@@ -147,6 +166,13 @@ class SettingsWindow(QMainWindow):
         self.clockface = parent.clockface
         uic.loadUi(os.path.join(BASEDIR, "ui/settings.ui"), self)
         make_background_translucent(self)
+        # self.subwindows = {}
+        # self.init_subwindow_and_button(BrightnessWindow, self.brightness_button)
+        # self.init_subwindow_and_button(ClocksWindow, self.clocks_button)
+        # self.init_subwindow_and_button(OwnersWindow, self.owners_button)
+        # self.init_subwindow_and_button(TestingWindow, self.testing_button)
+        # self.init_subwindow_and_button(VoicesWindow, self.voices_button)
+        # self.init_subwindow_and_button(VolumeWindow, self.volume_button)
         self.volume_window = VolumeWindow(self)
         self.volume_window.hide()
         self.volume_button.clicked.connect(lambda: self.chosen(self.volume_window))
@@ -162,10 +188,13 @@ class SettingsWindow(QMainWindow):
         self.voices_window = VoicesWindow(self)
         self.voices_window.hide()
         self.voices_button.clicked.connect(lambda: self.chosen(self.voices_window))
+        self.testing_window =  TestingWindow(self)
+        self.testing_window.hide()
+        self.testing_button.clicked.connect(lambda: self.chosen(self.testing_window))
     
     def chosen(self, subwindow=None):
         print("User chose", subwindow)
-        for w in (self.volume_window, self.brightness_window, self.owners_window, self.clocks_window, self.voices_window):
+        for w in (self.volume_window, self.brightness_window, self.owners_window, self.clocks_window, self.testing_window, self.voices_window):
             if w == subwindow:
                 w.setVisible(not w.isVisible())
             else:
@@ -176,7 +205,7 @@ class SettingsWindow(QMainWindow):
         super().hide()
         
 
-class ClockFace(Browser):
+class ClockFace(BrowserView):
     """The browser widget in which the JavaScript clock is displayed.
     
     This clockface displays whichever clockface it's told to display. The

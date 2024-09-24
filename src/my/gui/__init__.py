@@ -17,10 +17,13 @@ from PyQt5.QtCore import Qt, QObject
 
 
 try:
-    from PyQt5.QtWebKitWidgets import QWebView as Browser
+    from PyQt5.QtWebKitWidgets import QWebView as BrowserView
+    from PyQt5.QtWebKitWidgets import QWebSettings as BrowserSettings
 except ImportError:
-    from PyQt5.QtWebEngineWidgets import QWebEngineView as Browser
-    
+    from PyQt5.QtWebEngineWidgets import QWebEngineView as BrowserView
+    from PyQt5.QtWebEngineWidgets import QWebEngineSettings as BrowserSettings
+
+
 
 def set_vdu_brightness(brightness:int):
     # Technically, brightness>100 will be ignored by the hardware.
