@@ -52,7 +52,7 @@ def cache_this_smart_phrase(voice:str, smart_phrase:str, add_punctuation:bool=Tr
     _ = smart_phrase_audio(voice, smart_phrase)
 
 
-def cache_this_list_of_smart_phrases_for_voice(voice:str, lst:list[str], add_punctuation=True):
+def cache_this_list_of_smart_phrases_for_voice(voice:str, lst, add_punctuation=True):
     for smart_phrase in lst:
         cache_this_smart_phrase(voice, smart_phrase, add_punctuation=add_punctuation)
 
