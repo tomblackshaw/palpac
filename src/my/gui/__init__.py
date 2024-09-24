@@ -13,7 +13,6 @@ This module contains GUI-related tools.
 """
 
 import os
-from my.classes.exceptions import PyQtUICompilerError
 from PyQt5.QtCore import Qt, QObject
 
 
