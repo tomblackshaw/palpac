@@ -166,13 +166,6 @@ class SettingsWindow(QMainWindow):
         self.clockface = parent.clockface
         uic.loadUi(os.path.join(BASEDIR, "ui/settings.ui"), self)
         make_background_translucent(self)
-        # self.subwindows = {}
-        # self.init_subwindow_and_button(BrightnessWindow, self.brightness_button)
-        # self.init_subwindow_and_button(ClocksWindow, self.clocks_button)
-        # self.init_subwindow_and_button(OwnersWindow, self.owners_button)
-        # self.init_subwindow_and_button(TestingWindow, self.testing_button)
-        # self.init_subwindow_and_button(VoicesWindow, self.voices_button)
-        # self.init_subwindow_and_button(VolumeWindow, self.volume_button)
         self.volume_window = VolumeWindow(self)
         self.volume_window.hide()
         self.volume_button.clicked.connect(lambda: self.chosen(self.volume_window))
