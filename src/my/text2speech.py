@@ -78,7 +78,7 @@ def get_first_prof_name(tts:Text2SpeechSingleton) -> str:
         raise NoProfessionalVoicesError("There are no professional-grade voices available from your Eleven Labs account.") from e
 
 
-def speak_random_alarm(owner_name:str, time_24h:int, time_minutes:int, voice:str=None, tts:_Text2SpeechClass=Text2SpeechSingleton):
+def speak_random_alarm(owner_name:str, time_24h:int, time_minutes:int, voice:str=None, tts=Text2SpeechSingleton):
     """Speak an alarm warning.
 
     In the specified voice, to the specified owner of the alarm clock, speak an alarm
@@ -109,7 +109,7 @@ def speak_totally_randomized_alarm_and_time(owner_of_clock:str):
     speak_random_alarm(owner_of_clock, time_24h, time_minutes)
 
 
-def play_dialogue_lst(tts:_Text2SpeechClass, dialogue_lst:list):  # , stability=0.5, similarity_boost=0.01, style=0.5):
+def play_dialogue_lst(tts, dialogue_lst:list):  # , stability=0.5, similarity_boost=0.01, style=0.5):
     """Recites dialogue.
 
     Using the Eleven Labs website's API, their Python module, and mpv/ffmpeg, I play
@@ -172,7 +172,7 @@ def phrase_audio(voice:str, text:str, raise_exception_if_not_cached:bool=False) 
         return f.read()
 
 
-def list_phrases_to_handle(smart_phrase:list[str]):
+def list_phrases_to_handle(smart_phrase):
     # FIXME WRITE DOX
     phrases_to_handle = []
     while len(smart_phrase) > 0:
