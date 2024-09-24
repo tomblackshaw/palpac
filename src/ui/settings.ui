@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>480</width>
-    <height>479</height>
+    <height>480</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -30,7 +30,7 @@
     <property name="geometry">
      <rect>
       <x>270</x>
-      <y>330</y>
+      <y>360</y>
       <width>64</width>
       <height>64</height>
      </rect>
@@ -61,8 +61,8 @@
    <widget class="QPushButton" name="brightness_button">
     <property name="geometry">
      <rect>
-      <x>190</x>
-      <y>380</y>
+      <x>200</x>
+      <y>390</y>
       <width>64</width>
       <height>64</height>
      </rect>
@@ -99,7 +99,7 @@
     <property name="geometry">
      <rect>
       <x>60</x>
-      <y>270</y>
+      <y>310</y>
       <width>64</width>
       <height>64</height>
      </rect>
@@ -130,8 +130,8 @@
    <widget class="QPushButton" name="voices_button">
     <property name="geometry">
      <rect>
-      <x>120</x>
-      <y>330</y>
+      <x>130</x>
+      <y>360</y>
       <width>64</width>
       <height>64</height>
      </rect>
@@ -163,7 +163,7 @@
     <property name="geometry">
      <rect>
       <x>330</x>
-      <y>270</y>
+      <y>310</y>
       <width>64</width>
       <height>64</height>
      </rect>
@@ -194,8 +194,8 @@
    <widget class="QPushButton" name="testing_button">
     <property name="geometry">
      <rect>
-      <x>190</x>
-      <y>270</y>
+      <x>200</x>
+      <y>320</y>
       <width>64</width>
       <height>64</height>
      </rect>
