@@ -16,12 +16,16 @@ import os
 from PyQt5.QtCore import Qt, QObject
 
 
-try:
-    from PyQt5.QtWebKitWidgets import QWebView as BrowserView
-    from PyQt5.QtWebKitWidgets import QWebSettings as BrowserSettings
-except ImportError:
+try: 
     from PyQt5.QtWebEngineWidgets import QWebEngineView as BrowserView
     from PyQt5.QtWebEngineWidgets import QWebEngineSettings as BrowserSettings
+#    print("We are using QtWebEngineWidgets, which is good. It has JavascriptEnable(true/false) as an option.")
+except ImportError: # QtWebKitWidgets was removed in Qt 5.6; you're using an ancient library.
+    from PyQt5.QtWebKitWidgets import QWebView as BrowserView
+    class BrowserSettings(QObject):
+        def __init__(self):
+            raise ImportError("MISSING BrowserSettings CLASS - you're using an ancient web browser widget.")
+    print("We ae using QtWebKitWidgets, which was deprecated in Qt 5.5 and removed in Qt 5.6; that's not great.")
 
 
 
