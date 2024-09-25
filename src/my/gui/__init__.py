@@ -86,4 +86,5 @@ def screenCaptureWidget(widget, parent_pos, filename, fileformat='png'):
     screenshot = screen.grabWindow( widget.winId(), rfg.left()+parent_pos.x(), rfg.top() + parent_pos.y(),
                                        rfg.width(), rfg.height())
     screenshot.save(filename, fileformat)  
-    
+
+

@@ -42,10 +42,12 @@ from my.stringutils import generate_random_alarm_message, generate_detokenized_m
 from my.tools.sound.sing import songify_this_mp3
 from my.tools.sound.trim import convert_audio_recordings_list_into_one_audio_recording
 from pydub.audio_segment import AudioSegment
+from my.globals import ELEVENLABS_KEY_FILENAME
 
-if 0 != os.system("ping -c2 -W5 www.elevenlabs.io"):
+if not os.path.exists(ELEVENLABS_KEY_FILENAME) or 0 != os.system("ping -c2 -W5 www.elevenlabs.io"):
     Text2SpeechSingleton = None
-    print("We are offline. We cannot use ElevenLabs. Sorry.")
+    print("""We cannot use ElevenLabs. Either we're offline or there's no API key. Sorry.
+Let's just hope you're using the cache & not trying to call ElevenLabs...""")
 else:
     try:
         from my.classes.text2speechclass import _Text2SpeechClass
@@ -118,7 +120,7 @@ def play_dialogue_lst(tts, dialogue_lst:list):  # , stability=0.5, similarity_bo
 
     Using the Eleven Labs website's API, their Python module, and mpv/ffmpeg, I play
     the supplied dialogue list. 'Do' the named voices, too. FYI, the API's key is
-    stored at ~/$ELEVENLABS_KEY_BASENAME.
+    stored at $ELEVENLABS_KEY_FILENAME .
 
     Args:
         tts: Text-to-speech singleton Text2SpeechSingleton.
@@ -208,7 +210,6 @@ def deliberately_cache_a_smart_phrase(voice:str, smart_phrase:str):
         audio_op = phrase_audio(voice, phrase)
         try:
             _ = convert_audio_recordings_list_into_one_audio_recording([audio_op], trim_level=1)
-
         except CouldntDecodeError:
             print('"%s" (%s) failed. Retrying.' % (phrase, voice))
             os.unlink(pathname_of_phrase_audio(voice, phrase))

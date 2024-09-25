@@ -57,7 +57,7 @@ from elevenlabs.core.api_error import ApiError
 
 from my.classes import singleton, ReadWriteLock
 from my.classes.exceptions import ElevenLabsMissingKeyError, ElevenLabsAPIError, ElevenLabsDownError
-from my.globals import ELEVENLABS_KEY_BASENAME
+from my.globals import ELEVENLABS_KEY_FILENAME
 from my.stringutils import flatten, generate_random_string
 from my.tools.sound.sing import autotune_this_mp3
 from my.tools.sound.trim import convert_audio_recordings_list_into_an_mp3_file
@@ -130,7 +130,7 @@ class _Text2SpeechClass:
 
     """
     def __init__(self):
-        self.key_filename = '%s%s%s' % (os.path.expanduser('~'), os.sep, ELEVENLABS_KEY_BASENAME)
+        self.key_filename = ELEVENLABS_KEY_FILENAME
         self.client = get_elevenlabs_clientclass(self.key_filename)
         self.__api_models_lock = ReadWriteLock()
         self.__api_voices_lock = ReadWriteLock()

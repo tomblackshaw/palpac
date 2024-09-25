@@ -19,8 +19,9 @@ Attributes:
    https://sphinxcontrib-napoleon.readthedocs.io/en/latest/example_google.html
 
 """
+import os
 
-ELEVENLABS_KEY_BASENAME = '.eleven_api_key'  # e.g. /home/foo/.eleven_api_key
+ELEVENLABS_KEY_FILENAME = '%s%s%s' % (os.path.expanduser('~'), os.sep, '.eleven_api_key') # e.g. /home/foo/.eleven_api_key
 MAX_LATLONG_TIMEOUT = 999
 LAZY_SILENCE_THRESHOLD = -65.0
 DEFAULT_SILENCE_THRESHOLD = -50.0
