@@ -14,6 +14,7 @@ This module contains GUI-related tools.
 
 import os
 from PyQt5.QtCore import Qt, QObject
+from PyQt5.QtWidgets import QApplication
 
 
 try: 
@@ -67,3 +68,20 @@ def make_background_translucent(q:QObject):
     q.setAttribute(Qt.WA_TranslucentBackground)  # Turn background of window transparent
     q.setWindowFlags(Qt.FramelessWindowHint)
 
+
+
+
+def getRelativeFrameGeometry(widget):
+    g = widget.geometry()
+    fg = widget.frameGeometry()
+    return fg.translated(-g.left(),-g.top())
+
+
+def screenCaptureWidget(widget, parent_pos, filename, fileformat='png'):
+#    rfg = getRelativeFrameGeometry(QApplication.primaryScreen())
+    rfg = widget.frameGeometry()
+    screen = QApplication.primaryScreen()
+    screenshot = screen.grabWindow( widget.winId(), rfg.left()+parent_pos.x(), rfg.top() + parent_pos.y(),
+                                       rfg.width(), rfg.height())
+    screenshot.save(filename, fileformat)  
+    

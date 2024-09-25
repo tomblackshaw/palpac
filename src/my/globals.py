@@ -49,6 +49,7 @@ ZOOMS_DCT = {'neon 1':.9,
               'another':0.93,
               'digital 1':1.1,
               '3D':1.5,
+              'braun':1.3,
               }
 
 TOUCHSCREEN_SIZE_X, TOUCHSCREEN_SIZE_Y = 480, 480 

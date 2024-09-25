@@ -37,10 +37,11 @@ import os
 import sys
 
 from PyQt5 import uic
+
 from PyQt5.QtCore import QUrl, Qt, QObject, pyqtSignal, QPoint, QEvent
 from PyQt5.QtWidgets import QApplication, QMainWindow, QVBoxLayout, QSizePolicy, QLabel, QStackedLayout, QWidget
 
-from my.gui import set_vdu_brightness, set_audio_volume, make_background_translucent, make_window_transparent
+from my.gui import set_vdu_brightness, set_audio_volume, make_background_translucent, make_window_transparent, screenCaptureWidget
 from my.globals import FACES_DCT, TOUCHSCREEN_SIZE_X, TOUCHSCREEN_SIZE_Y, ZOOMS_DCT
 import time
 from os.path import join, isdir
@@ -51,16 +52,20 @@ from my.consts import all_potential_owner_names
 from my.text2speech import smart_phrase_audio, speak_a_random_alarm_message, just_apologize, fart_and_apologize
 from my.stringutils import generate_random_string
 import datetime
+from PyQt5.QtGui import QPixmap
 BASEDIR = os.path.dirname(__file__) # Base directory of me, the executable script
 DEFAULT_CLOCK_NAME = 'braun' # list(FACES_DCT.keys())[0]
 # find ui | grep index.html | grep -v /src/ | grep -v original
 
 OWNER_NAME = all_potential_owner_names[0]
 VOICE_NAME = [f for f in listdir('audio/cache') if isdir(join('audio/cache', f))][0]
-print("VOICE_NAME =", VOICE_NAME)
+
+def freezeframe_fname(face_name):
+    return('{cwd}/ui/clocks/{face_name}'.format(cwd=os.getcwd(), face_name=face_name))
 
 
 class BrightnessWindow(QMainWindow):    
+    '''Set brightness'''
     def __init__(self, parent=None):
         super().__init__(parent)
 
@@ -70,6 +75,7 @@ class BrightnessWindow(QMainWindow):
         
 
 class VolumeWindow(QMainWindow):    
+    '''Set volume'''
     def __init__(self, parent=None):
         super().__init__(parent)
 
@@ -79,17 +85,23 @@ class VolumeWindow(QMainWindow):
 
         
 class ClocksWindow(QMainWindow):    
+    '''Choose which clockface'''
     def __init__(self, parent=None):
         super().__init__(parent)
+        initial_clock_name = DEFAULT_CLOCK_NAME
         self.clockface = parent.clockface
         uic.loadUi(os.path.join(BASEDIR, "ui/clocks.ui"), self)
         make_background_translucent(self)
         [self.faces_qlist.addItem(k) for k in FACES_DCT.keys()]
-        self.faces_qlist.currentTextChanged.connect(lambda x: self.clockface.changeFace.emit(x)) 
-        [self.faces_qlist.setCurrentItem(x) for x in self.faces_qlist.findItems(DEFAULT_CLOCK_NAME, Qt.MatchExactly)]
+        [self.faces_qlist.setCurrentItem(x) for x in self.faces_qlist.findItems(initial_clock_name, Qt.MatchExactly)]
+        self.clockface.chooseFace.emit(initial_clock_name)
+        self.faces_qlist.currentTextChanged.connect(self.face_changed)
 
+    def face_changed(self, x):
+        self.clockface.freezeFace.emit(x) # true == screenshot&freeze after loading
 
 class VoicesWindow(QMainWindow):    
+    '''Choose which voice'''
     def __init__(self, parent=None):
         super().__init__(parent)
         uic.loadUi(os.path.join(BASEDIR, "ui/voices.ui"), self)
@@ -119,10 +131,12 @@ class VoicesWindow(QMainWindow):
         os.system("$(which mpv) %s" % flat_filename)
         os.unlink(flat_filename)
 
-        
-class TestingWindow(QMainWindow):    
+
+class TestingWindow(QMainWindow):
+    '''Test stuff'''
     def __init__(self, parent=None):
         super().__init__(parent)
+        self.parent = parent
         self.clockface = parent.clockface
         uic.loadUi(os.path.join(BASEDIR, "ui/testing.ui"), self)
         make_background_translucent(self)
@@ -130,15 +144,11 @@ class TestingWindow(QMainWindow):
         self.startjs_button.clicked.connect(self.start_jsbutton_clicked)
     
     def start_jsbutton_clicked(self):
-        print("START JS button was clicked")
-        s = self.clockface.settings()
-        s.setAttribute(BrowserSettings.JavascriptEnabled, True)
+        print("START button was clicked")
 
     def stop_jsbutton_clicked(self):
-        print("STOP JS button was clicked")
-        s = self.clockface.settings()
-        s.setAttribute(BrowserSettings.JavascriptEnabled, False)
-
+        print("STOP CLOCK button was clicked")
+    
 
 class OwnersWindow(QMainWindow):    
     def __init__(self, parent=None):
@@ -186,7 +196,6 @@ class SettingsWindow(QMainWindow):
         self.testing_button.clicked.connect(lambda: self.chosen(self.testing_window))
     
     def chosen(self, subwindow=None):
-        print("User chose", subwindow)
         for w in (self.volume_window, self.brightness_window, self.owners_window, self.clocks_window, self.testing_window, self.voices_window):
             if w == subwindow:
                 w.setVisible(not w.isVisible())
@@ -197,6 +206,8 @@ class SettingsWindow(QMainWindow):
         self.chosen(None)
         super().hide()
         
+        
+    
 
 class ClockFace(BrowserView):
     """The browser widget in which the JavaScript clock is displayed.
@@ -207,22 +218,41 @@ class ClockFace(BrowserView):
     etc. etc.
 
     """
-    changeFace = pyqtSignal(str)
+    chooseFace = pyqtSignal(str)
+    freezeFace = pyqtSignal(str)
+    
 
     def __init__(self, parent=None):
         super().__init__(parent)
-        self.changeFace.connect(self.load)
+        self.parent = parent
+        self.chooseFace.connect(self.choose_face)
+        self.freezeFace.connect(self.freeze_face)
         self.setWindowFlags(Qt.FramelessWindowHint)
         self.setFixedSize(TOUCHSCREEN_SIZE_X, TOUCHSCREEN_SIZE_Y)
-        self.loadFinished.connect(self.adjust_zoom_etc)
+        self._freeze_after_load = False # Changed to True by change_and_freeze()
 
-    def load(self, face_name):
+    def choose_face(self, face_name):
         self.face_name = face_name
-        super().load(QUrl('file://{cwd}/{relpath}'.format(cwd=os.getcwd(), relpath=FACES_DCT[face_name])))
+        self.load_file('{cwd}/{relpath}'.format(cwd=os.getcwd(), relpath=FACES_DCT[face_name]))
+        self.adjust_zoom_etc()
+    
+    def load_file(self, local_file):
+        self.setZoomFactor(1)
+        self.load(QUrl('file://{local_file}'.format(local_file=local_file)))
         
-    def adjust_zoom_etc(self, _ok_or_nah):
+    def adjust_zoom_etc(self, _ok_or_nah=False):
+        del _ok_or_nah # Unused
         self.setZoomFactor(ZOOMS_DCT[self.face_name] if self.face_name in ZOOMS_DCT.keys() else 1)
         self.setStyleSheet('QScrollBar {height:0px;}; QScrollBar {width:0px;}')  # Turn background transparent too
+
+    def freeze_face(self, face_name):
+        if not os.path.exists(freezeframe_fname(face_name)):
+            print("Sorry. I don't have a freezeframe pic of %s; I'll load the clock face instead." % face_name)
+            self.choose_face(face_name)
+        else:
+            self.face_name = face_name
+            self.load_file(freezeframe_fname(face_name))
+        
 
 
 class MainWindow(QMainWindow):
@@ -243,13 +273,14 @@ class MainWindow(QMainWindow):
         beard: The clickable overlay window. I call it a 'beard' because
             it acts as a beard for the clockface.
 
-    """    
+    """
     def __init__(self, parent=None):
         super().__init__(parent)
+        self.setWindowFlags(Qt.FramelessWindowHint)
         self.our_layout = QStackedLayout()
-        self.clockface = ClockFace() # The clock itself, on display
-        self.clockface.load(DEFAULT_CLOCK_NAME) 
+        self.clockface = ClockFace(self) # The clock itself, on display
         self.beard = QLabel("") # This label (which is invisible) is *stacked* in front of the clock, making it clickable.
+        self.clockface.beard = self.beard
         self.settings = SettingsWindow(self) # The configuration window that appears when the user clicks on the beard/clock.
         make_background_translucent(self.beard)
         for w in (self.clockface, self.beard, self.settings):
@@ -263,13 +294,17 @@ class MainWindow(QMainWindow):
 
     def mousePressEvent(self, event):
         if self.our_layout.currentWidget() == self.beard:
-            print("Activating the settings screen")
+#            if not os.path.exists(freezeframe_fname(self.clockface.face_name)):
+            print("Taking freezeframe of", self.clockface.face_name)
+            screenCaptureWidget(self, self.clockface.pos(), freezeframe_fname(self.clockface.face_name), 'png')
+            self.clockface.freezeFace.emit(self.clockface.face_name)
             self.settings.show()
             self.our_layout.setCurrentWidget(self.settings)
         else:
             print("Hiding the settings screen")
             self.settings.hide()
             self.our_layout.setCurrentWidget(self.beard)
+            self.clockface.chooseFace.emit(self.clockface.face_name)
         super().mousePressEvent(event)
 
 
