@@ -43,13 +43,17 @@ from my.tools.sound.sing import songify_this_mp3
 from my.tools.sound.trim import convert_audio_recordings_list_into_one_audio_recording
 from pydub.audio_segment import AudioSegment
 
-try:
-    from my.classes.text2speechclass import _Text2SpeechClass
-    Text2SpeechSingleton = _Text2SpeechClass()
-except (ModuleNotFoundError, ImportError) as my_e:
-    if 'circular' in str(my_e):
-        raise my_e
-    Text2SpeechSingleton = None  # compatibility w/ Python 3.8
+if 0 != os.system("ping -c2 -W5 www.elevenlabs.io"):
+    Text2SpeechSingleton = None
+    print("We are offline. We cannot use ElevenLabs. Sorry.")
+else:
+    try:
+        from my.classes.text2speechclass import _Text2SpeechClass
+        Text2SpeechSingleton = _Text2SpeechClass()
+    except (ModuleNotFoundError, ImportError) as my_e:
+        if 'circular' in str(my_e):
+            raise my_e
+        Text2SpeechSingleton = None  # compatibility w/ Python 3.8
 
 
 def get_first_prof_name(tts:Text2SpeechSingleton) -> str:

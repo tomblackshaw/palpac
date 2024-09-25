@@ -23,10 +23,10 @@ try:
 #    print("We are using QtWebEngineWidgets, which is good. It has JavascriptEnable(true/false) as an option.")
 except ImportError: # QtWebKitWidgets was removed in Qt 5.6; you're using an ancient library.
     from PyQt5.QtWebKitWidgets import QWebView as BrowserView
+    print("We ae using QtWebKitWidgets, which was deprecated in Qt 5.5 and removed in Qt 5.6; that's not great.")
     class BrowserSettings(QObject):
         def __init__(self):
             raise ImportError("MISSING BrowserSettings CLASS - you're using an ancient web browser widget.")
-    print("We ae using QtWebKitWidgets, which was deprecated in Qt 5.5 and removed in Qt 5.6; that's not great.")
 
 
 
@@ -59,8 +59,8 @@ def set_audio_volume(volume:int, mixer:str="Master"):
     os.system('''amixer set "{mixer}" {volume}%'''.format(mixer=mixer, volume=real_vol_list[volume]))
 
 
-def make_window_transparent(q:QObject):
-    q.setWindowOpacity(0.)  # Turn entire window transparent
+def make_window_transparent(q:QObject, opacity=0.):
+    q.setWindowOpacity(opacity)  # Turn entire window transparent
     q.setStyleSheet('QWidget{background: #000000}')  # Turn background transparent too
 
     
@@ -68,6 +68,8 @@ def make_background_translucent(q:QObject):
     q.setAttribute(Qt.WA_TranslucentBackground)  # Turn background of window transparent
     q.setWindowFlags(Qt.FramelessWindowHint)
 
+def disable_scrollbars(w):
+    w.setStyleSheet('QScrollBar {height:0px;}; QScrollBar {width:0px;}')  # Turn background transparent too
 
 
 
