@@ -311,7 +311,7 @@ def just_apologize(voice:str, voice_vol:int=100):
     os.unlink(apologize_mp3file)
 
 
-def fart_and_apologize(voice:str, fart_vol:int=75,voice_vol:int=80):
+def fart_and_apologize(voice:str, fart_vol:int=100,voice_vol:int=100):
     just_fart(fart_vol)
     just_apologize(voice, voice_vol)
 
