@@ -34,7 +34,7 @@ from PyQt5.QtCore import QUrl, Qt, QObject, pyqtSignal
 from PyQt5.QtWidgets import QApplication, QMainWindow, QLabel, QStackedLayout, QWidget
 
 from my.gui import set_vdu_brightness, set_audio_volume, make_background_translucent, screenCaptureWidget, disable_scrollbars
-from my.globals import FACES_DCT, TOUCHSCREEN_SIZE_X, TOUCHSCREEN_SIZE_Y, ZOOMS_DCT
+from my.globals import FACES_DCT, TOUCHSCREEN_SIZE_X, TOUCHSCREEN_SIZE_Y, ZOOMS_DCT, MPV_BIN
 from os.path import join, isdir, isfile
 from os import listdir
 
@@ -55,7 +55,6 @@ class _MyQtSignals(QObject):
     freezeFace = pyqtSignal(str)
     showSettings = pyqtSignal()
     hideSettings = pyqtSignal()
-#    setOwner = pyqtSignal(str)
     setJsTest = pyqtSignal(bool)
     setAlarm = pyqtSignal(str)
 
@@ -115,8 +114,6 @@ class AlarmsWindow(QMainWindow):
         super().__init__(parent)
         uic.loadUi(os.path.join(BASEDIR, "ui/alarms.ui"), self)
         make_background_translucent(self)
-#        self.hello_button.clicked.connect(self.hello_button_clicked)
-#        self.wakeup_button.clicked.connect(self.wakeup_button_clicked)
         path = 'sounds/alarms'
         [self.alarms_qlist.addItem(f,) for f in listdir(path) if isfile(join(path, f))]
         [self.alarms_qlist.setCurrentItem(x) for x in self.alarms_qlist.findItems(ALARMTONE_NAME, Qt.MatchExactly)]
@@ -125,7 +122,7 @@ class AlarmsWindow(QMainWindow):
     def new_alarm_chosen(self, alarmtone):
         global ALARMTONE_NAME
         ALARMTONE_NAME = alarmtone
-        os.system("killall mpv; $(which mpv) sounds/alarms/%s &" % alarmtone) # FIXME: thread it; show a modal thing;
+        os.system("killall mpv; {mpv} sounds/alarms/{fnam} &".format(mpv=MPV_BIN, fnam=alarmtone)) # FIXME: thread it; show a modal thing;
         # FIXME: show a progress bar for the audio file; let the user klll it at any time
         
     def setVisible(self, onoroff):
@@ -159,9 +156,9 @@ class VoicesWindow(QMainWindow):
         VOICE_NAME = voice
         rndstr = generate_random_string(32)
         flat_filename = '/tmp/tts{rndstr}.flat.mp3'.format(rndstr=rndstr)
-        data = smart_phrase_audio(VOICE_NAME, OWNER_NAME) # "I shall call you {nom}. Hello, {nom}.".format(nom=nom)) # x)
+        data = smart_phrase_audio(VOICE_NAME, OWNER_NAME)
         data.export(flat_filename, format="mp3")
-        os.system("$(which mpv) %s" % flat_filename)
+        os.system("{mpv} {fnam}".format(mpv=MPV_BIN, fnam=flat_filename))
         os.unlink(flat_filename)
 
 
@@ -181,29 +178,8 @@ class TestingWindow(QMainWindow):
             print("START button was clicked")
         else:
             print("STOP CLOCK button was clicked")
-            self.parent.clockface.load(QUrl.fromLocalFile(os.path.abspath('ui/icons/The_human_voice-1316067424.jpg')))
+            self.parent.clockface.load_file(os.path.abspath('ui/icons/The_human_voice-1316067424.jpg'))
     
-
-class OwnersWindow(QMainWindow):    
-    def __init__(self, parent=None):
-        super().__init__(parent)
-        uic.loadUi(os.path.join(BASEDIR, "ui/owners.ui"), self)
-        make_background_translucent(self)
-        # [self.owners_qlist.addItem(s) for s in all_potential_owner_names]
-        # self.owners_qlist.setCurrentRow(all_potential_owner_names.index(OWNER_NAME))
-        # self.owners_qlist.currentTextChanged.connect(self.new_owner_chosen)
-        MyQtSignals.setOwner.connect(self.new_owner_chosen)
-
-    def new_owner_chosen(self, nom):
-        global OWNER_NAME
-        OWNER_NAME = nom
-        rndstr = generate_random_string(32)
-        flat_filename = '/tmp/tts{rndstr}.flat.mp3'.format(rndstr=rndstr)
-        data = smart_phrase_audio(VOICE_NAME, nom) # "I shall call you {nom}. Hello, {nom}.".format(nom=nom)) # x)
-        data.export(flat_filename, format="mp3")
-        os.system("$(which mpv) %s" % flat_filename)
-        os.unlink(flat_filename)
-
 
 class SettingsWindow(QMainWindow):
     def __init__(self, parent=None):
@@ -214,7 +190,6 @@ class SettingsWindow(QMainWindow):
         self.all_subwindows = []
         self.configure_a_subwindow(AlarmsWindow, self.alarms_button)
         self.configure_a_subwindow(VolumeWindow, self.volume_button)
-        self.configure_a_subwindow(OwnersWindow, self.owners_button)
         self.configure_a_subwindow(ClocksWindow, self.clocks_button)
         self.configure_a_subwindow(VoicesWindow, self.voices_button)
         self.configure_a_subwindow(TestingWindow,self.testing_button)
@@ -223,21 +198,20 @@ class SettingsWindow(QMainWindow):
     def configure_a_subwindow(self, a_class, a_button):
         a_window = a_class(self)
         a_window.hide()
-        a_button.clicked.connect(lambda: self.chosen(a_window))
+        a_button.clicked.connect(lambda: self.choose_window(a_window))
         self.all_subwindows.append(a_window)
     
-    def chosen(self, subwindow=None):
+    def choose_window(self, chosen_subwindow=None):
         for w in self.all_subwindows:
-            if w == subwindow:
+            if w == chosen_subwindow:
                 w.setVisible(not w.isVisible())
             else:
                 w.hide()
-    
+
     def hide(self):
-        self.chosen(None)
+        self.choose_window(None) # No subwindow was chosen. Therefore, this will hide all of them.
         super().hide()
 
-    
 
 class ClockFace(BrowserView):
     """The browser widget in which the JavaScript clock is displayed.
@@ -261,24 +235,24 @@ class ClockFace(BrowserView):
         self.setFixedSize(TOUCHSCREEN_SIZE_X, TOUCHSCREEN_SIZE_Y)
 
     def choose_face(self, face_name):
+        self.setUpdatesEnabled(False)
         self.face_name = face_name
         self.load_file('{cwd}/{relpath}'.format(cwd=os.getcwd(), relpath=FACES_DCT[face_name]))
         self.setZoomFactor(ZOOMS_DCT[self.face_name] if self.face_name in ZOOMS_DCT.keys() else 1)
         disable_scrollbars(self)
+        self.setUpdatesEnabled(True)
 
     def load_file(self, local_file):
         self.setZoomFactor(1)
         the_url = 'file://{local_file}'.format(local_file=local_file)
         self.load(QUrl(the_url))
         disable_scrollbars(self)
-        
+
     def freeze_face(self, face_name):
-        if not os.path.exists(freezeframe_fname(face_name)): # TODO: ...or the cache is >3 days old?
-#            print("Sorry. I don't have a freezeframe pic of %s; I'll load the clock face instead." % face_name)
-            self.choose_face(face_name) # ... and close the clock-chooser.
-        else:
-            self.face_name = face_name
-            self.load_file(freezeframe_fname(face_name))
+        self.setUpdatesEnabled(False)
+        self.face_name = face_name
+        self.load_file(freezeframe_fname(face_name)) # Show the freezeframe
+        self.setUpdatesEnabled(True)
 
 
 
@@ -299,7 +273,6 @@ class MainWindow(QMainWindow):
         settings: The configurator window to be displayed/hidden/used.
         beard: The clickable overlay window. I call it a 'beard' because
             it acts as a beard for the clockface.
-        
             
     Accepted signals:
         showSettings
@@ -323,19 +296,16 @@ class MainWindow(QMainWindow):
         self.settings.hide()
         MyQtSignals.hideSettings.connect(self.hide_settings_screen)
         MyQtSignals.showSettings.connect(self.show_settings_screen)
-        disable_scrollbars(self)
 
     def show_settings_screen(self):
         '''Make the Settings screen the top widget. Behind it, show a freezeframe of the clockface.'''
-#        print("Taking freezeframe of", self.clockface.face_name, "because it's the current clockface and because it's running.")
-        screenCaptureWidget(self, self.clockface.pos(), freezeframe_fname(self.clockface.face_name), 'png')
+        screenCaptureWidget(self, self.clockface.pos(), freezeframe_fname(self.clockface.face_name))
         MyQtSignals.freezeFace.emit(self.clockface.face_name)
         self.settings.show()
         self.our_layout.setCurrentWidget(self.settings)
         
     def hide_settings_screen(self):
         '''Hide the Settings screen. Go back to displaying an animated clockface.'''
-        print("Hiding the settings screen")
         self.settings.hide()
         self.our_layout.setCurrentWidget(self.beard)
         MyQtSignals.setFace.emit(self.clockface.face_name)
@@ -343,15 +313,14 @@ class MainWindow(QMainWindow):
     def mousePressEvent(self, event):
         '''If the user clicks on the beard that covers the clockface, let's launch the Settings window; otherwise, let's hide it.'''
         if self.our_layout.currentWidget() == self.beard:
-            MyQtSignals.showSettings.emit() # self.show_settings_screen()
+            MyQtSignals.showSettings.emit()
         else:
-            MyQtSignals.hideSettings.emit() # self.hide_settings_screen()
+            MyQtSignals.hideSettings.emit()
         super().mousePressEvent(event)
 
 
 if __name__ == '__main__':
-#    sys.path.insert(0,'/opt/homebrew/bin')
-#os.system('''mpv sounds/startup.mp3 &''')
+    os.system('''%s sounds/startup.mp3 &''' % MPV_BIN)
     app = QApplication(sys.argv)
     w = MainWindow()
     w.show()
@@ -361,5 +330,4 @@ if __name__ == '__main__':
 
 
 
-#Remove OwnersWindow and replace it with something else
 

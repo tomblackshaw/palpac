@@ -192,6 +192,12 @@
       <pointsize>24</pointsize>
      </font>
     </property>
+    <property name="verticalScrollBarPolicy">
+     <enum>Qt::ScrollBarAlwaysOff</enum>
+    </property>
+    <property name="horizontalScrollBarPolicy">
+     <enum>Qt::ScrollBarAlwaysOff</enum>
+    </property>
     <item>
      <property name="text">
       <string>9</string>
@@ -271,6 +277,12 @@
      <font>
       <pointsize>24</pointsize>
      </font>
+    </property>
+    <property name="verticalScrollBarPolicy">
+     <enum>Qt::ScrollBarAlwaysOff</enum>
+    </property>
+    <property name="horizontalScrollBarPolicy">
+     <enum>Qt::ScrollBarAlwaysOff</enum>
     </property>
     <item>
      <property name="text">

@@ -42,13 +42,13 @@ from PyQt5.QtCore import QUrl, Qt, QObject, pyqtSignal, QPoint, QEvent
 from PyQt5.QtWidgets import QApplication, QMainWindow, QVBoxLayout, QSizePolicy, QLabel, QStackedLayout, QWidget
 
 from my.gui import set_vdu_brightness, set_audio_volume, make_background_translucent, make_window_transparent, screenCaptureWidget
-from my.globals import FACES_DCT, TOUCHSCREEN_SIZE_X, TOUCHSCREEN_SIZE_Y, ZOOMS_DCT
+from my.globals import FACES_DCT, TOUCHSCREEN_SIZE_X, TOUCHSCREEN_SIZE_Y, ZOOMS_DCT, MPV_BIN
 import time
 from os.path import join, isdir
 from os import listdir
 
 from my.gui import BrowserView, BrowserSettings
-from my.consts import all_potential_owner_names
+#from my.consts import all_potential_owner_names
 from my.text2speech import smart_phrase_audio, speak_a_random_alarm_message, just_apologize, fart_and_apologize
 from my.stringutils import generate_random_string
 import datetime
@@ -57,7 +57,7 @@ BASEDIR = os.path.dirname(__file__) # Base directory of me, the executable scrip
 DEFAULT_CLOCK_NAME = 'braun' # list(FACES_DCT.keys())[0]
 # find ui | grep index.html | grep -v /src/ | grep -v original
 
-OWNER_NAME = all_potential_owner_names[0]
+#OWNER_NAME = all_potential_owner_names[0]
 VOICE_NAME = [f for f in listdir('sounds/cache') if isdir(join('sounds/cache', f))][0]
 
 def freezeframe_fname(face_name):
@@ -128,7 +128,7 @@ class VoicesWindow(QMainWindow):
         flat_filename = '/tmp/tts{rndstr}.flat.mp3'.format(rndstr=rndstr)
         data = smart_phrase_audio(VOICE_NAME, OWNER_NAME) # "I shall call you {nom}. Hello, {nom}.".format(nom=nom)) # x)
         data.export(flat_filename, format="mp3")
-        os.system("$(which mpv) %s" % flat_filename)
+        os.system("{mpv} {fnam}".format(mpv=MPV_BIN, fnam=flat_filename))
         os.unlink(flat_filename)
 
 
@@ -155,8 +155,8 @@ class OwnersWindow(QMainWindow):
         super().__init__(parent)
         uic.loadUi(os.path.join(BASEDIR, "ui/owners.ui"), self)
         make_background_translucent(self)
-        [self.owners_qlist.addItem(s) for s in all_potential_owner_names]
-        self.owners_qlist.setCurrentRow(all_potential_owner_names.index(OWNER_NAME))
+#        [self.owners_qlist.addItem(s) for s in all_potential_owner_names]
+#        self.owners_qlist.setCurrentRow(all_potential_owner_names.index(OWNER_NAME))
         self.owners_qlist.currentTextChanged.connect(self.new_owner_chosen)
     
     def new_owner_chosen(self, nom):
@@ -166,7 +166,7 @@ class OwnersWindow(QMainWindow):
         flat_filename = '/tmp/tts{rndstr}.flat.mp3'.format(rndstr=rndstr)
         data = smart_phrase_audio(VOICE_NAME, nom) # "I shall call you {nom}. Hello, {nom}.".format(nom=nom)) # x)
         data.export(flat_filename, format="mp3")
-        os.system("$(which mpv) %s" % flat_filename)
+        os.system("{mpv} {fnam}".format(mpv=MPV_BIN, fnam=flat_filename))
         os.unlink(flat_filename)
 
 
@@ -309,7 +309,7 @@ class MainWindow(QMainWindow):
 
 
 if __name__ == '__main__':
-#os.system('''mpv sounds/startup.mp3 &''')
+    os.system('''%s sounds/startup.mp3 &''' % MPV_BIN)
     app = QApplication(sys.argv)
     w = MainWindow()
     w.show()

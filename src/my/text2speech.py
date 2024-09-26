@@ -42,7 +42,7 @@ from my.stringutils import generate_random_alarm_message, generate_detokenized_m
 from my.tools.sound.sing import songify_this_mp3
 from my.tools.sound.trim import convert_audio_recordings_list_into_one_audio_recording
 from pydub.audio_segment import AudioSegment
-from my.globals import ELEVENLABS_KEY_FILENAME
+from my.globals import ELEVENLABS_KEY_FILENAME, MPV_BIN
 
 if not os.path.exists(ELEVENLABS_KEY_FILENAME) or 0 != os.system("ping -c2 -W5 www.elevenlabs.io"):
     Text2SpeechSingleton = None
@@ -291,7 +291,7 @@ def speak_a_random_alarm_message(owner, hour, minute, voice, snoozed=False):
     my_txt = generate_random_alarm_message(owner_of_clock=owner, time_24h=hour, time_minutes=minute, snoozed=snoozed)
     data = smart_phrase_audio(voice, my_txt)
     data.export(flat_filename, format="mp3")
-    os.system("$(which mpv) %s" % flat_filename)
+    os.system("{mpv} {fnam}".format(mpv=MPV_BIN, fnam=flat_filename))
     os.unlink(flat_filename)
 
 
@@ -301,14 +301,14 @@ def just_fart(fart_vol:int=100):
     path = 'sounds/farts'
     fartfiles = [f for f in listdir(path) if isfile(join(path, f))]
     fart_mp3file = '{path}/{chx}'.format(path=path, chx=random.choice(fartfiles))
-    os.system('mpv --volume={vol} {fart}'.format(vol=fart_vol, fart=fart_mp3file))
+    os.system('{mpv} --volume={vol} {fart}'.format(mpv=MPV_BIN, vol=fart_vol, fart=fart_mp3file))
     
     
 def just_apologize(voice:str, voice_vol:int=100):
     data_apologize = smart_phrase_audio(voice, random.choice(farting_msgs_lst))
     apologize_mp3file = '/tmp/tts{rnd}'.format(rnd=generate_random_string(32))
     data_apologize.export(apologize_mp3file, format="mp3")
-    os.system('mpv --volume={vol} {playme}'.format(vol=voice_vol, playme=apologize_mp3file))
+    os.system('{mpv} --volume={vol} {playme}'.format(mpv=MPV_BIN, vol=voice_vol, playme=apologize_mp3file))
     os.unlink(apologize_mp3file)
 
 
@@ -333,7 +333,7 @@ def sing_a_random_alarm_message(owner:str, hour:int, minute:int, voice:str, snoo
     data.export(flat_filename, format="mp3")
     songify_this_mp3(infile=flat_filename, outfile=sung_filename, noof_singers=noof_singers,
                      keys=keys, len_per=len_per, squelch=squelch)
-    os.system("$(which mpv) --speed={speed} {filename}".format(speed=speed, filename=sung_filename))
+    os.system("{mpv} --speed={speed} {filename}".format(mpv=MPV_BIN, speed=speed, filename=sung_filename))
     os.unlink(sung_filename)
     os.unlink(flat_filename)
 

@@ -70,7 +70,8 @@ def make_background_translucent(q:QObject):
 
 def disable_scrollbars(w):
     w.setStyleSheet('QScrollBar {height:0px;}; QScrollBar {width:0px;}')  # Turn background transparent too
-
+#    w.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+#    w.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
 
 
 def getRelativeFrameGeometry(widget):

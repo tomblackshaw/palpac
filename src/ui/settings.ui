@@ -46,7 +46,7 @@
     </property>
     <property name="icon">
      <iconset>
-      <normaloff>icons/clocks3.png</normaloff>icons/clocks3.png</iconset>
+      <normaloff>icons/clocks7.png</normaloff>icons/clocks7.png</iconset>
     </property>
     <property name="iconSize">
      <size>
@@ -99,7 +99,7 @@
     <property name="geometry">
      <rect>
       <x>60</x>
-      <y>310</y>
+      <y>330</y>
       <width>64</width>
       <height>64</height>
      </rect>
@@ -130,7 +130,7 @@
    <widget class="QPushButton" name="voices_button">
     <property name="geometry">
      <rect>
-      <x>200</x>
+      <x>340</x>
       <y>330</y>
       <width>64</width>
       <height>64</height>
@@ -159,43 +159,11 @@
      <bool>true</bool>
     </property>
    </widget>
-   <widget class="QPushButton" name="owners_button">
-    <property name="geometry">
-     <rect>
-      <x>330</x>
-      <y>330</y>
-      <width>64</width>
-      <height>64</height>
-     </rect>
-    </property>
-    <property name="sizePolicy">
-     <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-      <horstretch>0</horstretch>
-      <verstretch>0</verstretch>
-     </sizepolicy>
-    </property>
-    <property name="text">
-     <string/>
-    </property>
-    <property name="icon">
-     <iconset>
-      <normaloff>icons/mynameis.png</normaloff>icons/mynameis.png</iconset>
-    </property>
-    <property name="iconSize">
-     <size>
-      <width>64</width>
-      <height>64</height>
-     </size>
-    </property>
-    <property name="flat">
-     <bool>true</bool>
-    </property>
-   </widget>
    <widget class="QPushButton" name="testing_button">
     <property name="geometry">
      <rect>
-      <x>270</x>
-      <y>300</y>
+      <x>210</x>
+      <y>330</y>
       <width>64</width>
       <height>64</height>
      </rect>

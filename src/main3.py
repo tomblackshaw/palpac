@@ -43,7 +43,7 @@ from PyQt5.QtWidgets import QApplication, QMainWindow, QVBoxLayout, QSizePolicy,
 
 from my.gui import set_vdu_brightness, set_audio_volume, make_background_translucent, make_window_transparent, screenCaptureWidget,\
     disable_scrollbars
-from my.globals import FACES_DCT, TOUCHSCREEN_SIZE_X, TOUCHSCREEN_SIZE_Y, ZOOMS_DCT
+from my.globals import FACES_DCT, TOUCHSCREEN_SIZE_X, TOUCHSCREEN_SIZE_Y, ZOOMS_DCT, MPV_BIN
 import time
 from os.path import join, isdir
 from os import listdir
@@ -138,7 +138,7 @@ class VoicesWindow(QMainWindow):
         flat_filename = '/tmp/tts{rndstr}.flat.mp3'.format(rndstr=rndstr)
         data = smart_phrase_audio(VOICE_NAME, OWNER_NAME) # "I shall call you {nom}. Hello, {nom}.".format(nom=nom)) # x)
         data.export(flat_filename, format="mp3")
-        os.system("$(which mpv) %s" % flat_filename)
+        os.system("%s %s" % (MPV_BIN, flat_filename))
         os.unlink(flat_filename)
 
 
@@ -176,7 +176,7 @@ class OwnersWindow(QMainWindow):
         flat_filename = '/tmp/tts{rndstr}.flat.mp3'.format(rndstr=rndstr)
         data = smart_phrase_audio(VOICE_NAME, nom) # "I shall call you {nom}. Hello, {nom}.".format(nom=nom)) # x)
         data.export(flat_filename, format="mp3")
-        os.system("$(which mpv) %s" % flat_filename)
+        os.system("%s %s" % (MPV_BIN, flat_filename))
         os.unlink(flat_filename)
 
 
