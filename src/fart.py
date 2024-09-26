@@ -11,7 +11,7 @@ if __name__ == '__main__':
     path = 'sounds/cache'
     voices_lst = [f for f in listdir(path) if isdir(join(path, f))]
     voice = random.choice(voices_lst)
-    just_fart(voice=voice)
+    just_fart()
 
 
 
