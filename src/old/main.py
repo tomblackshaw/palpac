@@ -220,7 +220,7 @@ class MainWindow(QMainWindow):
 
 
 if __name__ == '__main__':
-#os.system('''mpv audio/startup.mp3 &''')
+#os.system('''mpv sounds/startup.mp3 &''')
     app = QApplication(sys.argv)
     w = MainWindow()
     w.show()

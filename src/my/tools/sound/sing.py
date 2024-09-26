@@ -14,21 +14,21 @@ Sing one MP3 file at a time
                                 len_per=7, keys=[Cmaj, Fmaj, Gmaj, Fmaj, Fmin, Cmaj])
 
 def a():
-    songify_this_mp3(infile='audio/cache/Sarah/charlie..mp3', outfile='/tmp/00.mp3', noof_singers=1,
+    songify_this_mp3(infile='sounds/cache/Sarah/charlie..mp3', outfile='/tmp/00.mp3', noof_singers=1,
                          keys=[['c4'.split(' ')]], len_per=4, squelch=3)
-    songify_this_mp3(infile='audio/cache/Sarah/charlie?.mp3', outfile='/tmp/01.mp3', noof_singers=1,
+    songify_this_mp3(infile='sounds/cache/Sarah/charlie?.mp3', outfile='/tmp/01.mp3', noof_singers=1,
                          keys=[['g4'.split(' ')]], len_per=4, squelch=3)
-    songify_this_mp3(infile='audio/cache/Sarah/charlie!.mp3', outfile='/tmp/02.mp3', noof_singers=1,
+    songify_this_mp3(infile='sounds/cache/Sarah/charlie!.mp3', outfile='/tmp/02.mp3', noof_singers=1,
                          keys=[['c5'.split(' ')]], len_per=4, squelch=3)
-    songify_this_mp3(infile='audio/cache/Sarah/you_really_should_get_up,.mp3', outfile='/tmp/03.mp3', noof_singers=3,
+    songify_this_mp3(infile='sounds/cache/Sarah/you_really_should_get_up,.mp3', outfile='/tmp/03.mp3', noof_singers=3,
                          keys=['g3 c4 e4 g4 c5 e5 c6'.split(' '), 'c3 g3 c4 d#4 g4 c5 d#5 c6'.split(' '), ], len_per=1, squelch=1)
-    songify_this_mp3(infile='audio/cache/Sarah/up_you_get!.mp3', outfile='/tmp/04.mp3', noof_singers=1,
+    songify_this_mp3(infile='sounds/cache/Sarah/up_you_get!.mp3', outfile='/tmp/04.mp3', noof_singers=1,
                          keys=[['c4'.split(' ')]], len_per=4, squelch=3)
-    songify_this_mp3(infile='audio/cache/Sarah/up_you_get!.mp3', outfile='/tmp/05.mp3', noof_singers=1,
+    songify_this_mp3(infile='sounds/cache/Sarah/up_you_get!.mp3', outfile='/tmp/05.mp3', noof_singers=1,
                          keys=[['g4'.split(' ')]], len_per=4, squelch=3)
-    songify_this_mp3(infile='audio/cache/Sarah/up_you_get!.mp3', outfile='/tmp/06.mp3', noof_singers=1,
+    songify_this_mp3(infile='sounds/cache/Sarah/up_you_get!.mp3', outfile='/tmp/06.mp3', noof_singers=1,
                          keys=[['c5'.split(' ')]], len_per=4, squelch=3)
-    songify_this_mp3(infile='audio/cache/Sarah/you_really_should_get_up,.mp3', outfile='/tmp/07.mp3', noof_singers=3,
+    songify_this_mp3(infile='sounds/cache/Sarah/you_really_should_get_up,.mp3', outfile='/tmp/07.mp3', noof_singers=3,
                          keys=['g3 c4 d#4 g4 c5 d#5 c6'.split(' '), 'c3 g3 c4 e4 g4 c5 e5 c6'.split(' '), ], len_per=1, squelch=1)
 
 

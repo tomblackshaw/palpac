@@ -298,7 +298,7 @@ def speak_a_random_alarm_message(owner, hour, minute, voice, snoozed=False):
 def just_fart(fart_vol:int=100):
     from os import listdir
     from os.path import isfile, join
-    path = 'audio/farts'
+    path = 'sounds/farts'
     fartfiles = [f for f in listdir(path) if isfile(join(path, f))]
     fart_mp3file = '{path}/{chx}'.format(path=path, chx=random.choice(fartfiles))
     os.system('mpv --volume={vol} {fart}'.format(vol=fart_vol, fart=fart_mp3file))

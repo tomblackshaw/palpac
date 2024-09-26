@@ -4,9 +4,13 @@ Created on Sep 25, 2024
 @author: mchobbit
 '''
 import os
-from my.stringutils import generate_random_string
-from my.consts import farting_msgs_lst
+from my.stringutils import generate_random_string, generate_random_alarm_message, generate_detokenized_message,\
+    pathname_of_phrase_audio
+from my.consts import farting_msgs_lst, minutes_lst, hours_lst
 import random
+from my.text2speech import list_phrases_to_handle, phrase_audio
+from my.classes.exceptions import MissingFromCacheError
+from my.tools.sound.trim import convert_audio_recordings_list_into_one_audio_recording
 
 def speak_a_random_alarm_message(owner, hour, minute, voice, snoozed=False):
     # FIXME WRITE DOX
@@ -22,7 +26,7 @@ def speak_a_random_alarm_message(owner, hour, minute, voice, snoozed=False):
 def just_fart(fart_vol:int=100):
     from os import listdir
     from os.path import isfile, join
-    path = 'audio/farts'
+    path = 'sounds/farts'
     fartfiles = [f for f in listdir(path) if isfile(join(path, f))]
     fart_mp3file = '{path}/{chx}'.format(path=path, chx=random.choice(fartfiles))
     os.system('mpv --volume={vol} {fart}'.format(vol=fart_vol, fart=fart_mp3file))
@@ -61,7 +65,7 @@ def generate_timedate_phrases_list(timedate_str:str) -> str:
 
 
 
-def smart_phrase_audio(voice:str, smart_phrase:str, owner:str=None, time_24h:int=None, time_minutes:int=None, trim_level:int=1) -> AudioSegment:
+def smart_phrase_audio(voice:str, smart_phrase:str, owner:str=None, time_24h:int=None, time_minutes:int=None, trim_level:int=1): # -> AudioSegment:
     # FIXME WRITE DOX
     # FIXME This is a badly written subroutine. Clean it up. Document it. Thank you.
     if owner is not None and time_24h is not None and time_minutes is not None:

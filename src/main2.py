@@ -58,7 +58,7 @@ DEFAULT_CLOCK_NAME = 'braun' # list(FACES_DCT.keys())[0]
 # find ui | grep index.html | grep -v /src/ | grep -v original
 
 OWNER_NAME = all_potential_owner_names[0]
-VOICE_NAME = [f for f in listdir('audio/cache') if isdir(join('audio/cache', f))][0]
+VOICE_NAME = [f for f in listdir('sounds/cache') if isdir(join('sounds/cache', f))][0]
 
 def freezeframe_fname(face_name):
     return('{cwd}/ui/clocks/{face_name}'.format(cwd=os.getcwd(), face_name=face_name))
@@ -108,7 +108,7 @@ class VoicesWindow(QMainWindow):
         make_background_translucent(self)
         self.hello_button.clicked.connect(self.hello_button_clicked)
         self.wakeup_button.clicked.connect(self.wakeup_button_clicked)
-        path = 'audio/cache'
+        path = 'sounds/cache'
         [self.voices_qlist.addItem(f,) for f in listdir(path) if isdir(join(path, f))]
         [self.voices_qlist.setCurrentItem(x) for x in self.voices_qlist.findItems(VOICE_NAME, Qt.MatchExactly)]
         self.voices_qlist.currentTextChanged.connect(self.new_voice_chosen)
@@ -309,7 +309,7 @@ class MainWindow(QMainWindow):
 
 
 if __name__ == '__main__':
-#os.system('''mpv audio/startup.mp3 &''')
+#os.system('''mpv sounds/startup.mp3 &''')
     app = QApplication(sys.argv)
     w = MainWindow()
     w.show()

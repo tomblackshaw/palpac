@@ -10,7 +10,7 @@ voices available from ElevenLabs, under the user's current subscription - and
 generates audio for each of the common phrases. These phrases include greetings,
 apologies, hours, minutes, days, etc.
 
-The audio files are saved in ./audio/cache/{voice name}/
+The audio files are saved in ./sounds/cache/{voice name}/
 
 Todo:
     * For module TODOs

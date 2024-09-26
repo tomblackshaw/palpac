@@ -129,7 +129,7 @@ class FunWidget(QWidget):
 
 
 
-    os.system("mpv audio/startup.mp3 &")
+    os.system("mpv sounds/startup.mp3 &")
     add_to_os_path_if_existent('/opt/homebrew/bin', strict=False)
     app = QApplication(sys.argv)
     qwin = FunWidget(tts=Text2SpeechSingleton)

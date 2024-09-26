@@ -46,8 +46,8 @@ from my.consts import OWNER_NAME
 from my.classes import singleton
 BASEDIR = os.path.dirname(__file__) # Base directory of me, the executable script
 DEFAULT_CLOCK_NAME = list(FACES_DCT.keys())[-1]
-VOICE_NAME = [f for f in listdir('audio/cache') if isdir(join('audio/cache', f))][0]
-ALARMTONE_NAME = [f for f in listdir('audio/alarms') if isfile(join('audio/alarms', f))][0]
+VOICE_NAME = [f for f in listdir('sounds/cache') if isdir(join('sounds/cache', f))][0]
+ALARMTONE_NAME = [f for f in listdir('sounds/alarms') if isfile(join('sounds/alarms', f))][0]
 
 @singleton
 class _MyQtSignals(QObject):
@@ -117,7 +117,7 @@ class AlarmsWindow(QMainWindow):
         make_background_translucent(self)
 #        self.hello_button.clicked.connect(self.hello_button_clicked)
 #        self.wakeup_button.clicked.connect(self.wakeup_button_clicked)
-        path = 'audio/alarms'
+        path = 'sounds/alarms'
         [self.alarms_qlist.addItem(f,) for f in listdir(path) if isfile(join(path, f))]
         [self.alarms_qlist.setCurrentItem(x) for x in self.alarms_qlist.findItems(ALARMTONE_NAME, Qt.MatchExactly)]
         self.alarms_qlist.currentTextChanged.connect(self.new_alarm_chosen)
@@ -125,7 +125,7 @@ class AlarmsWindow(QMainWindow):
     def new_alarm_chosen(self, alarmtone):
         global ALARMTONE_NAME
         ALARMTONE_NAME = alarmtone
-        os.system("killall mpv; $(which mpv) audio/alarms/%s &" % alarmtone) # FIXME: thread it; show a modal thing;
+        os.system("killall mpv; $(which mpv) sounds/alarms/%s &" % alarmtone) # FIXME: thread it; show a modal thing;
         # FIXME: show a progress bar for the audio file; let the user klll it at any time
         
     def setVisible(self, onoroff):
@@ -141,7 +141,7 @@ class VoicesWindow(QMainWindow):
         make_background_translucent(self)
         self.hello_button.clicked.connect(self.hello_button_clicked)
         self.wakeup_button.clicked.connect(self.wakeup_button_clicked)
-        path = 'audio/cache'
+        path = 'sounds/cache'
         [self.voices_qlist.addItem(f,) for f in listdir(path) if isdir(join(path, f))]
         [self.voices_qlist.setCurrentItem(x) for x in self.voices_qlist.findItems(VOICE_NAME, Qt.MatchExactly)]
         self.voices_qlist.currentTextChanged.connect(self.new_voice_chosen)
@@ -351,7 +351,7 @@ class MainWindow(QMainWindow):
 
 if __name__ == '__main__':
 #    sys.path.insert(0,'/opt/homebrew/bin')
-#os.system('''mpv audio/startup.mp3 &''')
+#os.system('''mpv sounds/startup.mp3 &''')
     app = QApplication(sys.argv)
     w = MainWindow()
     w.show()

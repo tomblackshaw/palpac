@@ -19,7 +19,7 @@ if __name__ == '__main__':
     for binname in ('mpv',): 
         if 0 != os.system('which {binname} > /dev/null'.format(binname=binname)):
             raise MainAppStartupError("{binname} is missing. Please install it.".format(binname=binname))
-    path = 'audio/cache'
+    path = 'sounds/cache'
     voices_lst = [f for f in listdir(path) if isdir(join(path, f))]
     if len(sys.argv) == 1 or sys.argv[1] not in voices_lst:
         print("Options:", voices_lst)
