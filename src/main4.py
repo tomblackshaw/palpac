@@ -19,17 +19,7 @@ In this way, the user is given the impression that (1) the clock is clickable,
 it again will hide the configuration tools. 
 
 .. _Google Python Style Guide:
-   http://google.github.io/styleguide/pyguide.html
-   
-Configuration screen
-- click on the center of the clock to get it
-- when you've got it
-    - you'll see three buttons
-    - click 1/2/3 for a different config thing
-        - brightness
-        - volume
-        - clock face
-    - click anywhere to hide it again
+   http://google.github.io/styleguide/pyguide.html   
 
 """
 
@@ -49,14 +39,13 @@ from os.path import join, isdir, isfile
 from os import listdir
 
 from my.gui import BrowserView
-from my.consts import all_potential_owner_names
 from my.text2speech import smart_phrase_audio, speak_a_random_alarm_message, fart_and_apologize
 from my.stringutils import generate_random_string
 import datetime
+from my.consts import OWNER_NAME
 from my.classes import singleton
 BASEDIR = os.path.dirname(__file__) # Base directory of me, the executable script
 DEFAULT_CLOCK_NAME = list(FACES_DCT.keys())[-1]
-OWNER_NAME = all_potential_owner_names[0]
 VOICE_NAME = [f for f in listdir('audio/cache') if isdir(join('audio/cache', f))][0]
 ALARMTONE_NAME = [f for f in listdir('audio/alarms') if isfile(join('audio/alarms', f))][0]
 
@@ -66,7 +55,7 @@ class _MyQtSignals(QObject):
     freezeFace = pyqtSignal(str)
     showSettings = pyqtSignal()
     hideSettings = pyqtSignal()
-    setOwner = pyqtSignal(str)
+#    setOwner = pyqtSignal(str)
     setJsTest = pyqtSignal(bool)
     setAlarm = pyqtSignal(str)
 
@@ -200,11 +189,11 @@ class OwnersWindow(QMainWindow):
         super().__init__(parent)
         uic.loadUi(os.path.join(BASEDIR, "ui/owners.ui"), self)
         make_background_translucent(self)
-        [self.owners_qlist.addItem(s) for s in all_potential_owner_names]
-        self.owners_qlist.setCurrentRow(all_potential_owner_names.index(OWNER_NAME))
-        self.owners_qlist.currentTextChanged.connect(self.new_owner_chosen)
+        # [self.owners_qlist.addItem(s) for s in all_potential_owner_names]
+        # self.owners_qlist.setCurrentRow(all_potential_owner_names.index(OWNER_NAME))
+        # self.owners_qlist.currentTextChanged.connect(self.new_owner_chosen)
         MyQtSignals.setOwner.connect(self.new_owner_chosen)
-    
+
     def new_owner_chosen(self, nom):
         global OWNER_NAME
         OWNER_NAME = nom
@@ -307,9 +296,10 @@ class MainWindow(QMainWindow):
 
     Attributes:
         clockface: The clockface to be displayed and used.
-        confwindow: The configurator window to be displayed/hidden/used.
+        settings: The configurator window to be displayed/hidden/used.
         beard: The clickable overlay window. I call it a 'beard' because
             it acts as a beard for the clockface.
+        
             
     Accepted signals:
         showSettings
@@ -369,4 +359,7 @@ if __name__ == '__main__':
 
 
 
+
+
+#Remove OwnersWindow and replace it with something else
 

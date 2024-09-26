@@ -24,7 +24,8 @@ SOURCE: https://www.nodc.noaa.gov/archive/arc0021/0002199/1.1/data/0-data/HTML/W
 
 """
 
-all_potential_owner_names = ["Charlie", "Chief", "Dumbass", "Charles", "Killer", "Numb Nuts", "Shawday", "Boss"]
+OWNER_NAME = 'Charlie'
+#all_potential_owner_names = ["Charlie", "Chief", "Dumbass", "Charles", "Killer", "Numb Nuts", "Shawday", "Boss"]
 
 WMO_code_warnings_dct = {
 0: ("Blue skies", "...with not a cloud in the sky!"),
@@ -131,16 +132,16 @@ WMO_code_warnings_dct = {
 }
 
 hello_owner_lst = [
-"""${owner}. . . ${owner}? . . . ${owner}! . . .Hey! Good ${morning_or_afternoon_or_evening}.""",
-"""Good ${morning_or_afternoon_or_evening}, ${owner}.""",
-"""Ay yoe, ${owner}! Good ${morning_or_afternoon_or_evening}.""",
-"""What's crackalackin', ${owner}?""",
-"""Excuse me, ${owner}, may I have a word?""",
-"""Oh my, ${owner}, I have such news! Have you the time? You do now.""",
-"""Ground control to Major ${owner}.""",
-"""Oh captain, my captain? ${owner}, you salty dog!""",
-"""Okay, Rip Van ${owner}.""",
-"""Hey, ${owner}!""",
+"""{owner}. . . {owner}? . . . {owner}! . . .Hey! Good ${morning_or_afternoon_or_evening}.""".replace('{owner}', OWNER_NAME),
+"""Good ${morning_or_afternoon_or_evening}, {owner}.""".replace('{owner}', OWNER_NAME),
+"""Ay yoh, {owner}! Good ${morning_or_afternoon_or_evening}.""".replace('{owner}', OWNER_NAME),
+"""What's crackalackin', {owner}?""".replace('{owner}', OWNER_NAME),
+"""Excuse me, {owner}, may I have a word?""".replace('{owner}', OWNER_NAME),
+"""Oh my, {owner}, I have such news! Have you the time? You do now.""".replace('{owner}', OWNER_NAME),
+"""Ground control to Major {owner}.""".replace('{owner}', OWNER_NAME),
+"""Oh captain, my captain? {owner}, you salty dog!""".replace('{owner}', OWNER_NAME),
+"""Okay, Rip Van {owner}.""".replace('{owner}', OWNER_NAME),
+"""Hey, {owner}!""".replace('{owner}', OWNER_NAME),
 ]
 
 alarm_messages_lst = [
@@ -149,13 +150,13 @@ alarm_messages_lst = [
 """Knock, knock! Who's there? Get a warrant. Oh, and by the way, it's ${shorttime}.""",
 """${hello_owner} I love you, but you look like crap. Get up and do something. It's ${shorttime} and time's a-wasting.""",
 """I am an interrupting cow. Moo. Moo. Moo. I'll keep mooing until you get out of bed. Moo. It's ${shorttime}.""",
-"""${hello_owner} It's ${shorttime}. So, ${owner}, who has two thumbs and a functional alarm clock?. . . I'll give you a hint. It isn't Bill Cosby.""",
+"""${hello_owner} It's ${shorttime}. So, {owner}, who has two thumbs and a functional alarm clock?. . . I'll give you a hint. It isn't Bill Cosby.""".replace('{owner}', OWNER_NAME),
 """The time is ${shorttime}. You're late, you're late, for a very important date. . . When? Where? I don't care!""",
 """It's ${shorttime}. Each day has at least 24 hours. You're awake for, wait, no, that's not it. Every day has 12 hours and you're... No, that's not it either. Don't judge me! I'm sleepy!""",
-"""This is your alarm. This is your alarm. Ring. ... Ring, ring. ... Ring, ring, ring. Hello? Hi, It's your life, passing you by. What's that? ${owner} doesn't care? Okay, bye. Also, it's ${shorttime}.""",
-"""Get up, ${owner}. It's ${shorttime}. If you get up, I'll promise not to tell your friends you fart in your sleep.""",
+"""This is your alarm. This is your alarm. Ring. ... Ring, ring. ... Ring, ring, ring. Hello? Hi, It's your life, passing you by. What's that? {owner} doesn't care? Okay, bye. Also, it's ${shorttime}.""".replace('{owner}', OWNER_NAME),
+"""Get up, {owner}. It's ${shorttime}. If you get up, I'll promise not to tell your friends you fart in your sleep.""".replace('{owner}', OWNER_NAME),
 """${hello_owner} It's ${shorttime}. Get your ass out of bed before I play Baby Shark on Repeat.""",
-"""${hello_owner} Current location of ${owner}, bed. Appropriate location of ${owner}, somewhere else. It is ${shorttime}. Do you know where your future is?""",
+"""${hello_owner} Current location of {owner}, bed. Appropriate location of {owner}, somewhere else. It is ${shorttime}. Do you know where your future is?""".replace('{owner}', OWNER_NAME),
 """${hello_owner} It's ${shorttime}. The forecast is 100% chance of misery if you haven't charged your electronic devices.""",
 """${hello_owner} Crikey, it's ${shorttime} and there's a crocodile in your bed. Better run for cover! Preferably into a shower, a college class, or a grocery store. Lucky you!""",
 """${hello_owner} Don't cheat yourself. Treat yourself. It's ${shorttime}, time for you to hustle and bustle!""",
@@ -164,13 +165,13 @@ alarm_messages_lst = [
 """${hello_owner} Just because it's ${shorttime}, that doesn't mean you need to get up. It's fine. Go back to sleep. I mean, you did set the alarm, but whatever.""",
 """${hello_owner} The time for sleeping ended at ${one_minute_ago}. The time for adulting is now. It is ${shorttime}. Make a move.""",
 """${hello_owner} It's ${shorttime}. If you thought your childhood was fun, you'll love adulting. It's like being old, except you still have to work. Your lesson starts now.""",
-"""This is your conscience. Get up, ${owner}. It's ${shorttime}. It's time to get up. Beep, beep, beep, beep. Do not ignore your conscience. I know where you sleep, ${owner}.""",
+"""This is your conscience. Get up, {owner}. It's ${shorttime}. It's time to get up. Beep, beep, beep, beep. Do not ignore your conscience. I know where you sleep, {owner}.""".replace('{owner}', OWNER_NAME),
 """${hello_owner} It's ${shorttime}. You're giving me operational dysfunction. I find your ongoing bedridden-ness to be triggering. Please get up.""",
-"""${hello_owner} It is ${shorttime}. . . Hey ${owner} It's still ${shorttime}. . . In a minute, it'll be ${one_minute_later}. . . You don't want to be in bed when that happens, trust me.""",
+"""${hello_owner} It is ${shorttime}. . . Hey {owner} It's still ${shorttime}. . . In a minute, it'll be ${one_minute_later}. . . You don't want to be in bed when that happens, trust me.""".replace('{owner}', OWNER_NAME),
 """${hello_owner} It'll be ${shorttime} in 3, 2, 1, OK. Now, it's ${shorttime}.""",
-"""${hello_owner} You really should get up, ${owner}. In 60 seconds, it'll be ${one_minute_later} and you'll be late! Well, OK, not late-late, but you'll be one minute closer to being late.""",
-"""Shrek is love. Shrek is life. ${owner} is late. It's ${shorttime} and you need to get up.""",
-"""Tardiness has all the professional appeal of ringworm. It's ${shorttime}, ${owner}. Get. Up. Now!""",
+"""${hello_owner} You really should get up, {owner}. In 60 seconds, it'll be ${one_minute_later} and you'll be late! Well, OK, not late-late, but you'll be one minute closer to being late.""".replace('{owner}', OWNER_NAME),
+"""Shrek is love. Shrek is life. {owner} is late. It's ${shorttime} and you need to get up.""".replace('{owner}', OWNER_NAME),
+"""Tardiness has all the professional appeal of ringworm. It's ${shorttime}, {owner}. Get. Up. Now!""".replace('{owner}', OWNER_NAME),
 """${hello_owner} It is now ${shorttime}. Each day has 24 hours. You are awake for at least twelve of them.""",
 """${hello_owner} It is now ${shorttime}. Did you charge your cell phone and other electronic devices?""",
 """${hello_owner} It is now ${shorttime}. Are you sleepy? I love you, but the world doesn't give a shit. Get up!""",
@@ -180,31 +181,31 @@ alarm_messages_lst = [
 """${hello_owner} As Martin Luther King once said, Wake-up delayed is wake-up denied. It is now ${shorttime}.""",
 """${hello_owner} In the immortal words of Judas Iscariot, go get that money. It is now ${shorttime}.""",
 """${hello_owner} Let me take your hand, I'm shaking like milk, because it's ${shorttime}.""",
-"""Ay yoe trip, it's ${shorttime} and my rizz got the 314's low-key all blicky.""",
+"""Ay yo, trip, it's ${shorttime} and my rizz got the 314's low-key all blicky.""",
 """At the beep, the time will be ${shorttime}. . . . . . Beep. Sorry, no, that was premature. Wait. . . . Okay, now, beep.""",
-"""Like, OMG, you are totes late, ${owner}. JK, it's ${shorttime} and POV your drip is straight fire. Or gay fire. Whatevs. Anyway, time to rise and shine, my short boss sigma!""",
-"""${hello_owner} If you want your bed to outlast its warranty, get up! C'mon! It's ${shorttime} and time's a-wastin', ${owner}.""",
-"""It pulls the bedsheets off its skin, or else it sleeps in late again! It's ${shorttime}, ${owner}?""",
-"""This just in — it is now ${shorttime} and ${owner} is sleeping through the alarm, again. Sources report that our short boss has been up late, sticking out his ghee-at for the rizzler. More to come, after the skibbiddee.""",
-"""Hello ${owner}, my favorite minion! It's ${shorttime}. Today, we are going to blow up ... the bathroom!""",
-"""Oi, ${owner}, mate! It's ${shorttime} Time to have a red hot go, son! Go waltz your Matilda. Good on ya!""",
+"""Like, OMG, you are totes late, {owner}. JK, it's ${shorttime} and POV your drip is straight fire. Or gay fire. Whatevs. Anyway, time to rise and shine, my short boss sigma!""".replace('{owner}', OWNER_NAME),
+"""${hello_owner} If you want your bed to outlast its warranty, get up! C'mon! It's ${shorttime} and time's a-wastin', {owner}.""".replace('{owner}', OWNER_NAME),
+"""It pulls the bedsheets off its skin, or else it sleeps in late again! It's ${shorttime}, {owner}?""".replace('{owner}', OWNER_NAME),
+"""This just in — it is now ${shorttime} and {owner} is sleeping through the alarm, again. Sources report that our short boss has been up late, sticking out his ghee-at for the rizzler. More to come, after the skibbiddee.""".replace('{owner}', OWNER_NAME),
+"""Hello {owner}, my favorite minion! It's ${shorttime}. Today, we are going to blow up ... the bathroom!""".replace('{owner}', OWNER_NAME),
+"""Oi, {owner}, mate! It's ${shorttime} Time to have a red hot go, son! Go waltz your Matilda. Good on ya!""".replace('{owner}', OWNER_NAME),
 """Who has two thumbs, one testicle, and an appointment with destiny? I haven't a clue, but I do know the time is ${shorttime}""",
 """${hello_owner} What ho and good day, old chum. It is ${shorttime}. Methinks 'tis time for thee to unshackle thyself from thine own bedchamber and pound the pavement as if it owed you money.""",
 ]
 
 postsnooze_alrm_msgs_lst = [
-"""So, ${owner}, were those few extra minutes worthwhile? Ring. Ring. Ring, ring. Yep, it's ${shorttime} now.""",
-"""Hi, my name's ${owner}, and I don't like getting up. It's ${shorttime}. Stop snoozing.""",
-"""Snooze these nuts, home skillet. It's ${shorttime}, ${owner}. Drag yourself out of bed now.""",
-"""${owner} has snoozed, ${owner} hasn't risen, ${owner} will probably snooze again. Whatever. It's ${shorttime} and you've snoozed enough.""",
-"""In the beginning was the snooze, and the snooze was with ${owner}, and the snooze was ${owner}. It's ${shorttime} and you're still napping.""",
-"""As it is written in Ezekiel 23 verse 20, ${owner}, born of woman, shall have a short time to snooze. It's ${shorttime} and you should get up.""",
-"""Look, you had your fun, ${owner}, but time is passing you by. It's ${shorttime}. Get out there and fuck some shit up, yo.""",
-"""Buddhists ask, what is the sound of one hand clapping? I ask, what is the sound of one ${owner} napping? It's ${shorttime} and you need to get up.""",
-"""Awake, ${owner}. Heretofore henceforth forthwith and post haste. It's ${shorttime}, my dear, so hither your yon and gird up your loins.""",
-"""Hey Alexa, play Baby Shark by Pink Fong, at maximum volume.""",
-"""And now it's ${shorttime}. Fantastic. Fan bloody tastic.""",
-"""Seriously? You pushed the snooze button, ${owner}, and now it's ${shorttime}. Who raised you?""",
+"""So, {owner}, were those few extra minutes worthwhile? Ring. Ring. Ring, ring. Yep, it's ${shorttime} now.""".replace('{owner}', OWNER_NAME),
+"""Hi, my name's {owner}, and I don't like getting up. It's ${shorttime}. Stop snoozing.""".replace('{owner}', OWNER_NAME),
+"""Snooze these nuts, home skillet. It's ${shorttime}, {owner}. Drag yourself out of bed now.""".replace('{owner}', OWNER_NAME),
+"""{owner} has snoozed, {owner} hasn't risen, {owner} will probably snooze again. Whatever. It's ${shorttime} and you've snoozed enough.""".replace('{owner}', OWNER_NAME),
+"""In the beginning was the snooze, and the snooze was with {owner}, and the snooze was {owner}. It's ${shorttime} and you're still napping.""".replace('{owner}', OWNER_NAME),
+"""As it is written in Ezekiel 23 verse 20, {owner}, born of woman, shall have a short time to snooze. It's ${shorttime} and you should get up.""".replace('{owner}', OWNER_NAME),
+"""Look, you had your fun, {owner}, but time is passing you by. It's ${shorttime}. Get out there and fuck some shit up, yo.""".replace('{owner}', OWNER_NAME),
+"""Buddhists ask, what is the sound of one hand clapping? I ask, what is the sound of one {owner} napping? It's ${shorttime} and you need to get up.""".replace('{owner}', OWNER_NAME),
+"""Awake, {owner}. Heretofore henceforth forthwith and post haste. It's ${shorttime}, my dear, so hither your yon and gird up your loins.""".replace('{owner}', OWNER_NAME),
+"""Hey Alexa, play Baby Shark by Pink Fong, at maximum volume.""".replace('{owner}', OWNER_NAME),
+"""And now it's ${shorttime}. Fantastic. Fan bloody tastic.""".replace('{owner}', OWNER_NAME),
+"""Seriously? You pushed the snooze button, {owner}, and now it's ${shorttime}. Who raised you?""".replace('{owner}', OWNER_NAME),
 ]
 
 hours_lst = 'twelve one two three four five six seven eight nine ten eleven twelve thirteen fourteen fifteen \
