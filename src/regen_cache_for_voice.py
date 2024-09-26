@@ -22,7 +22,7 @@ Todo:
 """
 
 from my.consts import hello_owner_lst, alarm_messages_lst, hours_lst, minutes_lst, postsnooze_alrm_msgs_lst, \
-                                    farting_msgs_lst
+                                    farting_msgs_lst, OWNER_NAME
 from my.text2speech import smart_phrase_audio, deliberately_cache_a_smart_phrase
 
 
@@ -59,6 +59,7 @@ def cache_this_list_of_smart_phrases_for_voice(voice:str, lst, add_punctuation=T
 
 
 def cache_phrases_for_voice(voice:str):
+    cache_this_smart_phrase(voice, OWNER_NAME)
     cache_this_list_of_smart_phrases_for_voice(voice, hours_lst)
     cache_this_list_of_smart_phrases_for_voice(voice, minutes_lst, add_punctuation=False)
     cache_this_list_of_smart_phrases_for_voice(voice, hello_owner_lst)
@@ -74,7 +75,7 @@ def cache_phrases_for_voice(voice:str):
                                                        "morning", "afternoon", "evening",
                                                        "good morning", "good afternoon", "good evening",
                                                        "midnight", "hours", "in the afternoon", "in the morning",
-                                                       "in the evening"])
+                                                       "in the evening",])
 
 if __name__ == '__main__':
     from my.text2speech import Text2SpeechSingleton as tts
