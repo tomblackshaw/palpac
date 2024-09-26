@@ -58,7 +58,7 @@ BASEDIR = os.path.dirname(__file__) # Base directory of me, the executable scrip
 DEFAULT_CLOCK_NAME = list(FACES_DCT.keys())[-1]
 OWNER_NAME = all_potential_owner_names[0]
 VOICE_NAME = [f for f in listdir('audio/cache') if isdir(join('audio/cache', f))][0]
-ALARM_NAME = [f for f in listdir('audio/alarms') if isfile(join('audio/alarms', f))][0]
+ALARMTONE_NAME = [f for f in listdir('audio/alarms') if isfile(join('audio/alarms', f))][0]
 
 @singleton
 class _MyQtSignals(QObject):
@@ -130,13 +130,13 @@ class AlarmsWindow(QMainWindow):
 #        self.wakeup_button.clicked.connect(self.wakeup_button_clicked)
         path = 'audio/alarms'
         [self.alarms_qlist.addItem(f,) for f in listdir(path) if isfile(join(path, f))]
-        [self.alarms_qlist.setCurrentItem(x) for x in self.alarms_qlist.findItems(ALARM_NAME, Qt.MatchExactly)]
+        [self.alarms_qlist.setCurrentItem(x) for x in self.alarms_qlist.findItems(ALARMTONE_NAME, Qt.MatchExactly)]
         self.alarms_qlist.currentTextChanged.connect(self.new_alarm_chosen)
         
-    def new_alarm_chosen(self, alarm):
-        global VOICE_ALARM
-        ALARM_NAME = alarm
-        os.system("killall mpv; $(which mpv) audio/alarms/%s &" % alarm) # FIXME: thread it; show a modal thing;
+    def new_alarm_chosen(self, alarmtone):
+        global ALARMTONE_NAME
+        ALARMTONE_NAME = alarmtone
+        os.system("killall mpv; $(which mpv) audio/alarms/%s &" % alarmtone) # FIXME: thread it; show a modal thing;
         # FIXME: show a progress bar for the audio file; let the user klll it at any time
         
     def setVisible(self, onoroff):
