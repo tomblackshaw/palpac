@@ -66,6 +66,13 @@ def cache_phrases_for_voice(voice:str):
     cache_this_list_of_smart_phrases_for_voice(voice, postsnooze_alrm_msgs_lst)
     cache_this_list_of_smart_phrases_for_voice(voice, alarm_messages_lst)
     cache_this_list_of_smart_phrases_for_voice(voice, farting_msgs_lst)
+    cache_this_list_of_smart_phrases_for_voice(voice, ["Good morning, %s" % OWNER_NAME,
+                                                       "Good afternoon, %s" % OWNER_NAME,
+                                                       "Good evening, %s" % OWNER_NAME,
+                                                       "Hello %s" % OWNER_NAME,
+                                                       "Hi %s" % OWNER_NAME,
+                                                       "Greetings %s" % OWNER_NAME
+                                                       ])
     cache_this_list_of_smart_phrases_for_voice(voice, ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'])
     cache_this_list_of_smart_phrases_for_voice(voice, ["?", "!", "o'clock", "A.M.", "P.M.",
                                                        "twelve newn",
