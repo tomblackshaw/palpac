@@ -33,12 +33,11 @@ from PyQt5 import uic
 from PyQt5.QtCore import QUrl, Qt, QObject, pyqtSignal
 from PyQt5.QtWidgets import QApplication, QMainWindow, QLabel, QStackedLayout, QWidget
 
-from my.gui import set_vdu_brightness, set_audio_volume, make_background_translucent, screenCaptureWidget, disable_scrollbars
+from my.gui import BrowserView, set_vdu_brightness, set_audio_volume, make_background_translucent, \
+                screenCaptureWidget, disable_scrollbars
 from my.globals import FACES_DCT, TOUCHSCREEN_SIZE_X, TOUCHSCREEN_SIZE_Y, ZOOMS_DCT, MPV_BIN
 from os.path import join, isdir, isfile
 from os import listdir
-
-from my.gui import BrowserView
 from my.text2speech import smart_phrase_audio, speak_a_random_alarm_message, fart_and_apologize
 from my.stringutils import generate_random_string
 import datetime
