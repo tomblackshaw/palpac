@@ -25,6 +25,12 @@ from my.consts import hello_owner_lst, alarm_messages_lst, hours_lst, minutes_ls
                                     farting_msgs_lst, OWNER_NAME
 from my.text2speech import smart_phrase_audio, deliberately_cache_a_smart_phrase
 
+from os import listdir
+from os.path import isfile, join
+from my.tools.sound.trim import trim_my_audio
+from pydub.audio_segment import AudioSegment
+from pydub.exceptions import CouldntDecodeError
+import os
 
 def cache_this_smart_phrase(voice:str, smart_phrase:str, add_punctuation:bool=True):
     """With this voice, generate the audio for speaking this phrase.
@@ -84,8 +90,41 @@ def cache_phrases_for_voice(voice:str):
                                                        "midnight", "hours", "in the afternoon", "in the morning",
                                                        "in the evening",])
 
+
+
+def convert_one_mp3_to_ogg_file(mp3fname, oggfname):
+    untrimmed_audio = AudioSegment.from_mp3(mp3fname)
+    trimmed_aud = trim_my_audio(untrimmed_audio, trim_level=1)
+    trimmed_aud.export(oggfname, format="ogg")
+
+
+def mp3_to_ogg_conversions(path):
+    errors = 0
+    mp3files = [f for f in listdir(path) if isfile(join(path, f)) and f.endswith('.mp3')]
+    for f in mp3files:
+        mp3fname = '%s/%s' % (path, f)
+        oggfname = mp3fname.replace('.mp3', '.ogg')
+        if not os.path.exists(oggfname):
+            try:
+                convert_one_mp3_to_ogg_file(mp3fname, oggfname)
+            except CouldntDecodeError:
+                print("WARNING - could not decode %s; so, I'll delete it." % mp3fname)
+                os.unlink(mp3fname)
+                errors = errors + 1
+    return errors
+
+
+def mp3_to_ogg_voice_conversions(voice:str):
+    path = 'sounds/cache/%s' % voice
+    mp3_to_ogg_conversions(path)
+
+
 if __name__ == '__main__':
     from my.text2speech import Text2SpeechSingleton as tts
+    mp3_to_ogg_conversions('sounds/alarms')
+    mp3_to_ogg_conversions('sounds/farts')
     for this_voice in tts.all_voices:
         print("Working on", this_voice)
         cache_phrases_for_voice(this_voice)
+        mp3_to_ogg_voice_conversions(this_voice)
+

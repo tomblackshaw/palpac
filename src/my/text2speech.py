@@ -33,6 +33,9 @@ import os
 import random
 import string
 import sys
+from random import choice
+from os import listdir
+from os.path import isfile, join
 
 from pydub.exceptions import CouldntDecodeError
 
@@ -40,9 +43,13 @@ from my.classes.exceptions import NoProfessionalVoicesError, MissingFromCacheErr
 from my.consts import hours_lst, minutes_lst, Cmaj, farting_msgs_lst
 from my.stringutils import generate_random_alarm_message, generate_detokenized_message, pathname_of_phrase_audio, generate_random_string
 from my.tools.sound.sing import songify_this_mp3
-from my.tools.sound.trim import convert_audio_recordings_list_into_one_audio_recording
+from my.tools.sound.trim import convert_audio_recordings_list_into_one_audio_recording,\
+    convert_audio_recordings_list_into_an_mp3_file
 from pydub.audio_segment import AudioSegment
-from my.globals import ELEVENLABS_KEY_FILENAME, MPV_BIN
+from my.globals import ELEVENLABS_KEY_FILENAME 
+import time
+from my.tools.sound import play_audiofile
+import pygame
 
 if not os.path.exists(ELEVENLABS_KEY_FILENAME) or 0 != os.system("ping -c2 -W5 www.elevenlabs.io"):
     Text2SpeechSingleton = None
@@ -264,6 +271,57 @@ def smart_phrase_audio(voice:str, smart_phrase:str, owner:str=None, time_24h:int
     return convert_audio_recordings_list_into_one_audio_recording(data=data, trim_level=trim_level)
 
 
+
+def smart_phrase_filenames(voice:str, smart_phrase:str, owner:str=None, time_24h:int=None, time_minutes:int=None, suffix:str='ogg') -> list:
+    # FIXME WRITE DOX
+    # FIXME This is a badly written subroutine. Clean it up. Document it. Thank you.
+    if owner is not None and time_24h is not None and time_minutes is not None:
+        detokenized_phrase = generate_detokenized_message(owner, time_24h, time_minutes, smart_phrase)
+        detokenized_phrase = detokenized_phrase.replace('12 newn', '12:00 P.M.').replace('12 midnight', '12:00 A.M.')
+    else:
+        detokenized_phrase = ''.join(r + ' ' for r in list_phrases_to_handle(smart_phrase)).strip(' ')
+    detokenized_phrase = detokenized_phrase.lower()
+    audiofilenames = []
+    all_words = [r.lower().strip(' ') for r in detokenized_phrase.split(' ')]
+    firstwordno = 0
+    while firstwordno < len(all_words):
+        lastwordno = len(all_words)
+        while lastwordno > firstwordno:
+            searchforthis = ''.join([r + ' ' for r in all_words[firstwordno:lastwordno]]).strip()
+            outfile = pathname_of_phrase_audio(voice, searchforthis)
+            if not os.path.exists(outfile):
+                lastwordno -= 1
+            elif len(searchforthis) == 0:
+                break
+            else:
+                firstwordno = lastwordno - 1
+                audiofilenames.append(outfile)
+                break
+        if lastwordno == firstwordno:
+            if searchforthis == '':
+                print('Ignoring', searchforthis)
+            elif ':' in searchforthis and len(searchforthis) >= 4:
+                if lastwordno + 1 < len(all_words) and all_words[lastwordno + 1].lower()[:4] in ('a.m.', 'p.m.'):
+                    lastwordno += 1
+                    searchforthis = ''.join([r + ' ' for r in all_words[firstwordno:lastwordno + 1]]).strip()
+                print("TIME <=", searchforthis)
+                for s in generate_timedate_phrases_list(searchforthis):
+                    outfile = pathname_of_phrase_audio(voice, s)
+                    if not os.path.exists(outfile):
+                        raise MissingFromCacheError("{voice} => {s} <= {outfile} => (time thingy) is missing from the cache".format(s=s, voice=voice, outfile=outfile))
+                    audiofilenames.append(outfile)
+                firstwordno = lastwordno
+            elif searchforthis in ('?', ':', '!', '.'):
+                print("Ignoring", searchforthis)
+            else:
+                outfile = pathname_of_phrase_audio(voice, searchforthis, suffix=suffix)
+                raise MissingFromCacheError("{voice} => {searchforthis} <= {outfile} => is missing from the cache".format(searchforthis=searchforthis, voice=voice, outfile=outfile))
+        firstwordno += 1
+    return audiofilenames
+
+
+
+
 def generate_timedate_phrases_list(timedate_str:str) -> str:
     # FIXME WRITE DOX
     the_hr, the_min = timedate_str.split(':')
@@ -286,54 +344,36 @@ def generate_timedate_phrases_list(timedate_str:str) -> str:
 
 def speak_a_random_alarm_message(owner, hour, minute, voice, snoozed=False):
     # FIXME WRITE DOX
-    rndstr = generate_random_string(32)
-    flat_filename = '/tmp/tts{rndstr}.flat.mp3'.format(rndstr=rndstr)
     my_txt = generate_random_alarm_message(owner_of_clock=owner, time_24h=hour, time_minutes=minute, snoozed=snoozed)
-    data = smart_phrase_audio(voice, my_txt)
-    data.export(flat_filename, format="mp3")
-    os.system("{mpv} {fnam}".format(mpv=MPV_BIN, fnam=flat_filename))
-    os.unlink(flat_filename)
+    fnames = smart_phrase_filenames(voice, my_txt)
+    for f in fnames:
+        play_audiofile(f)
 
-
-def just_fart(fart_vol:int=100):
-    from os import listdir
-    from os.path import isfile, join
+def get_random_fart_fname():
     path = 'sounds/farts'
-    fartfiles = [f for f in listdir(path) if isfile(join(path, f))]
+    fartfiles = [f for f in listdir(path) if isfile(join(path, f)) and f.endswith('.ogg')]
     fart_mp3file = '{path}/{chx}'.format(path=path, chx=random.choice(fartfiles))
-    os.system('{mpv} --volume={vol} {fart}'.format(mpv=MPV_BIN, vol=fart_vol, fart=fart_mp3file))
+    return fart_mp3file
+
+def fart_and_apologize(voice:str, fart_vol=0.5, voice_vol=1.0):
+    fnames = [r for r in smart_phrase_filenames(voice=voice, smart_phrase=choice(farting_msgs_lst))]
+    fart_fname = get_random_fart_fname()
+    fart_duration = pygame.mixer.Sound(fart_fname).get_length()
+    play_audiofile(fart_fname, vol=fart_vol, nowait=True)
+    time.sleep(max(0, fart_duration*2./3.))
+    for f in fnames:
+        play_audiofile(f, vol=voice_vol)
+
+
+# def fart_and_apologize(voice:str, fart_vol:int=90,voice_vol:int=100):
+#     apologize_audioseg = smart_phrase_audio(voice, random.choice(farting_msgs_lst))
+#     fart_audioseg = AudioSegment.from_mp3(get_random_fart_fname())
+#     dB_diff = fart_vol-voice_vol
+#     adjusted_fart = fart_audioseg + dB_diff
+#     combined = adjusted_fart + apologize_audioseg
+#     _ = combined.export("/tmp/out.mp3", format="mp3")
+#     play_audiofile('/tmp/out.mp3') 
+#     os.unlink('/tmp/out.mp3')
+
     
-    
-def just_apologize(voice:str, voice_vol:int=100):
-    data_apologize = smart_phrase_audio(voice, random.choice(farting_msgs_lst))
-    apologize_mp3file = '/tmp/tts{rnd}'.format(rnd=generate_random_string(32))
-    data_apologize.export(apologize_mp3file, format="mp3")
-    os.system('{mpv} --volume={vol} {playme}'.format(mpv=MPV_BIN, vol=voice_vol, playme=apologize_mp3file))
-    os.unlink(apologize_mp3file)
-
-
-def fart_and_apologize(voice:str, fart_vol:int=100,voice_vol:int=100):
-    just_fart(fart_vol)
-    just_apologize(voice, voice_vol)
-
-
-def sing_a_random_alarm_message(owner:str, hour:int, minute:int, voice:str, snoozed:bool=False, noof_singers:int=4, keys=None, len_per:int=4, squelch:int=3, speed:int=0.8):
-    # FIXME WRITE DOX
-    '''
-    keys = [r.split(' ') for r in ('C4 C4 C4 C4', 'G4 G4 G4 G4', 'C5 C5 C5 C5', 'C4 G4 C5 E5 C3 G4 C5 E5', 'C3 G4 C5 E5 C3 G4 C5 D#5')]
-    sing_a_random_alarm_message('Charlie',12,0,'Lily', keys=keys)
-    '''
-    if keys is None:
-        keys = [Cmaj]
-    rndstr = generate_random_string(32)
-    flat_filename = '/tmp/tts{rndstr}.flat.mp3'.format(rndstr=rndstr)
-    sung_filename = '/tmp/tts{rndstr}.sung.mp3'.format(rndstr=rndstr)
-    my_txt = generate_random_alarm_message(owner_of_clock=owner, time_24h=hour, time_minutes=minute, snoozed=snoozed)
-    data = smart_phrase_audio(voice, my_txt)
-    data.export(flat_filename, format="mp3")
-    songify_this_mp3(infile=flat_filename, outfile=sung_filename, noof_singers=noof_singers,
-                     keys=keys, len_per=len_per, squelch=squelch)
-    os.system("{mpv} --speed={speed} {filename}".format(mpv=MPV_BIN, speed=speed, filename=sung_filename))
-    os.unlink(sung_filename)
-    os.unlink(flat_filename)
 

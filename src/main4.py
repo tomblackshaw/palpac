@@ -31,18 +31,22 @@ import sys
 from PyQt5 import uic
 
 from PyQt5.QtCore import QUrl, Qt, QObject, pyqtSignal
-from PyQt5.QtWidgets import QApplication, QMainWindow, QLabel, QStackedLayout, QWidget
+from PyQt5.QtWidgets import QScroller, QApplication, QMainWindow, QLabel, QStackedLayout, QWidget
 
+from random import choice
 from my.gui import BrowserView, set_vdu_brightness, set_audio_volume, make_background_translucent, \
-                screenCaptureWidget, disable_scrollbars
-from my.globals import FACES_DCT, TOUCHSCREEN_SIZE_X, TOUCHSCREEN_SIZE_Y, ZOOMS_DCT, MPV_BIN
+                screenCaptureWidget, disable_scrollbars, enable_touchscroll
+from my.globals import FACES_DCT, TOUCHSCREEN_SIZE_X, TOUCHSCREEN_SIZE_Y, ZOOMS_DCT
 from os.path import join, isdir, isfile
 from os import listdir
-from my.text2speech import smart_phrase_audio, speak_a_random_alarm_message, fart_and_apologize
+from my.text2speech import smart_phrase_audio, speak_a_random_alarm_message, fart_and_apologize, get_random_fart_fname,\
+    smart_phrase_filenames
 from my.stringutils import generate_random_string
 import datetime
-from my.consts import OWNER_NAME
+from my.consts import OWNER_NAME, farting_msgs_lst
 from my.classes import singleton
+from my.tools.sound import stop_sounds, play_audiofile
+
 BASEDIR = os.path.dirname(__file__) # Base directory of me, the executable script
 DEFAULT_CLOCK_NAME = list(FACES_DCT.keys())[-1]
 VOICE_NAME = [f for f in listdir('sounds/cache') if isdir(join('sounds/cache', f))][0]
@@ -96,7 +100,8 @@ class ClocksWindow(QMainWindow):
         [self.faces_qlist.setCurrentItem(x) for x in self.faces_qlist.findItems(initial_clock_name, Qt.MatchExactly)]
         MyQtSignals.setFace.emit(initial_clock_name)
         self.faces_qlist.currentTextChanged.connect(self.face_changed)
-
+        enable_touchscroll(self.faces_qlist)
+        
     def face_changed(self, x):
         if not os.path.exists(freezeframe_fname(x)): # TODO: ...or the cache is >3 days old?
             print("Sorry. I don't have a freezeframe pic of %s; I'll load the clock face instead." % x)
@@ -114,18 +119,20 @@ class AlarmsWindow(QMainWindow):
         uic.loadUi(os.path.join(BASEDIR, "ui/alarms.ui"), self)
         make_background_translucent(self)
         path = 'sounds/alarms'
-        [self.alarms_qlist.addItem(f,) for f in listdir(path) if isfile(join(path, f))]
+        [self.alarms_qlist.addItem(f,) for f in listdir(path) if isfile(join(path, f)) and f.endswith('.ogg')]
         [self.alarms_qlist.setCurrentItem(x) for x in self.alarms_qlist.findItems(ALARMTONE_NAME, Qt.MatchExactly)]
         self.alarms_qlist.currentTextChanged.connect(self.new_alarm_chosen)
+        for q in (self.alarms_qlist, self.hour_qlist, self.minutesA_qlist, self.minutesB_qlist, self.ampm_qlist):
+            enable_touchscroll(q)
         
     def new_alarm_chosen(self, alarmtone):
         global ALARMTONE_NAME
         ALARMTONE_NAME = alarmtone
-        os.system("killall mpv; {mpv} sounds/alarms/{fnam} &".format(mpv=MPV_BIN, fnam=alarmtone)) # FIXME: thread it; show a modal thing;
-        # FIXME: show a progress bar for the audio file; let the user klll it at any time
+        stop_sounds()
+        play_audiofile('sounds/alarms/%s' % alarmtone, nowait=True)
         
     def setVisible(self, onoroff):
-        os.system("killall mpv")
+        stop_sounds()
         super().setVisible(onoroff)
 
 
@@ -141,10 +148,12 @@ class VoicesWindow(QMainWindow):
         [self.voices_qlist.addItem(f,) for f in listdir(path) if isdir(join(path, f))]
         [self.voices_qlist.setCurrentItem(x) for x in self.voices_qlist.findItems(VOICE_NAME, Qt.MatchExactly)]
         self.voices_qlist.currentTextChanged.connect(self.new_voice_chosen)
+        enable_touchscroll(self.voices_qlist)
+
 
     def hello_button_clicked(self):
-        fart_and_apologize(voice=VOICE_NAME)
-        
+        fart_and_apologize(VOICE_NAME)
+
     def wakeup_button_clicked(self):
         speak_a_random_alarm_message(owner=OWNER_NAME, voice=VOICE_NAME, 
                                      hour=datetime.datetime.now().hour, minute=datetime.datetime.now().minute, 
@@ -153,12 +162,9 @@ class VoicesWindow(QMainWindow):
     def new_voice_chosen(self, voice):
         global VOICE_NAME
         VOICE_NAME = voice
-        rndstr = generate_random_string(32)
-        flat_filename = '/tmp/tts{rndstr}.flat.mp3'.format(rndstr=rndstr)
-        data = smart_phrase_audio(VOICE_NAME, OWNER_NAME)
-        data.export(flat_filename, format="mp3")
-        os.system("{mpv} {fnam}".format(mpv=MPV_BIN, fnam=flat_filename))
-        os.unlink(flat_filename)
+        play_audiofile("""sounds/cache/{voice}/{owner}.mp3""".format(
+                                            voice=VOICE_NAME, owner=OWNER_NAME.lower()), 
+                       nowait=True)
 
 
 class TestingWindow(QMainWindow):
@@ -176,7 +182,7 @@ class TestingWindow(QMainWindow):
         if true_or_false is True:
             print("START button was clicked")
         else:
-            print("STOP CLOCK button was clicked")
+            print("STOP button was clicked")
             self.parent.clockface.load_file(os.path.abspath('ui/icons/The_human_voice-1316067424.jpg'))
     
 
@@ -319,7 +325,7 @@ class MainWindow(QMainWindow):
 
 
 if __name__ == '__main__':
-    os.system('''%s sounds/startup.mp3 &''' % MPV_BIN)
+    play_audiofile('sounds/startup.mp3', nowait=True)
     app = QApplication(sys.argv)
     w = MainWindow()
     w.show()

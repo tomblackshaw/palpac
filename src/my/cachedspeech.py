@@ -11,7 +11,8 @@ import random
 from my.text2speech import list_phrases_to_handle, phrase_audio
 from my.classes.exceptions import MissingFromCacheError
 from my.tools.sound.trim import convert_audio_recordings_list_into_one_audio_recording
-from my.globals import MPV_BIN
+from my.tools.sound import play_mp3
+
 
 def speak_a_random_alarm_message(owner, hour, minute, voice, snoozed=False):
     # FIXME WRITE DOX
@@ -20,7 +21,7 @@ def speak_a_random_alarm_message(owner, hour, minute, voice, snoozed=False):
     my_txt = generate_random_alarm_message(owner_of_clock=owner, time_24h=hour, time_minutes=minute, snoozed=snoozed)
     data = smart_phrase_audio(voice, my_txt)
     data.export(flat_filename, format="mp3")
-    os.system("{mpv} {fnam}".format(mpv=MPV_BIN, fnam=flat_filename))
+    play_mp3(flat_filename) 
     os.unlink(flat_filename)
 
 

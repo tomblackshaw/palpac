@@ -242,5 +242,11 @@ farting_msgs_lst = [
     """Gesundh toot!""",
     """Next time, you'll have to pull my finger.""",
     """Did you hear what that asshole just said?""",
+    """I regret nothing!""",
+    """YOLO!""",
+    """I can smell a ghost.""",
+    """Farting is such sweet sorrow!""",
+    """Ah, the song of my people!""",
+    """Gas leak, detected.""",
     ]
 

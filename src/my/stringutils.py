@@ -341,8 +341,8 @@ def generate_random_alarm_message(owner_of_clock:str, time_24h:int,  time_minute
 
 
 
-def pathname_of_phrase_audio(voice:str, text:str) -> str:
+def pathname_of_phrase_audio(voice:str, text:str, suffix:str='ogg') -> str:
     if len(text) > 0 and text[0] == '.':
         text = text[1:]
-    return 'sounds/cache/{voice}/{text}.mp3'.format(voice=voice, text=text.lower().replace(' ', '_'))
+    return 'sounds/cache/{voice}/{text}.{suffix}'.format(voice=voice, text=text.lower().replace(' ', '_'), suffix=suffix)
 

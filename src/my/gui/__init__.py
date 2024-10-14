@@ -14,7 +14,7 @@ This module contains GUI-related tools.
 
 import os
 from PyQt5.QtCore import Qt, QObject
-from PyQt5.QtWidgets import QApplication
+from PyQt5.QtWidgets import QApplication, QScroller
 
 
 try: 
@@ -67,6 +67,11 @@ def make_window_transparent(q:QObject, opacity=0.):
 def make_background_translucent(q:QObject):
     q.setAttribute(Qt.WA_TranslucentBackground)  # Turn background of window transparent
     q.setWindowFlags(Qt.FramelessWindowHint)
+
+
+def enable_touchscroll(q:QObject):
+        QScroller.grabGesture(q, QScroller.LeftMouseButtonGesture) # Enable scroll-with-mouse-button
+
 
 def disable_scrollbars(w):
     w.setStyleSheet('QScrollBar {height:0px;}; QScrollBar {width:0px;}')  # Turn background transparent too

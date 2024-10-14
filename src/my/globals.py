@@ -22,11 +22,13 @@ Attributes:
 import os
 import sys
 
-def where_is_binary(binary_name):
-    return ['%s/%s'%(mydir, binary_name) for mydir in sys.path+['/opt/homebrew/bin'] if os.path.exists('%s/%s'%(mydir, binary_name))][0]
+# def where_is_binary(binary_name):
+#     try:
+#         return ['%s/%s'%(mydir, binary_name) for mydir in sys.path+['/opt/homebrew/bin','/usr/bin','/usr/local/bin','/usr/sbin','/usr/local/sbin'] if os.path.exists('%s/%s'%(mydir, binary_name))][0]
+#     except IndexError as e:
+#         raise FileNotFoundError(e)
 
-MPV_BIN = where_is_binary('mpv')
-FFPROBE_BIN=  where_is_binary('ffprobe') 
+ 
 ELEVENLABS_KEY_FILENAME = '%s%s%s' % (os.path.expanduser('~'), os.sep, '.eleven_api_key') # e.g. /home/foo/.eleven_api_key
 MAX_LATLONG_TIMEOUT = 999
 LAZY_SILENCE_THRESHOLD = -65.0

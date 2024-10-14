@@ -417,7 +417,7 @@ class _Text2SpeechClass:
         except ConnectError as e:
             raise ElevenLabsDownError("Unable to access the ElevenLabs engine. Check your Internet connection.") from e
         except ApiError as e:
-            raise ElevenLabsAPIError("Unable to retrieve audio from the ElevenLabs egine. Did you pay your subscription?") from e
+            raise ElevenLabsAPIError("Unable to retrieve audio from the ElevenLabs engine. Did you pay your subscription?") from e
 
     def play(self, data, force_mpv:bool=True, trim_level:int=0): # 
         if type(data) is str:
