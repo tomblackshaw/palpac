@@ -30,6 +30,9 @@ import sys
 
  
 ELEVENLABS_KEY_FILENAME = '%s%s%s' % (os.path.expanduser('~'), os.sep, '.eleven_api_key') # e.g. /home/foo/.eleven_api_key
+SOUNDS_CACHE_PATH = 'sounds/cache'
+SOUNDS_ALARMS_PATH = 'sounds/alarms'
+SOUNDS_FARTS_PATH = 'sounds/farts'
 MAX_LATLONG_TIMEOUT = 999
 LAZY_SILENCE_THRESHOLD = -65.0
 DEFAULT_SILENCE_THRESHOLD = -50.0

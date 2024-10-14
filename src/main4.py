@@ -36,7 +36,7 @@ from PyQt5.QtWidgets import QScroller, QApplication, QMainWindow, QLabel, QStack
 from random import choice
 from my.gui import BrowserView, set_vdu_brightness, set_audio_volume, make_background_translucent, \
                 screenCaptureWidget, disable_scrollbars, enable_touchscroll
-from my.globals import FACES_DCT, TOUCHSCREEN_SIZE_X, TOUCHSCREEN_SIZE_Y, ZOOMS_DCT
+from my.globals import FACES_DCT, TOUCHSCREEN_SIZE_X, TOUCHSCREEN_SIZE_Y, ZOOMS_DCT, SOUNDS_CACHE_PATH, SOUNDS_ALARMS_PATH
 from os.path import join, isdir, isfile
 from os import listdir
 from my.text2speech import smart_phrase_audio, speak_a_random_alarm_message, fart_and_apologize, get_random_fart_fname,\
@@ -49,8 +49,8 @@ from my.tools.sound import stop_sounds, play_audiofile
 
 BASEDIR = os.path.dirname(__file__) # Base directory of me, the executable script
 DEFAULT_CLOCK_NAME = list(FACES_DCT.keys())[-1]
-VOICE_NAME = [f for f in listdir('sounds/cache') if isdir(join('sounds/cache', f))][0]
-ALARMTONE_NAME = [f for f in listdir('sounds/alarms') if isfile(join('sounds/alarms', f))][0]
+VOICE_NAME = [f for f in listdir(SOUNDS_CACHE_PATH) if isdir(join(SOUNDS_CACHE_PATH, f))][0]
+ALARMTONE_NAME = [f for f in listdir(SOUNDS_ALARMS_PATH) if isfile(join(SOUNDS_ALARMS_PATH, f))][0]
 
 @singleton
 class _MyQtSignals(QObject):
@@ -118,7 +118,7 @@ class AlarmsWindow(QMainWindow):
         super().__init__(parent)
         uic.loadUi(os.path.join(BASEDIR, "ui/alarms.ui"), self)
         make_background_translucent(self)
-        path = 'sounds/alarms'
+        path = SOUNDS_ALARMS_PATH
         [self.alarms_qlist.addItem(f,) for f in listdir(path) if isfile(join(path, f)) and f.endswith('.ogg')]
         [self.alarms_qlist.setCurrentItem(x) for x in self.alarms_qlist.findItems(ALARMTONE_NAME, Qt.MatchExactly)]
         self.alarms_qlist.currentTextChanged.connect(self.new_alarm_chosen)
@@ -129,7 +129,7 @@ class AlarmsWindow(QMainWindow):
         global ALARMTONE_NAME
         ALARMTONE_NAME = alarmtone
         stop_sounds()
-        play_audiofile('sounds/alarms/%s' % alarmtone, nowait=True)
+        play_audiofile('%s/%s' % (SOUNDS_ALARMS_PATH, alarmtone), nowait=True)
         
     def setVisible(self, onoroff):
         stop_sounds()
@@ -144,7 +144,7 @@ class VoicesWindow(QMainWindow):
         make_background_translucent(self)
         self.hello_button.clicked.connect(self.hello_button_clicked)
         self.wakeup_button.clicked.connect(self.wakeup_button_clicked)
-        path = 'sounds/cache'
+        path = SOUNDS_CACHE_PATH
         [self.voices_qlist.addItem(f,) for f in listdir(path) if isdir(join(path, f))]
         [self.voices_qlist.setCurrentItem(x) for x in self.voices_qlist.findItems(VOICE_NAME, Qt.MatchExactly)]
         self.voices_qlist.currentTextChanged.connect(self.new_voice_chosen)
@@ -162,8 +162,8 @@ class VoicesWindow(QMainWindow):
     def new_voice_chosen(self, voice):
         global VOICE_NAME
         VOICE_NAME = voice
-        play_audiofile("""sounds/cache/{voice}/{owner}.mp3""".format(
-                                            voice=VOICE_NAME, owner=OWNER_NAME.lower()), 
+        play_audiofile("""{cache}/{voice}/{owner}.mp3""".format(
+                                            cache=SOUNDS_CACHE_PATH, voice=VOICE_NAME, owner=OWNER_NAME.lower()), 
                        nowait=True)
 
 

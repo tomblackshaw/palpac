@@ -26,6 +26,7 @@ import requests
 from my.classes.exceptions import WebAPITimeoutError, WebAPIOutputError
 from my.consts import alarm_messages_lst, postsnooze_alrm_msgs_lst
 from my.tools import logit
+from my.globals import SOUNDS_CACHE_PATH
 
 MAX_RANDGENSTR_LEN = 99999  # used by generate_random_string()
 
@@ -344,5 +345,5 @@ def generate_random_alarm_message(owner_of_clock:str, time_24h:int,  time_minute
 def pathname_of_phrase_audio(voice:str, text:str, suffix:str='ogg') -> str:
     if len(text) > 0 and text[0] == '.':
         text = text[1:]
-    return 'sounds/cache/{voice}/{text}.{suffix}'.format(voice=voice, text=text.lower().replace(' ', '_'), suffix=suffix)
+    return '{cache}/{voice}/{text}.{suffix}'.format(cache=SOUNDS_CACHE_PATH, voice=voice, text=text.lower().replace(' ', '_'), suffix=suffix)
 

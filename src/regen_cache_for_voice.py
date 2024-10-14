@@ -31,6 +31,7 @@ from my.tools.sound.trim import trim_my_audio
 from pydub.audio_segment import AudioSegment
 from pydub.exceptions import CouldntDecodeError
 import os
+from my.globals import SOUNDS_CACHE_PATH, SOUNDS_ALARMS_PATH, SOUNDS_FARTS_PATH
 
 def cache_this_smart_phrase(voice:str, smart_phrase:str, add_punctuation:bool=True):
     """With this voice, generate the audio for speaking this phrase.
@@ -115,14 +116,14 @@ def mp3_to_ogg_conversions(path):
 
 
 def mp3_to_ogg_voice_conversions(voice:str):
-    path = 'sounds/cache/%s' % voice
+    path = '%s/%s' % (SOUNDS_CACHE_PATH, voice)
     mp3_to_ogg_conversions(path)
 
 
 if __name__ == '__main__':
     from my.text2speech import Text2SpeechSingleton as tts
-    mp3_to_ogg_conversions('sounds/alarms')
-    mp3_to_ogg_conversions('sounds/farts')
+    mp3_to_ogg_conversions(SOUNDS_ALARMS_PATH)
+    mp3_to_ogg_conversions(SOUNDS_FARTS_PATH)
     for this_voice in tts.all_voices:
         print("Working on", this_voice)
         cache_phrases_for_voice(this_voice)

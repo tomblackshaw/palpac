@@ -46,7 +46,7 @@ from my.tools.sound.sing import songify_this_mp3
 from my.tools.sound.trim import convert_audio_recordings_list_into_one_audio_recording,\
     convert_audio_recordings_list_into_an_mp3_file
 from pydub.audio_segment import AudioSegment
-from my.globals import ELEVENLABS_KEY_FILENAME 
+from my.globals import ELEVENLABS_KEY_FILENAME, SOUNDS_FARTS_PATH 
 import time
 from my.tools.sound import play_audiofile
 import pygame
@@ -350,7 +350,7 @@ def speak_a_random_alarm_message(owner, hour, minute, voice, snoozed=False):
         play_audiofile(f)
 
 def get_random_fart_fname():
-    path = 'sounds/farts'
+    path = SOUNDS_FARTS_PATH
     fartfiles = [f for f in listdir(path) if isfile(join(path, f)) and f.endswith('.ogg')]
     fart_mp3file = '{path}/{chx}'.format(path=path, chx=random.choice(fartfiles))
     return fart_mp3file

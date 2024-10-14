@@ -11,24 +11,25 @@ import random
 from my.text2speech import list_phrases_to_handle, phrase_audio
 from my.classes.exceptions import MissingFromCacheError
 from my.tools.sound.trim import convert_audio_recordings_list_into_one_audio_recording
-from my.tools.sound import play_mp3
+from my.tools.sound import play_audiofile
+from my.globals import SOUNDS_FARTS_PATH
 
 
 def speak_a_random_alarm_message(owner, hour, minute, voice, snoozed=False):
     # FIXME WRITE DOX
     rndstr = generate_random_string(32)
-    flat_filename = '/tmp/tts{rndstr}.flat.mp3'.format(rndstr=rndstr)
+    flat_filename = '/tmp/tts{rndstr}.flat.ogg'.format(rndstr=rndstr)
     my_txt = generate_random_alarm_message(owner_of_clock=owner, time_24h=hour, time_minutes=minute, snoozed=snoozed)
     data = smart_phrase_audio(voice, my_txt)
-    data.export(flat_filename, format="mp3")
-    play_mp3(flat_filename) 
+    data.export(flat_filename, format="ogg")
+    play_audiofile(flat_filename) 
     os.unlink(flat_filename)
 
 
 def just_fart(fart_vol:int=100):
     from os import listdir
     from os.path import isfile, join
-    path = 'sounds/farts'
+    path = SOUNDS_FARTS_PATH
     fartfiles = [f for f in listdir(path) if isfile(join(path, f))]
     fart_mp3file = '{path}/{chx}'.format(path=path, chx=random.choice(fartfiles))
     os.system('mpv --volume={vol} {fart}'.format(vol=fart_vol, fart=fart_mp3file))
