@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>QBrightnessWindow</class>
- <widget class="QMainWindow" name="QBrightnessWindow">
+ <class>QOwnersWindow</class>
+ <widget class="QMainWindow" name="QOwnersWindow">
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>398</width>
+    <width>394</width>
     <height>300</height>
    </rect>
   </property>
   <property name="sizePolicy">
-   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+   <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
     <horstretch>0</horstretch>
     <verstretch>0</verstretch>
    </sizepolicy>
@@ -26,32 +26,28 @@
    <string>MainWindow</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <widget class="QSlider" name="brightness_slider">
+   <widget class="QListWidget" name="owners_qlist">
     <property name="geometry">
      <rect>
-      <x>60</x>
-      <y>130</y>
-      <width>291</width>
-      <height>71</height>
+      <x>30</x>
+      <y>10</y>
+      <width>221</width>
+      <height>191</height>
      </rect>
     </property>
     <property name="sizePolicy">
-     <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+     <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
       <horstretch>0</horstretch>
       <verstretch>0</verstretch>
      </sizepolicy>
     </property>
-    <property name="mouseTracking">
-     <bool>true</bool>
+    <property name="font">
+     <font>
+      <pointsize>36</pointsize>
+     </font>
     </property>
-    <property name="autoFillBackground">
-     <bool>true</bool>
-    </property>
-    <property name="maximum">
-     <number>100</number>
-    </property>
-    <property name="orientation">
-     <enum>Qt::Horizontal</enum>
+    <property name="tabletTracking">
+     <bool>false</bool>
     </property>
    </widget>
   </widget>

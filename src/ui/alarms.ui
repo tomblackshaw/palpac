@@ -46,8 +46,17 @@
       <pointsize>24</pointsize>
      </font>
     </property>
+    <property name="mouseTracking">
+     <bool>true</bool>
+    </property>
     <property name="tabletTracking">
      <bool>false</bool>
+    </property>
+    <property name="verticalScrollBarPolicy">
+     <enum>Qt::ScrollBarAlwaysOff</enum>
+    </property>
+    <property name="horizontalScrollBarPolicy">
+     <enum>Qt::ScrollBarAlwaysOff</enum>
     </property>
    </widget>
    <widget class="QListWidget" name="hour_qlist">
@@ -63,6 +72,15 @@
      <font>
       <pointsize>24</pointsize>
      </font>
+    </property>
+    <property name="mouseTracking">
+     <bool>true</bool>
+    </property>
+    <property name="verticalScrollBarPolicy">
+     <enum>Qt::ScrollBarAlwaysOff</enum>
+    </property>
+    <property name="horizontalScrollBarPolicy">
+     <enum>Qt::ScrollBarAlwaysOff</enum>
     </property>
     <item>
      <property name="text">
@@ -149,6 +167,15 @@
       <pointsize>24</pointsize>
      </font>
     </property>
+    <property name="mouseTracking">
+     <bool>true</bool>
+    </property>
+    <property name="verticalScrollBarPolicy">
+     <enum>Qt::ScrollBarAlwaysOff</enum>
+    </property>
+    <property name="horizontalScrollBarPolicy">
+     <enum>Qt::ScrollBarAlwaysOff</enum>
+    </property>
     <item>
      <property name="text">
       <string>AM</string>
@@ -191,6 +218,9 @@
      <font>
       <pointsize>24</pointsize>
      </font>
+    </property>
+    <property name="mouseTracking">
+     <bool>true</bool>
     </property>
     <property name="verticalScrollBarPolicy">
      <enum>Qt::ScrollBarAlwaysOff</enum>
@@ -277,6 +307,9 @@
      <font>
       <pointsize>24</pointsize>
      </font>
+    </property>
+    <property name="mouseTracking">
+     <bool>true</bool>
     </property>
     <property name="verticalScrollBarPolicy">
      <enum>Qt::ScrollBarAlwaysOff</enum>

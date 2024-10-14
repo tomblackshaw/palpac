@@ -29,10 +29,10 @@
    <widget class="QPushButton" name="clocks_button">
     <property name="geometry">
      <rect>
-      <x>270</x>
-      <y>370</y>
-      <width>64</width>
-      <height>64</height>
+      <x>290</x>
+      <y>310</y>
+      <width>96</width>
+      <height>96</height>
      </rect>
     </property>
     <property name="sizePolicy">
@@ -46,12 +46,12 @@
     </property>
     <property name="icon">
      <iconset>
-      <normaloff>icons/clocks7.png</normaloff>icons/clocks7.png</iconset>
+      <normaloff>icons/clocks3.png</normaloff>icons/clocks3.png</iconset>
     </property>
     <property name="iconSize">
      <size>
-      <width>64</width>
-      <height>64</height>
+      <width>96</width>
+      <height>96</height>
      </size>
     </property>
     <property name="flat">
@@ -61,10 +61,10 @@
    <widget class="QPushButton" name="brightness_button">
     <property name="geometry">
      <rect>
-      <x>200</x>
-      <y>400</y>
-      <width>64</width>
-      <height>64</height>
+      <x>210</x>
+      <y>360</y>
+      <width>96</width>
+      <height>96</height>
      </rect>
     </property>
     <property name="sizePolicy">
@@ -87,8 +87,8 @@
     </property>
     <property name="iconSize">
      <size>
-      <width>64</width>
-      <height>64</height>
+      <width>96</width>
+      <height>96</height>
      </size>
     </property>
     <property name="flat">
@@ -98,10 +98,10 @@
    <widget class="QPushButton" name="volume_button">
     <property name="geometry">
      <rect>
-      <x>60</x>
-      <y>330</y>
-      <width>64</width>
-      <height>64</height>
+      <x>30</x>
+      <y>240</y>
+      <width>96</width>
+      <height>96</height>
      </rect>
     </property>
     <property name="sizePolicy">
@@ -119,8 +119,8 @@
     </property>
     <property name="iconSize">
      <size>
-      <width>64</width>
-      <height>64</height>
+      <width>96</width>
+      <height>96</height>
      </size>
     </property>
     <property name="flat">
@@ -130,10 +130,10 @@
    <widget class="QPushButton" name="voices_button">
     <property name="geometry">
      <rect>
-      <x>340</x>
-      <y>330</y>
-      <width>64</width>
-      <height>64</height>
+      <x>370</x>
+      <y>240</y>
+      <width>96</width>
+      <height>96</height>
      </rect>
     </property>
     <property name="sizePolicy">
@@ -151,8 +151,8 @@
     </property>
     <property name="iconSize">
      <size>
-      <width>64</width>
-      <height>64</height>
+      <width>96</width>
+      <height>96</height>
      </size>
     </property>
     <property name="flat">
@@ -162,10 +162,10 @@
    <widget class="QPushButton" name="testing_button">
     <property name="geometry">
      <rect>
-      <x>210</x>
-      <y>330</y>
-      <width>64</width>
-      <height>64</height>
+      <x>190</x>
+      <y>240</y>
+      <width>96</width>
+      <height>96</height>
      </rect>
     </property>
     <property name="sizePolicy">
@@ -183,8 +183,8 @@
     </property>
     <property name="iconSize">
      <size>
-      <width>64</width>
-      <height>64</height>
+      <width>96</width>
+      <height>96</height>
      </size>
     </property>
     <property name="flat">
@@ -194,10 +194,10 @@
    <widget class="QPushButton" name="alarms_button">
     <property name="geometry">
      <rect>
-      <x>130</x>
-      <y>360</y>
-      <width>64</width>
-      <height>64</height>
+      <x>110</x>
+      <y>330</y>
+      <width>96</width>
+      <height>96</height>
      </rect>
     </property>
     <property name="sizePolicy">
@@ -211,12 +211,12 @@
     </property>
     <property name="icon">
      <iconset>
-      <normaloff>icons/alarm.png</normaloff>icons/alarm.png</iconset>
+      <normaloff>icons/alarm2.png</normaloff>icons/alarm2.png</iconset>
     </property>
     <property name="iconSize">
      <size>
-      <width>64</width>
-      <height>64</height>
+      <width>96</width>
+      <height>96</height>
      </size>
     </property>
     <property name="flat">

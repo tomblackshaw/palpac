@@ -31,9 +31,12 @@
      <rect>
       <x>115</x>
       <y>12</y>
-      <width>22</width>
+      <width>71</width>
       <height>231</height>
      </rect>
+    </property>
+    <property name="mouseTracking">
+     <bool>true</bool>
     </property>
     <property name="autoFillBackground">
      <bool>true</bool>
