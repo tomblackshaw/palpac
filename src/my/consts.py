@@ -171,7 +171,7 @@ alarm_messages_lst = [
 """${hello_owner} It'll be ${shorttime} in 3, 2, 1, OK. Now, it's ${shorttime}.""",
 """${hello_owner} You really should get up, {owner}. In 60 seconds, it'll be ${one_minute_later} and you'll be late! Well, OK, not late-late, but you'll be one minute closer to being late.""".replace('{owner}', OWNER_NAME),
 """Shrek is love. Shrek is life. {owner} is late. It's ${shorttime} and you need to get up.""".replace('{owner}', OWNER_NAME),
-"""Tardiness has all the professional appeal of ringworm. It's ${shorttime}, {owner}. Get. Up. Now!""".replace('{owner}', OWNER_NAME),
+"""{owner}, tardiness has all the professional appeal of ringworm. Please. Get. Up. Now. Now, it's ${shorttime}.""".replace('{owner}', OWNER_NAME),
 """${hello_owner} It is now ${shorttime}. Each day has 24 hours. You are awake for at least twelve of them.""",
 """${hello_owner} It is now ${shorttime}. Did you charge your cell phone and other electronic devices?""",
 """${hello_owner} It is now ${shorttime}. Are you sleepy? I love you, but the world doesn't give a shit. Get up!""",
