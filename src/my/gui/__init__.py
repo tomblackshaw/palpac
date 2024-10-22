@@ -73,7 +73,7 @@ def enable_touchscroll(q:QObject):
         QScroller.grabGesture(q, QScroller.LeftMouseButtonGesture) # Enable scroll-with-mouse-button
 
 
-def disable_scrollbars(w):
+def make_scrollbars_zeropixels_in_size(w):
     w.setStyleSheet('QScrollBar {height:0px;}; QScrollBar {width:0px;}')  # Turn background transparent too
 #    w.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
 #    w.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
