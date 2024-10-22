@@ -31,21 +31,19 @@ import sys
 from PyQt5 import uic
 
 from PyQt5.QtCore import QUrl, Qt, QObject, pyqtSignal
-from PyQt5.QtWidgets import QScroller, QApplication, QMainWindow, QLabel, QStackedLayout, QWidget
+from PyQt5.QtWidgets import QApplication, QMainWindow, QLabel, QStackedLayout, QWidget
 
-from random import choice
 from my.gui import BrowserView, set_vdu_brightness, set_audio_volume, make_background_translucent, \
-                screenCaptureWidget, disable_scrollbars, enable_touchscroll
+                screenCaptureWidget, make_scrollbars_zeropixels_in_size, enable_touchscroll
 from my.globals import FACES_DCT, TOUCHSCREEN_SIZE_X, TOUCHSCREEN_SIZE_Y, ZOOMS_DCT, SOUNDS_CACHE_PATH, SOUNDS_ALARMS_PATH
 from os.path import join, isdir, isfile
 from os import listdir
-from my.text2speech import smart_phrase_audio, speak_a_random_alarm_message, fart_and_apologize, get_random_fart_fname,\
-    smart_phrase_filenames
-from my.stringutils import generate_random_string
+from my.text2speech import speak_a_random_alarm_message, fart_and_apologize, get_random_fart_fname
 import datetime
-from my.consts import OWNER_NAME, farting_msgs_lst
+from my.consts import OWNER_NAME
 from my.classes import singleton
 from my.tools.sound import stop_sounds, play_audiofile
+from my.classes.exceptions import MissingFromCacheError
 
 BASEDIR = os.path.dirname(__file__) # Base directory of me, the executable script
 DEFAULT_CLOCK_NAME = list(FACES_DCT.keys())[-1]
@@ -64,6 +62,16 @@ class _MyQtSignals(QObject):
 MyQtSignals = _MyQtSignals() 
 
 
+def fork_me_right(myfunc):
+    # Fork a child process
+    processid = os.fork()
+    if processid > 0 : # processid > 0 represents the parent process
+        return
+    else:
+        myfunc()
+        sys.exit(0)
+  
+  
 def freezeframe_fname(face_name):
     return('{cwd}/ui/clocks/thumbs/{face_name}.png'.format(cwd=os.getcwd(), face_name=face_name))
 
@@ -124,6 +132,7 @@ class AlarmsWindow(QMainWindow):
         self.alarms_qlist.currentTextChanged.connect(self.new_alarm_chosen)
         for q in (self.alarms_qlist, self.hour_qlist, self.minutesA_qlist, self.minutesB_qlist, self.ampm_qlist):
             enable_touchscroll(q)
+        print("QQQ please add the 'scroller rounder-up' so that the selecting of a given hour/minute/second causes all dials to line up neatly.")
         
     def new_alarm_chosen(self, alarmtone):
         global ALARMTONE_NAME
@@ -150,9 +159,11 @@ class VoicesWindow(QMainWindow):
         self.voices_qlist.currentTextChanged.connect(self.new_voice_chosen)
         enable_touchscroll(self.voices_qlist)
 
-
     def hello_button_clicked(self):
-        fart_and_apologize(VOICE_NAME)
+        try:
+            fart_and_apologize(VOICE_NAME)
+        except MissingFromCacheError:
+            play_audiofile(get_random_fart_fname(), nowait=True)
 
     def wakeup_button_clicked(self):
         speak_a_random_alarm_message(owner=OWNER_NAME, voice=VOICE_NAME, 
@@ -244,14 +255,14 @@ class ClockFace(BrowserView):
         self.face_name = face_name
         self.load_file('{cwd}/{relpath}'.format(cwd=os.getcwd(), relpath=FACES_DCT[face_name]))
         self.setZoomFactor(ZOOMS_DCT[self.face_name] if self.face_name in ZOOMS_DCT.keys() else 1)
-        disable_scrollbars(self)
+        make_scrollbars_zeropixels_in_size(self)
         self.setUpdatesEnabled(True)
 
     def load_file(self, local_file):
         self.setZoomFactor(1)
         the_url = 'file://{local_file}'.format(local_file=local_file)
         self.load(QUrl(the_url))
-        disable_scrollbars(self)
+        make_scrollbars_zeropixels_in_size(self)
 
     def freeze_face(self, face_name):
         self.setUpdatesEnabled(False)

@@ -3,6 +3,7 @@
 
 
 import pygame  # @UnresolvedImport
+import time
 
 
 pygame.mixer.init()
@@ -37,4 +38,34 @@ def play_oggfile(fname, vol=1.0, nowait=False):
         while chan.get_busy() == True:
             continue
 
-    
+
+
+def ogg_file_queue_thread_func(qu):
+    while True:
+        try:
+            item = qu.get()
+        except Empty:
+            continue
+        else:
+            print(f'Processing item {item}')
+            play_oggfile(item)
+            qu.task_done()
+
+from threading import Thread
+
+from queue import Empty, Queue
+ogg_queue = Queue()
+
+consumer_thread = Thread(
+        target=ogg_file_queue_thread_func,
+        args=(ogg_queue,),
+        daemon=True
+    )
+consumer_thread.start()
+
+
+
+
+def queue_oggfile(fname, vol=1.0):
+    global ogg_queue
+    ogg_queue.put(fname)

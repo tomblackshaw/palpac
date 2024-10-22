@@ -48,7 +48,7 @@ from my.tools.sound.trim import convert_audio_recordings_list_into_one_audio_rec
 from pydub.audio_segment import AudioSegment
 from my.globals import ELEVENLABS_KEY_FILENAME, SOUNDS_FARTS_PATH 
 import time
-from my.tools.sound import play_audiofile
+from my.tools.sound import play_audiofile, queue_oggfile
 import pygame
 
 if not os.path.exists(ELEVENLABS_KEY_FILENAME) or 0 != os.system("ping -c2 -W5 www.elevenlabs.io"):
@@ -347,7 +347,7 @@ def speak_a_random_alarm_message(owner, hour, minute, voice, snoozed=False):
     my_txt = generate_random_alarm_message(owner_of_clock=owner, time_24h=hour, time_minutes=minute, snoozed=snoozed)
     fnames = smart_phrase_filenames(voice, my_txt)
     for f in fnames:
-        play_audiofile(f)
+        queue_oggfile(f)
 
 def get_random_fart_fname():
     path = SOUNDS_FARTS_PATH
@@ -356,14 +356,14 @@ def get_random_fart_fname():
     return fart_mp3file
 
 def fart_and_apologize(voice:str, fart_vol=0.5, voice_vol=1.0):
-    fnames = [r for r in smart_phrase_filenames(voice=voice, smart_phrase=choice(farting_msgs_lst))]
+    phrases_fnames = [r for r in smart_phrase_filenames(voice=voice, smart_phrase=choice(farting_msgs_lst))]
     fart_fname = get_random_fart_fname()
     fart_duration = pygame.mixer.Sound(fart_fname).get_length()
     play_audiofile(fart_fname, vol=fart_vol, nowait=True)
-    time.sleep(max(0, fart_duration*2./3.))
-    for f in fnames:
-        play_audiofile(f, vol=voice_vol)
-
+    time.sleep(min(1.0, fart_duration*2./3.))
+    for f in phrases_fnames:
+        queue_oggfile(f, vol=voice_vol)
+    
 
 # def fart_and_apologize(voice:str, fart_vol:int=90,voice_vol:int=100):
 #     apologize_audioseg = smart_phrase_audio(voice, random.choice(farting_msgs_lst))
