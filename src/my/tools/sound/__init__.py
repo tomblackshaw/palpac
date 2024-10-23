@@ -4,6 +4,13 @@
 
 import pygame  # @UnresolvedImport
 import time
+from pydub.audio_segment import AudioSegment
+from my.tools.sound.trim import trim_my_audio
+from my.globals import SOUNDS_CACHE_PATH
+from pydub.exceptions import CouldntDecodeError
+import os
+from os import listdir
+from os.path import isfile, join
 
 
 pygame.mixer.init()
@@ -38,6 +45,32 @@ def play_oggfile(fname, vol=1.0, nowait=False):
         while chan.get_busy() == True:
             continue
 
+
+def mp3_to_ogg_conversions(path):
+    errors = 0
+    mp3files = [f for f in listdir(path) if isfile(join(path, f)) and f.endswith('.mp3')]
+    for f in mp3files:
+        mp3fname = '%s/%s' % (path, f)
+        oggfname = mp3fname.replace('.mp3', '.ogg')
+        if not os.path.exists(oggfname):
+            try:
+                convert_one_mp3_to_ogg_file(mp3fname, oggfname)
+            except CouldntDecodeError:
+                print("WARNING - could not decode %s; so, I'll delete it." % mp3fname)
+                os.unlink(mp3fname)
+                errors = errors + 1
+    return errors
+
+
+def mp3_to_ogg_voice_conversions(voice:str):
+    path = '%s/%s' % (SOUNDS_CACHE_PATH, voice)
+    mp3_to_ogg_conversions(path)
+
+
+def convert_one_mp3_to_ogg_file(mp3fname, oggfname):
+    untrimmed_audio = AudioSegment.from_mp3(mp3fname)
+    trimmed_aud = trim_my_audio(untrimmed_audio, trim_level=1)
+    trimmed_aud.export(oggfname, format="ogg")
 
 
 def ogg_file_queue_thread_func(qu):
