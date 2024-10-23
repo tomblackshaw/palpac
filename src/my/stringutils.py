@@ -345,5 +345,26 @@ def generate_random_alarm_message(owner_of_clock:str, time_24h:int,  time_minute
 def pathname_of_phrase_audio(voice:str, text:str, suffix:str='ogg') -> str:
     if len(text) > 0 and text[0] == '.':
         text = text[1:]
+    return '{cache}/{voice}/{text}.{suffix}'.format(cache=SOUNDS_CACHE_PATH, voice=voice, text=text.lower(\
+                              ).replace(' ', '_').replace("'",'',).replace("!",'^'), suffix=suffix)
+
+
+
+
+
+def OLD_pathname_of_phrase_audio(voice:str, text:str, suffix:str='ogg') -> str:
+    if len(text) > 0 and text[0] == '.':
+        text = text[1:]
     return '{cache}/{voice}/{text}.{suffix}'.format(cache=SOUNDS_CACHE_PATH, voice=voice, text=text.lower().replace(' ', '_'), suffix=suffix)
+
+
+
+
+
+
+
+
+
+
+
 

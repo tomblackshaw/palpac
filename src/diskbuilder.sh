@@ -276,27 +276,15 @@ optimC() {
 }
 
 optimD() {
-    sed -i s/.*APPARMOR.*// .config
-    (yes "n" | make -j4 zImage) & procno=$!
-    sleep 30
-    kill $procno
-    killall gcc make 
-    sed -i s/.*SPECTRE.*// .config
-    (yes "n" | make -j4 zImage) & procno=$!
-    sleep 30
-    kill $procno
-    killall gcc make 
-}
-
-optimE() {
     # ABANDON ALL PREVIOUS CHANGES!
     cp -f .config.BEFORE .config
     for d in CONFIG_RD_ CONFIG_HAVE_KERNEL_ CONFIG_ZSWAP_COMPRESSOR_ INITRAMFS_COMPRESS CONFIG_ZSWAP_COMPRESSOR_DEFAULT_; do
         sed -i s/"$d"*// .config
     done
-# CONFIG_USB_GADGET CONFIG_USB_STORAGE CONFIG_SECURITY_APPARMOR CONFIG_USB_GADGETFS 
-# CONFIG_USB_MIDI_GADGET CONFIG_USB_USBNET CONFIG_CPU_SPECTRE CONFIG_USB_NET_DRIVERS 
-# CONFIG_USB_DWC2 CONFIG_NETWORK_FILESYSTEMS CONFIG_QUOTA MD CONFIG_RC_CORE CONFIG_F2FS_FS 
+# CONFIG_USB_GADGET CONFIG_USB_STORAGE  CONFIG_USB_GADGETFS 
+# CONFIG_USB_MIDI_GADGET CONFIG_USB_USBNET CONFIG_USB_NET_DRIVERS 
+# CONFIG_USB_DWC2 CONFIG_NETWORK_FILESYSTEMS CONFIG_QUOTA MD CONFIG_RC_CORE CONFIG_F2FS_FS
+# CONFIG_SECURITY_APPARMOR CONFIG_CPU_SPECTRE
     for d in CONFIG_RD_GZIP \
             CONFIG_HAVE_KERNEL_LZMA CONFIG_HAVE_KERNEL_GZIP CONFIG_HAVE_KERNEL_XZ CONFIG_HAVE_KERNEL_LZO \
             CONFIG_KERNEL_GZIP CONFIG_KERNEL_LZMA CONFIG_KERNEL_XZ CONFIG_KERNEL_LZO \
@@ -334,9 +322,186 @@ EOF
 }
 
 
+optimE() {
+    # ABANDON ALL PREVIOUS CHANGES!
+    cp -f .config.BEFORE .config
+   ./scripts/config --file .config -d DEBUG_INFO \
+  -d DEBUG_INFO_DWARF_TOOLCHAIN_DEFAULT -d DEBUG_INFO_DWARF4 \
+  -d DEBUG_INFO_DWARF5 -e CONFIG_DEBUG_INFO_NONE
+
+    for d in CONFIG_RD_ CONFIG_HAVE_KERNEL_ CONFIG_ZSWAP_COMPRESSOR_ INITRAMFS_COMPRESS CONFIG_ZSWAP_COMPRESSOR_DEFAULT_; do
+        sed -i s/"$d"*// .config
+    done
+# Consider:
+#     CONFIG_USB_GADGET
+#     CONFIG_USB_STORAGE
+#     CONFIG_USB_GADGETFS 
+#     CONFIG_USB_MIDI_GADGET
+#     CONFIG_USB_USBNET
+#     CONFIG_USB_NET_DRIVERS 
+#     CONFIG_KERNFS
+#     CONFIG_NETWORK_FILESYSTEMS
+#     CONFIG_QUOTA
+#     MD
+#     CONFIG_RC_CORE
+#     CONFIG_REGULATOR
+#     CONFIG_SECURITY_APPARMOR
+#     CONFIG_CPU_SPECTRE
+#     CONFIG_SRCU <== makes bootup look ugly on touchscreen (?)
+#     CONFIG_USB_DWCOTG <== breaks USB entirely
+#     CONFIG_WATCHDOG <== disables 'reboot' (but 'shutdown' still works)
+
+# ADDED FOR THE LATEST TEST ITERATION:
+#            CONFIG_USB_DWC2 CONFIG_NETWORK_FILESYSTEMS CONFIG_QUOTA MD CONFIG_RC_CORE CONFIG_F2FS_FS
+    for d in CONFIG_USB_DWC2 CONFIG_NETWORK_FILESYSTEMS CONFIG_QUOTA MD CONFIG_RC_CORE CONFIG_F2FS_FS CONFIG_RD_GZIP \
+            CONFIG_HAVE_KERNEL_LZMA CONFIG_HAVE_KERNEL_GZIP CONFIG_HAVE_KERNEL_XZ CONFIG_HAVE_KERNEL_LZO \
+            CONFIG_KERNEL_GZIP CONFIG_KERNEL_LZMA CONFIG_KERNEL_XZ CONFIG_KERNEL_LZO \
+            INITRAMFS_COMPRESSION_GZIP CONFIG_ZSWAP_COMPRESSOR_DEFAULT_DEFLATE \
+            CONFIG_ZSWAP_COMPRESSOR_DEFAULT_LZO CONFIG_ZSWAP_COMPRESSOR_DEFAULT_LZ4HC \
+            CONFIG_ZSWAP_COMPRESSOR_DEFAULT_ZSTD CONFIG_ZSWAP_COMPRESSOR_DEFAULT_842 \
+            CONFIG_INITRAMFS_COMPRESSION_GZIP CONFIG_LZO_DECOMPRESS CONFIG_ZSTD_DECOMPRESS \
+            CONFIG_CC_OPTIMIZE_FOR_PERFORMANCE; do
+        sed -i s/$d=/'# '$d' is not set'/ .config
+    done
+    cat << 'EOF' >> .config
+CONFIG_CC_OPTIMIZE_FOR_SIZE=y
+INITRAMFS_SOURCE=""
+CONFIG_HAVE_KERNEL_LZ4=y
+CONFIG_KERNEL_LZ4=y
+CONFIG_RD_GZIP=n
+CONFIG_RD_LZ4=y
+CONFIG_RD_BZIP2=n
+CONFIG_RD_LZO=n
+CONFIG_RD_LZMA=n
+CONFIG_RD_RD_LZMA=n
+CONFIG_RD_XZ=n
+CONFIG_RD_ZSTD=n
+CONFIG_INITRAMFS_COMPRESSION_LZ4=y
+CONFIG_LZ4_DECOMPRESS=y
+INITRAMFS_COMPRESSION_LZ4=y
+CONFIG_ZSWAP_COMPRESSOR_DEFAULT_LZ4=y
+CONFIG_ZSWAP_COMPRESSOR_DEFAULT="lz4"
+NET_VENDOR_XILINX=n
+EOF
+}
 
 
 
+
+
+optimF() {
+    # ABANDON ALL PREVIOUS CHANGES!
+    cp -f .config.BEFORE .config
+   ./scripts/config --file .config -d DEBUG_INFO \
+  -d DEBUG_INFO_DWARF_TOOLCHAIN_DEFAULT -d DEBUG_INFO_DWARF4 \
+  -d DEBUG_INFO_DWARF5 -e CONFIG_DEBUG_INFO_NONE
+
+    for d in CONFIG_RD_ CONFIG_HAVE_KERNEL_ CONFIG_ZSWAP_COMPRESSOR_ INITRAMFS_COMPRESS CONFIG_ZSWAP_COMPRESSOR_DEFAULT_; do
+        sed -i s/"$d"*// .config
+    done
+# Consider:
+#     
+#     
+#      
+#     
+#     
+#      
+#     CONFIG_KERNFS
+#     CONFIG_NETWORK_FILESYSTEMS
+#     CONFIG_QUOTA
+#     MD
+#     CONFIG_RC_CORE
+#     CONFIG_REGULATOR
+#     CONFIG_SECURITY_APPARMOR
+#     CONFIG_CPU_SPECTRE
+#     CONFIG_SRCU <== makes bootup look ugly on touchscreen (?)
+#     CONFIG_USB_DWCOTG <== breaks USB entirely
+#     CONFIG_WATCHDOG <== disables 'reboot' (but 'shutdown' still works)
+
+    for d in CONFIG_USB_GADGET CONFIG_USB_STORAGE CONFIG_USB_GADGETFS CONFIG_USB_MIDI_GADGET CONFIG_USB_USBNET CONFIG_USB_NET_DRIVERS \
+            CONFIG_USB_DWC2 CONFIG_NETWORK_FILESYSTEMS CONFIG_QUOTA MD CONFIG_RC_CORE CONFIG_F2FS_FS CONFIG_RD_GZIP \
+            CONFIG_HAVE_KERNEL_LZMA CONFIG_HAVE_KERNEL_GZIP CONFIG_HAVE_KERNEL_XZ CONFIG_HAVE_KERNEL_LZO \
+            CONFIG_KERNEL_GZIP CONFIG_KERNEL_LZMA CONFIG_KERNEL_XZ CONFIG_KERNEL_LZO \
+            INITRAMFS_COMPRESSION_GZIP CONFIG_ZSWAP_COMPRESSOR_DEFAULT_DEFLATE \
+            CONFIG_ZSWAP_COMPRESSOR_DEFAULT_LZO CONFIG_ZSWAP_COMPRESSOR_DEFAULT_LZ4HC \
+            CONFIG_ZSWAP_COMPRESSOR_DEFAULT_ZSTD CONFIG_ZSWAP_COMPRESSOR_DEFAULT_842 \
+            CONFIG_INITRAMFS_COMPRESSION_GZIP CONFIG_LZO_DECOMPRESS CONFIG_ZSTD_DECOMPRESS \
+            CONFIG_CC_OPTIMIZE_FOR_PERFORMANCE; do
+        sed -i s/$d=/'# '$d' is not set'/ .config
+    done
+    cat << 'EOF' >> .config
+CONFIG_CC_OPTIMIZE_FOR_SIZE=y
+INITRAMFS_SOURCE=""
+CONFIG_HAVE_KERNEL_LZ4=y
+CONFIG_KERNEL_LZ4=y
+CONFIG_RD_GZIP=n
+CONFIG_RD_LZ4=y
+CONFIG_RD_BZIP2=n
+CONFIG_RD_LZO=n
+CONFIG_RD_LZMA=n
+CONFIG_RD_RD_LZMA=n
+CONFIG_RD_XZ=n
+CONFIG_RD_ZSTD=n
+CONFIG_INITRAMFS_COMPRESSION_LZ4=y
+CONFIG_LZ4_DECOMPRESS=y
+INITRAMFS_COMPRESSION_LZ4=y
+CONFIG_ZSWAP_COMPRESSOR_DEFAULT_LZ4=y
+CONFIG_ZSWAP_COMPRESSOR_DEFAULT="lz4"
+NET_VENDOR_XILINX=n
+ZSWAP_DEFAULT_ON=y
+EOF
+}
+
+
+
+optimG() {
+    # ABANDON ALL PREVIOUS CHANGES!
+    cp -f .config.BEFORE .config
+   ./scripts/config --file .config -d DEBUG_INFO \
+  -d DEBUG_INFO_DWARF_TOOLCHAIN_DEFAULT -d DEBUG_INFO_DWARF4 \
+  -d DEBUG_INFO_DWARF5 -e CONFIG_DEBUG_INFO_NONE
+
+    for d in CONFIG_RD_ CONFIG_HAVE_KERNEL_ CONFIG_ZSWAP_COMPRESSOR_ INITRAMFS_COMPRESS CONFIG_ZSWAP_COMPRESSOR_DEFAULT_; do
+        sed -i s/"$d"*// .config
+    done
+    for d in CONFIG_KERNFS CONFIG_CPU_SPECTRE CONFIG_SECURITY_APPARMOR MD \
+            CONFIG_USB_GADGET CONFIG_USB_STORAGE CONFIG_USB_GADGETFS CONFIG_USB_MIDI_GADGET CONFIG_USB_USBNET CONFIG_USB_NET_DRIVERS \
+            CONFIG_USB_DWC2 CONFIG_NETWORK_FILESYSTEMS CONFIG_QUOTA MD CONFIG_RC_CORE CONFIG_F2FS_FS CONFIG_RD_GZIP \
+            CONFIG_HAVE_KERNEL_LZMA CONFIG_HAVE_KERNEL_GZIP CONFIG_HAVE_KERNEL_XZ CONFIG_HAVE_KERNEL_LZO \
+            CONFIG_KERNEL_GZIP CONFIG_KERNEL_LZMA CONFIG_KERNEL_XZ CONFIG_KERNEL_LZO \
+            INITRAMFS_COMPRESSION_GZIP CONFIG_ZSWAP_COMPRESSOR_DEFAULT_DEFLATE \
+            CONFIG_ZSWAP_COMPRESSOR_DEFAULT_LZO CONFIG_ZSWAP_COMPRESSOR_DEFAULT_LZ4HC \
+            CONFIG_ZSWAP_COMPRESSOR_DEFAULT_ZSTD CONFIG_ZSWAP_COMPRESSOR_DEFAULT_842 \
+            CONFIG_INITRAMFS_COMPRESSION_GZIP CONFIG_LZO_DECOMPRESS CONFIG_ZSTD_DECOMPRESS \
+            CONFIG_CC_OPTIMIZE_FOR_PERFORMANCE; do
+        sed -i s/$d=/'# '$d' is not set'/ .config
+    done
+    cat << 'EOF' >> .config
+CONFIG_CC_OPTIMIZE_FOR_SIZE=y
+INITRAMFS_SOURCE=""
+CONFIG_HAVE_KERNEL_LZ4=y
+CONFIG_KERNEL_LZ4=y
+CONFIG_RD_GZIP=n
+CONFIG_RD_LZ4=y
+CONFIG_RD_BZIP2=n
+CONFIG_RD_LZO=n
+CONFIG_RD_LZMA=n
+CONFIG_RD_RD_LZMA=n
+CONFIG_RD_XZ=n
+CONFIG_RD_ZSTD=n
+CONFIG_INITRAMFS_COMPRESSION_LZ4=y
+CONFIG_LZ4_DECOMPRESS=y
+INITRAMFS_COMPRESSION_LZ4=y
+CONFIG_ZSWAP_COMPRESSOR_DEFAULT_LZ4=y
+CONFIG_ZSWAP_COMPRESSOR_DEFAULT="lz4"
+NET_VENDOR_XILINX=n
+ZSWAP_DEFAULT_ON=y
+EOF
+}
+
+
+    
+ 
 
 optimGGGG() {
 cd /usr/src/linux
@@ -379,43 +544,11 @@ EOF
 # CONFIG_INITRAMFS_COMPRESSION_NONE is not set" >> .config
 }
 
-optimJ() {
-    echo "J BREAKS USB"
-    sed -i s/.*CONFIG_USB_DWCOTG.*// .config
-    (yes "n" | make -j4 zImage) & procno=$!
-    sleep 30
-    kill $procno
-    killall gcc make 
-}
-
-optimK() {
-    echo "K BREAKS REBOOT"
-    sed -i s/.*CONFIG_WATCHDOG.*// .config
-    (yes "n" | make -j4 zImage) & procno=$!
-    sleep 30
-    kill $procno
-    killall gcc make 
-}
 
 
-optimL() {
-    echo "L BREAKS OTHER STUFF"
-        sed -i s/CONFIG_SRCU=y/CONFIG_SRCU=n/ .config
-    sed -i s/CONFIG_TREE_SRCU=y/CONFIG_TREE_SRCU=n/ .config
-    sed -i s/CONFIG_CPU_SPECTRE=y/CONFIG_CPU_SPECTRE=n/ .config
-#    sed -i s/CONFIG_KERNFS=y/CONFIG_KERNFS=n/ .config
-#    sed -i s/CONFIG_REGULATOR=y/CONFIG_REGULATOR=n/ .config
-# More NFS?
-    sed -i s/CONFIG_NETWORK_FILESYSTEMS.*// .config
-    sed -i s/CONFIG_QUOTA.*// .config
-    sed -i s/MD=y/MD=n/ .config
-    sed -i s/CONFIG_RC_CORE=y/CONFIG_RC_CORE=m/ .config
-    (yes "n" | make -j4 zImage) & procno=$!
-    sleep 30
-    kill $procno
-    killall gcc make 
 
 }
+
 
 test_optim() {
     local ver=$1
@@ -471,7 +604,7 @@ do_btrfs_prep() {
     rsync -av /tmp/p2/[a-z]* /tmp/p4/
 }
 
-remount_btrfs() {
+remount_p4_p2_and_p1() {
     mount /dev/mmcblk0p2 /tmp/p2
     mount /dev/mmcblk0p1 /tmp/p2/boot
     mount /dev/mmcblk0p4 /tmp/p4 -o compress=lzo
@@ -612,13 +745,14 @@ RRR
 
 
 rollback() {
-    remount_btrfs
-    rsync -av --del --exclude=tmp /tmp/p4/"$1"/[a-z]* /tmp/p2/
+    remount_p4_p2_and_p1
+    rsync -av --del --exclude=tmp /tmp/p4/"$1"/{bin,boot,etc,home,lib,opt,root,sbin,srv,usr,var} /tmp/p2/
 }
 
 final_cherry_on_top() {
     echo DONE > /home/.done_yay.
 }
+
 
 
 do_primaries
@@ -632,7 +766,7 @@ for jjjj in install_the_software       \
         run_pi0circle_screen_installer \
         compile_and_install_kernel_and_modules \
         final_cherry_on_top; do
-    remount_btrfs
+    remount_p4_p2_and_p1
     if [ -e "/tmp/p4/@after_$jjjj" ]; then
         echo "Skipping @after_$jjjj -- we already have a snapshot"
         last_good_snapshot=@after_$jjjj

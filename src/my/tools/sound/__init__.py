@@ -99,6 +99,6 @@ consumer_thread.start()
 
 
 
-def queue_oggfile(fname, vol=1.0):
+def queue_oggfile(fname):
     global ogg_queue
     ogg_queue.put(fname)

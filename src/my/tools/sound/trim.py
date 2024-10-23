@@ -14,6 +14,7 @@ from pydub.audio_segment import AudioSegment
 
 from my.globals import DEFAULT_SILENCE_THRESHOLD, SNIPPY_SILENCE_THRESHOLD, LAZY_SILENCE_THRESHOLD
 from my.stringutils import generate_random_string
+from pydub.exceptions import CouldntDecodeError
 
 
 def detect_leading_silence(sound:AudioSegment, silence_threshold:float=DEFAULT_SILENCE_THRESHOLD, chunk_size:int=10) -> int:
@@ -44,7 +45,7 @@ def detect_leading_silence(sound:AudioSegment, silence_threshold:float=DEFAULT_S
 def convert_audio_recordings_list_into_one_audio_recording(data, trim_level:int=0) -> AudioSegment:
     """Convert a list of audio data into one AudioSegment instance.
 
-    Write the supplied list of data (probably MP3 to individual files.
+    Write the supplied list of data (probably MP3) to individual files.
     Use the pydub library to combine them into a single AudioSegment
     instance.
 
@@ -66,11 +67,14 @@ def convert_audio_recordings_list_into_one_audio_recording(data, trim_level:int=
     sounds = None
     filenames = ''
     for d in data:
-        fname = '/tmp/{rnd}'.format(rnd=generate_random_string(32))
+        fname = '/tmp/{rnd}.ogg'.format(rnd=generate_random_string(32))
         filenames += ' {fname}'.format(fname=fname)
         with open(fname, 'wb') as f:
             f.write(d)
-        untrimmed_audio = AudioSegment.from_mp3(fname)
+            try:
+                untrimmed_audio = AudioSegment.from_mp3(fname)
+            except:
+                untrimmed_audio = AudioSegment.from_ogg(fname)
         trimmed_aud = trim_my_audio(untrimmed_audio, trim_level)
         if sounds is None:
             sounds = trimmed_aud
@@ -132,4 +136,4 @@ def convert_audio_recordings_list_into_an_mp3_file(data, exportfile:str, trim_le
 
     """
     sounds = convert_audio_recordings_list_into_one_audio_recording(data=data, trim_level=trim_level)
-    sounds.export(exportfile, format='mp3')
+    sounds.export(exportfile, format='mp3' if exportfile.endswith( 'mp3') else 'ogg')

@@ -132,11 +132,11 @@ def save_mp3_audio_of_several_voices_singing_one_phrase(voices_list, phrase, not
         save_mp3_audio_of_one_voice_singing_one_phrase(voice, phrase, notes[noof_voices], out_fname, squelch)
         fnames_list.append(out_fname)
         noof_voices += 1
-    all_sounds = [AudioSegment.from_file(fnames_list[i], format='mp3') for i in range(noof_voices)]
+    all_sounds = [AudioSegment.from_file(fnames_list[i], format='mp3' if fnames_list[i] else 'ogg') for i in range(noof_voices)]
     cumulative_overlay = all_sounds[0]
     for i in range(1, noof_voices):
         cumulative_overlay = cumulative_overlay .overlay(all_sounds[i])
-    cumulative_overlay.export(outputfile, format="mp3")
+    cumulative_overlay.export(outputfile, format="mp3" if outputfile.endswith('mp3') else 'ogg')
     for f in fnames_list:
         os.unlink(f)
 

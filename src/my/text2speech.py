@@ -41,14 +41,15 @@ from pydub.exceptions import CouldntDecodeError
 
 from my.classes.exceptions import NoProfessionalVoicesError, MissingFromCacheError
 from my.consts import hours_lst, minutes_lst, Cmaj, farting_msgs_lst
-from my.stringutils import generate_random_alarm_message, generate_detokenized_message, pathname_of_phrase_audio, generate_random_string
+from my.stringutils import generate_random_alarm_message, generate_detokenized_message, pathname_of_phrase_audio, generate_random_string,\
+    OLD_pathname_of_phrase_audio
 from my.tools.sound.sing import songify_this_mp3
 from my.tools.sound.trim import convert_audio_recordings_list_into_one_audio_recording,\
     convert_audio_recordings_list_into_an_mp3_file
 from pydub.audio_segment import AudioSegment
 from my.globals import ELEVENLABS_KEY_FILENAME, SOUNDS_FARTS_PATH 
 import time
-from my.tools.sound import play_audiofile, queue_oggfile
+from my.tools.sound import play_audiofile, queue_oggfile, convert_one_mp3_to_ogg_file
 import pygame
 
 if not os.path.exists(ELEVENLABS_KEY_FILENAME) or 0 != os.system("ping -c2 -W5 www.elevenlabs.io"):
@@ -156,14 +157,14 @@ def play_dialogue_lst(tts, dialogue_lst:list):  # , stability=0.5, similarity_bo
 
 
 
-def phrase_audio(voice:str, text:str, raise_exception_if_not_cached:bool=False) -> bytes:
+def phrase_audio(voice:str, text:str, suffix='ogg', raise_exception_if_not_cached:bool=False) -> bytes:
     # FIXME WRITE DOX
     text = text.lower().strip(' ')
     if len(text) > 1:
     # if text not in ('!', '?', '.', ','):
         while len(text) > 0 and text[0] in ' !?;:.,':
             text = text[1:]
-    outfile =pathname_of_phrase_audio(voice, text)
+    outfile =pathname_of_phrase_audio(voice, text, suffix=suffix)
     if not os.path.exists(outfile):
         if raise_exception_if_not_cached:
             raise MissingFromCacheError("'{text}' (for {voice}) should have been cached not hasn't been.".format(text=text, voice=voice))
@@ -214,13 +215,17 @@ def deliberately_cache_a_smart_phrase(voice:str, smart_phrase:str):
     # FIXME WRITE DOX
     phrases_to_handle = list_phrases_to_handle(smart_phrase)
     for phrase in phrases_to_handle:
+        if os.path.exists(OLD_pathname_of_phrase_audio(voice, phrase)) and not os.path.exists(pathname_of_phrase_audio(voice, phrase)):
+            print("Moving file from old to new")
+            os.rename(OLD_pathname_of_phrase_audio(voice, phrase), pathname_of_phrase_audio(voice, phrase))
         audio_op = phrase_audio(voice, phrase)
         try:
             _ = convert_audio_recordings_list_into_one_audio_recording([audio_op], trim_level=1)
         except CouldntDecodeError:
             print('"%s" (%s) failed. Retrying.' % (phrase, voice))
             os.unlink(pathname_of_phrase_audio(voice, phrase))
-            deliberately_cache_a_smart_phrase(voice, phrase)
+            audio_op = phrase_audio(voice, phrase)
+            deliberately_cache_a_smart_phrase(voice, smart_phrase) # audio_op = phrase_audio(voice, phrase)
             print('"%s" (%s) regenerated successfully.' % (phrase, voice))
 
 
@@ -266,7 +271,10 @@ def smart_phrase_audio(voice:str, smart_phrase:str, owner:str=None, time_24h:int
                 print("Ignoring", searchforthis)
             else:
                 outfile = pathname_of_phrase_audio(voice, searchforthis)
-                raise MissingFromCacheError("{voice} => {searchforthis} <= {outfile} => is missing from the cache".format(searchforthis=searchforthis, voice=voice, outfile=outfile))
+                if searchforthis in ('',',','.',';',':','?','!'):
+                    print("Warning -- searchforthis was %s; weird" % searchforthis)
+                else:
+                    raise MissingFromCacheError("{voice} => {searchforthis} <= {outfile} => is missing from the cache".format(searchforthis=searchforthis, voice=voice, outfile=outfile))
         firstwordno += 1
     return convert_audio_recordings_list_into_one_audio_recording(data=data, trim_level=trim_level)
 
@@ -355,14 +363,14 @@ def get_random_fart_fname():
     fart_mp3file = '{path}/{chx}'.format(path=path, chx=random.choice(fartfiles))
     return fart_mp3file
 
-def fart_and_apologize(voice:str, fart_vol=0.5, voice_vol=1.0):
+def fart_and_apologize(voice:str, fart_vol=0.5): # , voice_vol=1.0):
     phrases_fnames = [r for r in smart_phrase_filenames(voice=voice, smart_phrase=choice(farting_msgs_lst))]
     fart_fname = get_random_fart_fname()
     fart_duration = pygame.mixer.Sound(fart_fname).get_length()
     play_audiofile(fart_fname, vol=fart_vol, nowait=True)
     time.sleep(min(1.0, fart_duration*2./3.))
     for f in phrases_fnames:
-        queue_oggfile(f, vol=voice_vol)
+        queue_oggfile(f) #, vol=voice_vol)
     
 
 # def fart_and_apologize(voice:str, fart_vol:int=90,voice_vol:int=100):

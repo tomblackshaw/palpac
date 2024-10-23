@@ -29,10 +29,10 @@
    <widget class="QSlider" name="brightness_slider">
     <property name="geometry">
      <rect>
-      <x>60</x>
-      <y>130</y>
+      <x>50</x>
+      <y>-30</y>
       <width>291</width>
-      <height>71</height>
+      <height>231</height>
      </rect>
     </property>
     <property name="sizePolicy">
@@ -46,6 +46,9 @@
     </property>
     <property name="autoFillBackground">
      <bool>true</bool>
+    </property>
+    <property name="minimum">
+     <number>50</number>
     </property>
     <property name="maximum">
      <number>100</number>

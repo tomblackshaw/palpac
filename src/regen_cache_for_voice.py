@@ -32,6 +32,7 @@ from pydub.audio_segment import AudioSegment
 from pydub.exceptions import CouldntDecodeError
 import os
 from my.globals import SOUNDS_CACHE_PATH, SOUNDS_ALARMS_PATH, SOUNDS_FARTS_PATH
+from my.tools.sound import convert_one_mp3_to_ogg_file, mp3_to_ogg_conversions, mp3_to_ogg_voice_conversions
 
 def cache_this_smart_phrase(voice:str, smart_phrase:str, add_punctuation:bool=True):
     """With this voice, generate the audio for speaking this phrase.
@@ -84,7 +85,7 @@ def cache_phrases_for_voice(voice:str):
     cache_this_list_of_smart_phrases_for_voice(voice, ["?", "!", "o'clock", "A.M.", "P.M.",
                                                        "twelve newn",
                                                        "twelve newn", "twelve midnight",
-                                                       "12 new", "12 newn", "12 midnight",
+                                                       "12 newn", "12 midnight",
                                                        "time", '',
                                                        "morning", "afternoon", "evening",
                                                        "good morning", "good afternoon", "good evening",
