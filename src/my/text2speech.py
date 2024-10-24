@@ -166,7 +166,10 @@ def phrase_audio(voice:str, text:str, suffix='mp3', raise_exception_if_not_cache
     # if text not in ('!', '?', '.', ','):
         while len(text) > 0 and text[0] in ' !?;:.,':
             text = text[1:]
-    if not os.path.exists(outfile):
+    if len(text) == 0:
+        print("An empty phrase HAS no audio file associated with it.")
+        return None
+    elif not os.path.exists(outfile):
         if raise_exception_if_not_cached:
             raise MissingFromCacheError("'{text}' (for {voice}) should have been cached not hasn't been.".format(text=text, voice=voice))
         print(voice, '==>', text)
@@ -226,8 +229,11 @@ def deliberately_cache_a_smart_phrase(voice:str, smart_phrase:str):
     # FIXME WRITE DOX
     phrases_to_handle = list_phrases_to_handle(smart_phrase)
     for phrase in phrases_to_handle:
+        phrase = phrase.strip(' ')
         print("Does", phrase, "have a cached audio file?")
-        
+        if len(phrase) == 0:
+            print("Who cares? It's empty.")
+            continue
         phrase_path = pathname_of_phrase_audio(voice, phrase)
         old_phrasepath = pathname_of_phrase_audio(voice, phrase)
         for x in ('.ogg', '.mp3'):
@@ -332,7 +338,7 @@ def smart_phrase_audio(voice:str, smart_phrase:str, owner:str=None, time_24h:int
                 print("Ignoring", searchforthis)
             else:
                 outfile = pathname_of_phrase_audio(voice, searchforthis)
-                if searchforthis in ('',',','.',';',':','?','!'):
+                if searchforthis in ('',',','.',';',':','?','!'," "):
                     print("Warning -- searchforthis was %s; weird" % searchforthis)
                 else:
                     raise MissingFromCacheError("{voice} => {searchforthis} <= {outfile} => is missing from the cache".format(searchforthis=searchforthis, voice=voice, outfile=outfile))
@@ -385,7 +391,7 @@ def smart_phrase_filenames(voice:str, smart_phrase:str, owner:str=None, time_24h
                     audiofilenames.append(outfile)
                 firstwordno = lastwordno
             elif searchforthis in ('?', ':', '!', '.'):
-                print("Ignoring", searchforthis)
+                print("Ignoring >>>", searchforthis, "<<<")
             else:
                 outfile = pathname_of_phrase_audio(voice, searchforthis, suffix=suffix)
                 errstr="{voice} => {searchforthis} <= {outfile} => is missing from the cache".format(searchforthis=searchforthis, voice=voice, outfile=outfile)

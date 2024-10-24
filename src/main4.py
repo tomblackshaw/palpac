@@ -44,6 +44,7 @@ from my.consts import OWNER_NAME
 from my.classes import singleton
 from my.tools.sound import stop_sounds, play_audiofile
 from my.classes.exceptions import MissingFromCacheError
+import random
 
 BASEDIR = os.path.dirname(__file__) # Base directory of me, the executable script
 DEFAULT_CLOCK_NAME = list(FACES_DCT.keys())[-1]
@@ -151,14 +152,31 @@ class VoicesWindow(QMainWindow):
         super().__init__(parent)
         uic.loadUi(os.path.join(BASEDIR, "ui/voices.ui"), self)
         make_background_translucent(self)
+        self.randomizer_button.clicked.connect(self.randomizer_button_clicked)
         self.hello_button.clicked.connect(self.hello_button_clicked)
         self.wakeup_button.clicked.connect(self.wakeup_button_clicked)
         path = SOUNDS_CACHE_PATH
-        [self.voices_qlist.addItem(f,) for f in listdir(path) if isdir(join(path, f))]
-        [self.voices_qlist.setCurrentItem(x) for x in self.voices_qlist.findItems(VOICE_NAME, Qt.MatchExactly)]
-        self.voices_qlist.currentTextChanged.connect(self.new_voice_chosen)
-        enable_touchscroll(self.voices_qlist)
+        # [self.voices_qlist.addItem(f,) for f in listdir(path) if isdir(join(path, f))]
+        # [self.voices_qlist.setCurrentItem(x) for x in self.voices_qlist.findItems(VOICE_NAME, Qt.MatchExactly)]
+        # self.voices_qlist.currentTextChanged.connect(self.new_voice_chosen)
+        # enable_touchscroll(self.voices_qlist)
 
+    
+    def randomizer_button_clicked(self):
+        print("RANDOM VOICE SELECTED")
+        while  True:
+            try:
+                vox = random.choice([f for f in listdir(SOUNDS_CACHE_PATH) if isdir(join(SOUNDS_CACHE_PATH, f))])
+                self.new_voice_chosen(vox)
+                break
+            except:
+                print("This voice failed. Trying another...")
+        
+    # def voicename_button_clicked(self):
+    #     play_audiofile("""{cache}/{voice}/{owner}.mp3""".format(
+    #                                         cache=SOUNDS_CACHE_PATH, voice=VOICE_NAME, owner=OWNER_NAME.lower()), 
+    #                    nowait=True)    
+    
     def hello_button_clicked(self):
         try:
             fart_and_apologize(VOICE_NAME)
