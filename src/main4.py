@@ -168,7 +168,7 @@ class VoicesWindow(QMainWindow):
     def wakeup_button_clicked(self):
         speak_a_random_alarm_message(owner=OWNER_NAME, voice=VOICE_NAME, 
                                      hour=datetime.datetime.now().hour, minute=datetime.datetime.now().minute, 
-                                     snoozed=False)
+                                     snoozed=False, fail_quietly=True)
 
     def new_voice_chosen(self, voice):
         global VOICE_NAME

@@ -47,7 +47,7 @@
      </font>
     </property>
     <property name="mouseTracking">
-     <bool>true</bool>
+     <bool>false</bool>
     </property>
     <property name="tabletTracking">
      <bool>false</bool>

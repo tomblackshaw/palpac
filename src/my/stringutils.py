@@ -346,7 +346,7 @@ def pathname_of_phrase_audio(voice:str, text:str, suffix:str='ogg') -> str:
     if len(text) > 0 and text[0] == '.':
         text = text[1:]
     return '{cache}/{voice}/{text}.{suffix}'.format(cache=SOUNDS_CACHE_PATH, voice=voice, text=text.lower(\
-                              ).replace(' ', '_').replace("'",'',).replace("!",'^'), suffix=suffix)
+                              ).replace(' ', '_').replace("'",'',).replace("!",'^'), suffix=suffix).strip(' ')
 
 
 

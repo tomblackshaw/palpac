@@ -56,7 +56,15 @@ def cache_this_smart_phrase(voice:str, smart_phrase:str, add_punctuation:bool=Tr
             if len(smart_phrase) > 0 and smart_phrase[-1] not in ('.,?!'):
                 y = smart_phrase + x
                 deliberately_cache_a_smart_phrase(voice, y)
-                _ = smart_phrase_audio(voice, y)
+                try:
+                    _ = smart_phrase_audio(voice, y)
+                except Exception as e:
+                    print("UNABLE TO GET SMART PHRASE AUDIO FOR >>>", y, "<<<")
+                    raise("UNABLE TO GET SMART PHRASE AUDIO FOR", y) from e
+    try:
+        _ = smart_phrase_audio(voice, smart_phrase)
+    except Exception as e:
+        raise("UNABLE TO GET SMART PHRASE AUDIO FOR", smart_phrase) from e
     _ = smart_phrase_audio(voice, smart_phrase)
 
 
@@ -68,17 +76,15 @@ def cache_this_list_of_smart_phrases_for_voice(voice:str, lst, add_punctuation=T
 
 def cache_phrases_for_voice(voice:str):
     cache_this_smart_phrase(voice, OWNER_NAME)
-    cache_this_list_of_smart_phrases_for_voice(voice, hours_lst)
-    cache_this_list_of_smart_phrases_for_voice(voice, minutes_lst, add_punctuation=False)
-    cache_this_list_of_smart_phrases_for_voice(voice, hello_owner_lst)
-    cache_this_list_of_smart_phrases_for_voice(voice, postsnooze_alrm_msgs_lst)
-    cache_this_list_of_smart_phrases_for_voice(voice, alarm_messages_lst)
-    cache_this_list_of_smart_phrases_for_voice(voice, farting_msgs_lst)
     cache_this_list_of_smart_phrases_for_voice(voice, ["Good morning, %s" % OWNER_NAME,
                                                        "Good afternoon, %s" % OWNER_NAME,
                                                        "Good evening, %s" % OWNER_NAME,
                                                        "Hello %s" % OWNER_NAME,
+                                                       "Hello, %s" % OWNER_NAME,
                                                        "Hi %s" % OWNER_NAME,
+                                                       "Hi, %s" % OWNER_NAME,
+                                                       "Hey %s" % OWNER_NAME,
+                                                       "Hey, %s" % OWNER_NAME,
                                                        "Greetings %s" % OWNER_NAME
                                                        ])
     cache_this_list_of_smart_phrases_for_voice(voice, ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'])
@@ -91,6 +97,12 @@ def cache_phrases_for_voice(voice:str):
                                                        "good morning", "good afternoon", "good evening",
                                                        "midnight", "hours", "in the afternoon", "in the morning",
                                                        "in the evening",])
+    cache_this_list_of_smart_phrases_for_voice(voice, postsnooze_alrm_msgs_lst)
+    cache_this_list_of_smart_phrases_for_voice(voice, alarm_messages_lst)
+    cache_this_list_of_smart_phrases_for_voice(voice, hello_owner_lst)
+    cache_this_list_of_smart_phrases_for_voice(voice, hours_lst)
+    cache_this_list_of_smart_phrases_for_voice(voice, minutes_lst, add_punctuation=False)
+    cache_this_list_of_smart_phrases_for_voice(voice, farting_msgs_lst)
 
 
 

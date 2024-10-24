@@ -65,16 +65,14 @@ def convert_audio_recordings_list_into_one_audio_recording(data, trim_level:int=
 
     """
     sounds = None
+    # We use MP3 here. It doesn't matter why. We delete the file in the end anyway.
     filenames = ''
     for d in data:
-        fname = '/tmp/{rnd}.ogg'.format(rnd=generate_random_string(32))
+        fname = '/tmp/{rnd}.mp3'.format(rnd=generate_random_string(32))
         filenames += ' {fname}'.format(fname=fname)
         with open(fname, 'wb') as f:
             f.write(d)
-            try:
-                untrimmed_audio = AudioSegment.from_mp3(fname)
-            except:
-                untrimmed_audio = AudioSegment.from_ogg(fname)
+            untrimmed_audio = AudioSegment.from_mp3(fname)
         trimmed_aud = trim_my_audio(untrimmed_audio, trim_level)
         if sounds is None:
             sounds = trimmed_aud
