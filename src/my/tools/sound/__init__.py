@@ -67,8 +67,12 @@ def mp3_to_ogg_voice_conversions(voice:str):
     mp3_to_ogg_conversions(path)
 
 
-def convert_one_mp3_to_ogg_file(mp3fname, oggfname):
+def convert_one_mp3_to_ogg_file(mp3fname, oggfname):    
     assert(os.path.exists(mp3fname))
+    try:
+        os.unlink(oggfname)
+    except:
+        pass
     untrimmed_audio = AudioSegment.from_mp3(mp3fname)
     trimmed_aud = trim_my_audio(untrimmed_audio, trim_level=1)
     trimmed_aud.export(oggfname, format="ogg")

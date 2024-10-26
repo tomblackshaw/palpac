@@ -16,6 +16,8 @@ Attributes:
 
 """
 
+from os import listdir
+from os.path import isfile, join
 from urllib.parse import urlparse
 import os
 import random
@@ -343,13 +345,15 @@ def generate_random_alarm_message(owner_of_clock:str, time_24h:int,  time_minute
 
 
 def pathname_of_phrase_audio(voice:str, text:str, suffix:str='ogg') -> str:
-    if len(text) > 0 and text[0] == '.':
-        text = text[1:]
-    return '{cache}/{voice}/{text}.{suffix}'.format(cache=SOUNDS_CACHE_PATH, voice=voice, text=text.lower(\
-                              ).replace(' ', '_').replace("'",'',).replace("!",'^'), suffix=suffix).strip(' ')
-
-
-
+    if '...' in text:
+        raise ValueError("We do not tolerate '...' in our texts.")
+    if suffix not in ('mp3', 'ogg'):
+        raise ValueError('suffix must be ogg or mp3')
+    text = text.strip(' ')
+    return '{cache}/{voice}/{text}.{suffix}'.format(suffix=suffix,
+                                                    cache=SOUNDS_CACHE_PATH, 
+                                                    voice=voice, 
+                                                    text=text.lower().replace(' ','_').replace('.','^')).replace('!','&').replace('"',"'")
 
 
 def OLD_pathname_of_phrase_audio(voice:str, text:str, suffix:str='ogg') -> str:
@@ -358,7 +362,8 @@ def OLD_pathname_of_phrase_audio(voice:str, text:str, suffix:str='ogg') -> str:
     return '{cache}/{voice}/{text}.{suffix}'.format(cache=SOUNDS_CACHE_PATH, voice=voice, text=text.lower().replace(' ', '_'), suffix=suffix)
 
 
-
+def list_files_in_dir(path, endswith_str=None):
+    return [f for f in listdir(path) if isfile(join(path, f)) and (endswith_str is None or f.endswith(endswith_str))]
 
 
 

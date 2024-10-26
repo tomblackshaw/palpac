@@ -8,7 +8,7 @@ from my.stringutils import generate_random_string, generate_random_alarm_message
     pathname_of_phrase_audio
 from my.consts import farting_msgs_lst, minutes_lst, hours_lst
 import random
-from my.text2speech import list_phrases_to_handle, phrase_audio
+from my.text2speech import list_phrases_to_handle, phrase_audio, smart_phrase_audio
 from my.classes.exceptions import MissingFromCacheError
 from my.tools.sound.trim import convert_audio_recordings_list_into_one_audio_recording
 from my.tools.sound import play_audiofile
@@ -66,53 +66,6 @@ def generate_timedate_phrases_list(timedate_str:str) -> str:
     else:
         return (hours_lst[int(the_hr)] + '?', minutes_lst[int(the_min)], the_ampm + '.')
 
-
-
-def smart_phrase_audio(voice:str, smart_phrase:str, owner:str=None, time_24h:int=None, time_minutes:int=None, trim_level:int=1): # -> AudioSegment:
-    # FIXME WRITE DOX
-    # FIXME This is a badly written subroutine. Clean it up. Document it. Thank you.
-    if owner is not None and time_24h is not None and time_minutes is not None:
-        detokenized_phrase = generate_detokenized_message(owner, time_24h, time_minutes, smart_phrase)
-        detokenized_phrase = detokenized_phrase.replace('12 newn', '12:00 P.M.').replace('12 midnight', '12:00 A.M.')
-    else:
-        detokenized_phrase = ''.join(r + ' ' for r in list_phrases_to_handle(smart_phrase)).strip(' ')
-    detokenized_phrase = detokenized_phrase.lower()
-    data = []
-    all_words = [r.lower().strip(' ') for r in detokenized_phrase.split(' ')]
-    firstwordno = 0
-    while firstwordno < len(all_words):
-        lastwordno = len(all_words)
-        while lastwordno > firstwordno:
-            searchforthis = ''.join([r + ' ' for r in all_words[firstwordno:lastwordno]]).strip()
-            if not os.path.exists(pathname_of_phrase_audio(voice, searchforthis)):
-                lastwordno -= 1
-            elif len(searchforthis) == 0:
-                break
-            else:
-                firstwordno = lastwordno - 1
-                data.append(phrase_audio(voice, searchforthis))
-                break
-        if lastwordno == firstwordno:
-            if searchforthis == '':
-                print('Ignoring', searchforthis)
-            elif ':' in searchforthis and len(searchforthis) >= 4:
-                if lastwordno + 1 < len(all_words) and all_words[lastwordno + 1].lower()[:4] in ('a.m.', 'p.m.'):
-                    lastwordno += 1
-                    searchforthis = ''.join([r + ' ' for r in all_words[firstwordno:lastwordno + 1]]).strip()
-                print("TIME <=", searchforthis)
-                for s in generate_timedate_phrases_list(searchforthis):
-                    outfile = pathname_of_phrase_audio(voice, s)
-                    if not os.path.exists(outfile):
-                        raise MissingFromCacheError("{voice} => {s} <= {outfile} => (time thingy) is missing from the cache".format(s=s, voice=voice, outfile=outfile))
-                    data.append(phrase_audio(voice, s))
-                firstwordno = lastwordno
-            elif searchforthis in ('?', ':', '!', '.'):
-                print("Ignoring", searchforthis)
-            else:
-                outfile = pathname_of_phrase_audio(voice, searchforthis)
-                raise MissingFromCacheError("{voice} => {searchforthis} <= {outfile} => is missing from the cache".format(searchforthis=searchforthis, voice=voice, outfile=outfile))
-        firstwordno += 1
-    return convert_audio_recordings_list_into_one_audio_recording(data=data, trim_level=trim_level)
 
 
 

@@ -15,7 +15,7 @@ if __name__ == '__main__':
         print("cachespeech <voice> <text> <outfile>")
         sys.exit(1)
     the_voice, the_text, outfile = sys.argv[1:4]
-    audio_data = phrase_audio(the_voice, the_text)
+    audio_data = phrase_audio(the_voice, the_text, suffix='mp3')
     with open(outfile, 'wb') as f:
         f.write(audio_data)
     sys.exit(0)
