@@ -1,6 +1,11 @@
 #!/bin/bash
 
 
+die() {
+    echo "$1" >> /dev/stderr
+    exit 1
+}
+
 do_primaries() {
     if cat /etc/fstab | grep MODDED; then
         return
@@ -44,20 +49,6 @@ install_py312() {
 }
 
 
-install_gcc84() {
-    apt -y install libmpc-dev libmpcdec-dev gmp* libgmp*dev libmpfr*dev
-    curl -s https://ftp.gnu.org/gnu/gcc/gcc-8.4.0/gcc-8.4.0.tar.xz | tar xJ -C /usr/src
-    cd /usr/src/gcc-8.4.0; mkdir build; cd build
-    ../configure --disable-dependency-tracking \
-                        --disable-nls \
-                        --disable-multilib \
-                        --enable-default-pie \
-                        --enable-languages=c,c++
-    make -j4
-    make install
-}
-
-
 install_rust() {
     apt -y remove rustc cargo
     su -l m -c "curl https://sh.rustup.rs -sSf | sh -s -- -y"
@@ -80,7 +71,6 @@ install_python_rust_etc() {
     SUB_install_these_modules_with_this_python python3 "$pythonmodules"
     res=$?
     if python3 --version | fgrep "Python 3.7"; then
-#       install_gcc84
         install_py312
         install_rust
         false
@@ -105,6 +95,7 @@ DONOTUSE_install_pisugar() {
 }
 
 configure_stuff() {
+    wget "https://raw.githubusercontent.com/torvalds/linux/master/scripts/bootgraph.pl" -O /home/m/bootgraph.pl
     mkdir -p /boot/firmware
     mkdir -p /etc/cron.minutely
     echo "*  *    * * *   root    cd / && run-parts --report /etc/cron.minutely" >> /etc/crontab
@@ -215,6 +206,44 @@ EOF
     echo "consoleblank=0 console=serial0,115200 console=tty1 root=/dev/mmcblk0p2 rootfstype=ext4 elevator=noop fsck.repair=yes rootwait cfg80211.ieee80211_regdom=FR rd.plymouth=0 plymouth.enable=0 vt.global_cursor_default=0 quiet logo.nologo nosplash silent dwc_otg.lpm_enable=0 rootflags=commit=120,data=writeback noatime nodiratime fastboot data=writeback loglevel=0 printk.time=1 initcall_debug" > /boot/cmdline.txt
     echo "boot_delay=0
 dtoverlay=disable-bt" >> /boot/config.txt # DISABLES BLUETOOTH
+}
+
+
+add_rollmeback_script() {
+    cat << 'EOF' > /usr/local/sbin/rollmeback
+#!/bin/bash
+
+if ! echo "$0" | grep /tmp > /dev/null; then
+    tempfname=/tmp/runme.$RANDOM.sh
+    cp -f "$0" $tempfname
+    chmod +x $tempfname
+    $tempfname "$@"
+    exit $?
+fi
+if [ "$UID" != "0" ]; then
+    sudo $0 "$@"
+    exit $?
+fi
+mkdir -p /tmp/p2 /tmp/p4
+mount /dev/mmcblk0p2 /tmp/p2 2> /dev/null
+mount /dev/mmcblk0p1 /tmp/p2/boot 2> /dev/null
+mount /dev/mmcblk0p4 /tmp/p4 -o compress=lzo 2> /dev/null
+g="$1"
+if [ "$g" == "" ] || [ ! -e "/tmp/p4/"$g ]; then
+    echo "SNAPSHOT NOT FOUND; PLEASE CHOOSE ONE OF THESE:
+$(btrfs subvolume list /tmp/p4 | cut -d' ' -f9)" >> /dev/stderr; exit 2
+else
+    rsync -av --del --exclude=tmp /tmp/p4/"$g"/{bin,boot,etc,home,lib,opt,root,sbin,srv,usr,var} /tmp/p2/
+    cp -f /tmp/p4/"$g"/boot/config.txt /tmp/p2/boot/
+fi
+read -t 10 -p "Reboot (y/n)?" choice
+case "$choice" in 
+  y|Y ) echo "Rebooting"; reboot;;
+  n|N ) echo "ok";;
+  * ) echo "Rebooting"; reboot;;
+esac
+EOF
+    chmod +x /usr/local/sbin/rollmeback
 }
 
 
@@ -332,27 +361,7 @@ optimE() {
     for d in CONFIG_RD_ CONFIG_HAVE_KERNEL_ CONFIG_ZSWAP_COMPRESSOR_ INITRAMFS_COMPRESS CONFIG_ZSWAP_COMPRESSOR_DEFAULT_; do
         sed -i s/"$d"*// .config
     done
-# Consider:
-#     CONFIG_USB_GADGET
-#     CONFIG_USB_STORAGE
-#     CONFIG_USB_GADGETFS 
-#     CONFIG_USB_MIDI_GADGET
-#     CONFIG_USB_USBNET
-#     CONFIG_USB_NET_DRIVERS 
-#     CONFIG_KERNFS
-#     CONFIG_NETWORK_FILESYSTEMS
-#     CONFIG_QUOTA
-#     MD
-#     CONFIG_RC_CORE
-#     CONFIG_REGULATOR
-#     CONFIG_SECURITY_APPARMOR
-#     CONFIG_CPU_SPECTRE
-#     CONFIG_SRCU <== makes bootup look ugly on touchscreen (?)
-#     CONFIG_USB_DWCOTG <== breaks USB entirely
-#     CONFIG_WATCHDOG <== disables 'reboot' (but 'shutdown' still works)
 
-# ADDED FOR THE LATEST TEST ITERATION:
-#            CONFIG_USB_DWC2 CONFIG_NETWORK_FILESYSTEMS CONFIG_QUOTA MD CONFIG_RC_CORE CONFIG_F2FS_FS
     for d in CONFIG_USB_DWC2 CONFIG_NETWORK_FILESYSTEMS CONFIG_QUOTA MD CONFIG_RC_CORE CONFIG_F2FS_FS CONFIG_RD_GZIP \
             CONFIG_HAVE_KERNEL_LZMA CONFIG_HAVE_KERNEL_GZIP CONFIG_HAVE_KERNEL_XZ CONFIG_HAVE_KERNEL_LZO \
             CONFIG_KERNEL_GZIP CONFIG_KERNEL_LZMA CONFIG_KERNEL_XZ CONFIG_KERNEL_LZO \
@@ -399,25 +408,6 @@ optimF() {
     for d in CONFIG_RD_ CONFIG_HAVE_KERNEL_ CONFIG_ZSWAP_COMPRESSOR_ INITRAMFS_COMPRESS CONFIG_ZSWAP_COMPRESSOR_DEFAULT_; do
         sed -i s/"$d"*// .config
     done
-# Consider:
-#     
-#     
-#      
-#     
-#     
-#      
-#     CONFIG_KERNFS
-#     CONFIG_NETWORK_FILESYSTEMS
-#     CONFIG_QUOTA
-#     MD
-#     CONFIG_RC_CORE
-#     CONFIG_REGULATOR
-#     CONFIG_SECURITY_APPARMOR
-#     CONFIG_CPU_SPECTRE
-#     CONFIG_SRCU <== makes bootup look ugly on touchscreen (?)
-#     CONFIG_USB_DWCOTG <== breaks USB entirely
-#     CONFIG_WATCHDOG <== disables 'reboot' (but 'shutdown' still works)
-
     for d in CONFIG_USB_GADGET CONFIG_USB_STORAGE CONFIG_USB_GADGETFS CONFIG_USB_MIDI_GADGET CONFIG_USB_USBNET CONFIG_USB_NET_DRIVERS \
             CONFIG_USB_DWC2 CONFIG_NETWORK_FILESYSTEMS CONFIG_QUOTA MD CONFIG_RC_CORE CONFIG_F2FS_FS CONFIG_RD_GZIP \
             CONFIG_HAVE_KERNEL_LZMA CONFIG_HAVE_KERNEL_GZIP CONFIG_HAVE_KERNEL_XZ CONFIG_HAVE_KERNEL_LZO \
@@ -501,9 +491,22 @@ EOF
 
 
     
+optimH() {
+    cd /usr/src/linux
+    sed -i s/palpac-G/palpac-H/ .config
+    sed -i s/CONFIG_CC_OPTIMIZE_FOR_.*// .config
+    cat << EOF >> .config
+CONFIG_CC_OPTIMIZE_FOR_PERFORMANCE=y
+# CONFIG_CC_OPTIMIZE_FOR_SIZE is not set
+EOF
+}
  
 
-optimGGGG() {
+
+
+
+
+optimI() {
 cd /usr/src/linux
     cat << 'EOF' > /boot/splash.txt
 ## Initramfs-Splash
@@ -547,8 +550,6 @@ EOF
 
 
 
-}
-
 
 test_optim() {
     local ver=$1
@@ -568,6 +569,7 @@ test_optim() {
 
 
 compile_and_install_kernel_and_modules() {
+    snag_kernel_src
     mount /boot
     cpufreq-set -g performance
     cd /usr/src/linux
@@ -575,12 +577,12 @@ compile_and_install_kernel_and_modules() {
     yes "" | make oldconfig
     sed -i s/CONFIG_LOCALVERSION=.*/CONFIG_LOCALVERSION=\"-v8-stockish\"/ .config
     yes "" | make -j4 zImage modules dtbs; mount /boot; make modules_install; cp arch/arm/boot/dts/*.dtb /boot/; cp arch/arm/boot/dts/overlays/*.dtb* /boot/overlays/; cp arch/arm/boot/dts/overlays/README /boot/overlays/; cp arch/arm/boot/zImage /boot/kernel-v8-stockish.img
-    for c in A B C D E; do
+    for c in A B C D E F G H; do
         test_optim $c
+        sed -i s/kernel=.*// /boot/config.txt
+        echo "kernel=kernel-v8-$c.img" >> /boot/config.txt
         snappit "@after_building_kernel_$c"
     done
-    sed -i s/kernel=.*// /boot/config.txt
-    echo "kernel=kernel-v8-$c.img" >> /boot/config.txt
 }
 
 
@@ -589,22 +591,26 @@ compile_and_install_kernel_and_modules() {
 
 do_btrfs_prep() {
     apt -y install btrfs-tools
-    mkfs.btrfs -L mybackup /dev/mmcblk0p4
+    umount /tmp/p4
+    umount /tmp/p4
+    umount /dev/mmcblk0p4
+    umount /dev/mmcblk0p4
+    umount /dev/mmcblk0p4
+    mkfs.btrfs -f -L mybackup /dev/mmcblk0p4 || die "FAILED TO FORMAT BTRFS P4"
     mkdir -p /tmp/p2 /tmp/p4
     mount /dev/mmcblk0p2 /tmp/p2
     mount /dev/mmcblk0p1 /tmp/p2/boot
-    umount /tmp/p4
-    umount /tmp/p4
-    mount /dev/mmcblk0p4 /tmp/p4 -o compress=lzo
-    btrfs subvolume create /tmp/p4/@
+    mount /dev/mmcblk0p4 /tmp/p4 -o compress=lzo || die "FAILED TO PREP BRTFS P4"
+    btrfs subvolume create /tmp/p4/@ || die "FAILED TO CREATE BTRFS P4 SNAPSHOT '@'"
     btrfs subvolume set-default $(btrfs subvolume list /tmp/p4 | cut -d' ' -f2) /tmp/p4
     umount /tmp/p4
     umount /tmp/p4
-    mount /dev/mmcblk0p4 /tmp/p4 -o compress=lzo
+    mount /dev/mmcblk0p4 /tmp/p4 -o compress=lzo || die "FAILED TO RE-MOUNT BRTFS P4"
     rsync -av /tmp/p2/[a-z]* /tmp/p4/
 }
 
 remount_p4_p2_and_p1() {
+    mkdir -p /tmp/p2 /tmp/p4
     mount /dev/mmcblk0p2 /tmp/p2
     mount /dev/mmcblk0p1 /tmp/p2/boot
     mount /dev/mmcblk0p4 /tmp/p4 -o compress=lzo
@@ -613,79 +619,44 @@ remount_p4_p2_and_p1() {
 
 snappit() {
     echo "Sync'ing..."
+    remount_p4_p2_and_p1
     rsync --del -av /tmp/p2/* /tmp/p4/
-    btrfs subvolume snapshot /tmp/p4/ /tmp/p4/"$1"
+    btrfs subvolume snapshot /tmp/p4/ /tmp/p4/"$1" || die "FAILED TO MAKE $1 SNAPSHOT"
 }
 
 
-
-ugly_hack_to_speed_up_boot() {
-    cat << 'EOF' > /etc/systemd/system/palpac.service
+shave_three_seconds_off_boot() {
+    apt -y --purge remove plymouth cups cups-browsed cups-client cups-common cups-core-drivers cups-daemon cups-filters cups-filters-core-drivers cups-ipp-utils cups-pk-helper cups-ppdc cups-server-common hplip printer-driver-gutenprint printer-driver-hpcups
+    cat << 'EOF' > /usr/local/sbin/launch_x11_and_ratpoison
+#!/bin/bash
+# -retro -rw -background # https://www.computerhope.com/unix/ux.htm
+/usr/bin/X -retro -nolisten &
+for i in {1..20}; do
+    DISPLAY=:0 xhost + && su -l m -c "DISPLAY=:0 /usr/bin/ratpoison"
+    sleep 0.4
+done
+exit 0
+EOF
+    chmod +x /usr/local/sbin/launch_x11_and_ratpoison
+    cat << 'EOF' > /etc/systemd/system/x11_and_ratpoison.service
 [Unit]
-Description=PALPAC Launcher Including X
+Description=Launch X11 and Ratpoison
 Before=local-fs-pre.target
 After=slices.target
 DefaultDependencies=no
 
 [Service]
-ExecStart=/usr/bin/startx /usr/bin/ratpoison
+ExecStart=/usr/local/sbin/launch_x11_and_ratpoison
 Type=simple
-Restart=always
-RestartSec=5s
 
 [Install]
 WantedBy=sysinit.target
 EOF
-
-    cat << 'EOF' > /root/.ratpoisonrc 
-set border 0
-set startupmessage 0
-exec xset s off
-exec xset -dpms
-exec xsetroot -cursor /home/m/.emptycursor /home/m/.emptycursor
-exec /usr/local/bin/palpac
-EOF
-
-    cat << 'EOF' > /usr/local/bin/palpac
-#!/bin/bash
-
-if [ "$USER" == "root" ]; then
-    xhost +
-    su -l m -c "DISPLAY=:0 $0"
-    exit $?
-else
-    /home/m/autorun &
-fi
-EOF
-
-    cat << 'EOF' > /root/.ratpoisonrc 
-set border 0
-set startupmessage 0
-exec xset s off
-exec xset -dpms
-exec xsetroot -cursor /home/m/.emptycursor /home/m/.emptycursor
-exec /usr/local/bin/palpac
-EOF
-
-    chmod +x /usr/local/bin/palpac
-    systemctl daemon-reload
-    systemctl set-default multi-user.target
-    systemctl enable palpac
-    systemctl disable raspi-config
-    systemctl disable ModemManager
-    [ -e "/etc/X11/xinit/xserverrc" ] && cp -f /etc/X11/xinit/xserverrc /etc/X11/xinit/xserverrc.normal
-    echo "exec /usr/bin/X -background none -nolisten tcp \"\$@\"" > /etc/X11/xinit/xserverrc
-    chmod +x /etc/X11/xinit/xserverrc
-    cat << 'EOF' > /usr/local/bin/goregular
-#!/bin/sh
-
-systemctl disable palpac
-systemctl set-default graphical.target
-EOF
-    chmod +x /usr/local/bin/goregular
-    systemctl disable getty@tty3
+    systemctl enable x11_and_ratpoison
+    systemctl disable display-manager
 }
-
+    
+    
 
 
 
@@ -745,27 +716,31 @@ RRR
 
 
 rollback() {
-    remount_p4_p2_and_p1
-    rsync -av --del --exclude=tmp /tmp/p4/"$1"/{bin,boot,etc,home,lib,opt,root,sbin,srv,usr,var} /tmp/p2/
+    if [ "$1" == "" ]; then
+        echo "PLEASE SPECIFY SNAPSHOT"
+    else
+        mkdir -p /tmp/p2 /tmp/p4
+        mount /dev/mmcblk0p2 /tmp/p2 2> /dev/null
+        mount /dev/mmcblk0p1 /tmp/p2/boot 2> /dev/null
+        mount /dev/mmcblk0p4 /tmp/p4 -o compress=lzo 2> /dev/null
+        rsync -av --del --exclude=tmp /tmp/p4/"$1"/{bin,boot,etc,home,lib,opt,root,sbin,srv,usr,var} /tmp/p2/
+    fi
 }
 
-final_cherry_on_top() {
-    echo DONE > /home/.done_yay.
-}
 
 
 
 do_primaries
 last_good_snapshot=""
-btrfs subvolume list /tmp/p4 | fgrep "path @" || do_btrfs_prep
+do_btrfs_prep
+add_rollmeback_script
 for jjjj in install_the_software       \
-        configure_stuff                \
-        purge_crap                     \
-        snag_kernel_src                \
-        run_home_tweaker_script        \
-        run_pi0circle_screen_installer \
         compile_and_install_kernel_and_modules \
-        final_cherry_on_top; do
+        purge_crap                     \
+        shave_three_seconds_off_boot   \
+        configure_stuff                \
+        run_home_tweaker_script        \
+        run_pi0circle_screen_installer; do
     remount_p4_p2_and_p1
     if [ -e "/tmp/p4/@after_$jjjj" ]; then
         echo "Skipping @after_$jjjj -- we already have a snapshot"
@@ -785,23 +760,12 @@ if [ "$last_good_snapshot" != "" ]; then
     last_good_snapshot=""
 fi
 
+mkdir -p /tmp/p2 /tmp/p4
+mount /dev/mmcblk0p2 /tmp/p2 2> /dev/null
+mount /dev/mmcblk0p1 /tmp/p2/boot 2> /dev/null
+mount /dev/mmcblk0p4 /tmp/p4 -o compress=lzo 2> /dev/null
+for i in $(btrfs subvolume list /tmp/p4 | cut -d' ' -f9); do
+    cp /usr/local/sbin/rollmeback /tmp/p4/$i/usr/local/sbin/
+done
 
-
-
-
-
-
-
-
-ugly_hack_to_speed_up_boot
-rm -f /home/m/autorun
-cat << 'EOF' > /home/m/autorun
-#!/bin/bash
-
-cd /home/m/palpac/src
-python3 main4.py
-exit $?
-EOF
-chmod +x /home/m/autorun
-chown m:m /home/m/autorun
 

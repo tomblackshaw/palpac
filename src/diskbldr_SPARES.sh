@@ -54,9 +54,7 @@ main() {
     echo hi > /.pay.txt || echo oh
     echo "PAYLOAD: $(date)" > /boot/.pay.txt || echo dear
     echo "MORE PAY: $(date)" > /.pay.txt || echo dear
-    mv /dev/fb0 /dev/fb0.orig
-    mv /dev/fb1 /dev/fb0
-    fbi -a --noverbose -T 1 -d /dev/fb0.orig /boot/splash.png
+    cat /root/fb0.img > /dev/fb0
     exec /sbin/init
     exit $?
 }
@@ -68,4 +66,85 @@ exit 0
 EOF
 rm -f /boot/.pay* /.pay*
 chmod +x /.myinit.sh
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ugly_hack_to_speed_up_boot() {
+    cat << 'EOF' > /etc/systemd/system/palpac.service
+[Unit]
+Description=PALPAC Launcher Including X
+Before=local-fs-pre.target
+After=slices.target
+DefaultDependencies=no
+
+[Service]
+ExecStart=/usr/bin/startx /usr/bin/ratpoison
+Type=simple
+Restart=always
+RestartSec=5s
+
+[Install]
+WantedBy=sysinit.target
+EOF
+
+    cat << 'EOF' > /root/.ratpoisonrc 
+set border 0
+set startupmessage 0
+exec xset s off
+exec xset -dpms
+exec xsetroot -cursor /home/m/.emptycursor /home/m/.emptycursor
+exec /usr/local/bin/palpac
+EOF
+
+    cat << 'EOF' > /usr/local/bin/palpac
+#!/bin/bash
+
+if [ "$USER" == "root" ]; then
+    xhost +
+    su -l m -c "DISPLAY=:0 $0"
+    exit $?
+else
+    /home/m/autorun &
+fi
+EOF
+
+    cat << 'EOF' > /root/.ratpoisonrc 
+set border 0
+set startupmessage 0
+exec xset s off
+exec xset -dpms
+exec xsetroot -cursor /home/m/.emptycursor /home/m/.emptycursor
+exec /usr/local/bin/palpac
+EOF
+
+    chmod +x /usr/local/bin/palpac
+    systemctl daemon-reload
+    systemctl set-default multi-user.target
+    systemctl enable palpac
+    systemctl disable raspi-config
+    systemctl disable ModemManager
+    [ -e "/etc/X11/xinit/xserverrc" ] && cp -f /etc/X11/xinit/xserverrc /etc/X11/xinit/xserverrc.normal
+    echo "exec /usr/bin/X -background none -nolisten tcp \"\$@\"" > /etc/X11/xinit/xserverrc
+    chmod +x /etc/X11/xinit/xserverrc
+    cat << 'EOF' > /usr/local/bin/goregular
+#!/bin/sh
+
+systemctl disable palpac
+systemctl set-default graphical.target
+EOF
+    chmod +x /usr/local/bin/goregular
+    systemctl disable getty@tty3
+}
+
 
