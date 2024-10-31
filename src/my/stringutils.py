@@ -296,7 +296,7 @@ def generate_detokenized_message(owner:str, time_24h:int, time_minutes:int, mess
     if owner == '' or owner is None:
         raise ValueError("Owner -- the name of the human who owns this alarm clock -- needs to be a non-empty string. You supplied a duff value.")
     if type(time_24h) is not int or type(time_minutes) is not int or time_24h < 0 or time_24h >= 24 or time_minutes < 0 or time_minutes >= 60:
-        raise ValueError("You supplied a duff hour and/or minute.")
+        raise ValueError("You supplied a duff hour (%s) and/or minute (%s)." % (str(time_24h), str(time_minutes)))
     shorttime = convert_24h_and_mins_to_shorttime(time_24h, time_minutes)
     one_minute_ago = convert_24h_and_mins_to_shorttime(time_24h, time_minutes, diff=-1)
     one_minute_later = convert_24h_and_mins_to_shorttime(time_24h, time_minutes, diff=1)
@@ -344,13 +344,20 @@ def generate_random_alarm_message(owner_of_clock:str, time_24h:int,  time_minute
 
 
 
-def pathname_of_phrase_audio(voice:str, text:str, suffix:str='ogg') -> str:
-    if '...' in text:
+def pathname_of_phrase_audio(voice:str, text:str=None, suffix:str='ogg') -> str:
+    if text is None:
+        return SOUNDS_CACHE_PATH + os.sep + voice
+    elif text == '':
+        raise ValueError("You asked me for the pathname of an empty or null string.")
+    elif text[0] in "!?;:,.' ":
+        raise ValueError("Do not ask me for the pathname of a phrase that starts with punctuation or a space. Such a phrase should not exist.")
+    elif '...' in text:
         raise ValueError("We do not tolerate '...' in our texts.")
-    if suffix not in ('mp3', 'ogg'):
+    elif suffix not in ('mp3', 'ogg'):
         raise ValueError('suffix must be ogg or mp3')
-    text = text.strip(' ')
-    return '{cache}/{voice}/{text}.{suffix}'.format(suffix=suffix,
+    else:
+        text = text.strip(' ')
+        return '{cache}/{voice}/{text}.{suffix}'.format(suffix=suffix,
                                                     cache=SOUNDS_CACHE_PATH, 
                                                     voice=voice, 
                                                     text=text.lower().replace(' ','_').replace('.','^')).replace('!','&').replace('"',"'")
@@ -363,7 +370,7 @@ def OLD_pathname_of_phrase_audio(voice:str, text:str, suffix:str='ogg') -> str:
 
 
 def list_files_in_dir(path, endswith_str=None):
-    return [f for f in listdir(path) if isfile(join(path, f)) and (endswith_str is None or f.endswith(endswith_str))]
+    return [f for f in listdir(path) if isfile(join(path, f)) and not f.startswith('.') and (endswith_str is None or f.endswith(endswith_str))]
 
 
 

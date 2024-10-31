@@ -334,7 +334,7 @@ class _Text2SpeechClass:
         self.__boost_lock.acquire_write()
         try:
             if value is None or type(value) is not bool:
-                raise ValueError("When setting boost, specify a booling & not a {t}".format(t=bool(type(value))))
+                raise TypeError("When setting boost, specify a booling & not a {t}".format(t=bool(type(value))))
             self.__boost = value
         finally:
             self.__boost_lock.release_write()    
@@ -399,7 +399,19 @@ class _Text2SpeechClass:
     def name_of_an_id(self, an_id:str):
         return [r for r in self.api_voices if r.voice_id == an_id][0].name
 
-    def audio(self, text:str, getgenerator:bool=False, stream:bool=False):
+    def audio(self, text:str, getgenerator:bool=False, stream:bool=False, noof_attempts=3):
+        while noof_attempts > 0:
+            noof_attempts = noof_attempts - 1
+            try:
+                return self._audio(text, getgenerator, stream)
+            except Exception as e:
+                if noof_attempts <= 0:
+                    raise e
+                else:
+                    print(">>>%s<<< audio acquisition failed. Retrying..." % text)
+        raise SystemError("You should never get here.")
+            
+    def _audio(self, text:str, getgenerator:bool=False, stream:bool=False):
         if self.advanced is False:
             audio = self.client.generate(text=text, voice=self.voice, stream=stream)
         else:

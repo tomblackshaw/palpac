@@ -21,7 +21,9 @@ def stop_sounds():
 
 
 def play_audiofile(fname, vol=1.0, nowait=False):
-    if fname.endswith('.mp3'):
+    if not os.path.exists(fname):
+        raise FileNotFoundError("play_audiofile() cannot play %s: it doesn't exist" % fname)
+    elif fname.endswith('.mp3'):
         play_mp3file(fname=fname, vol=vol, nowait=nowait)
     elif fname.endswith('.ogg'):
         play_oggfile(fname=fname, vol=vol, nowait=nowait)
@@ -29,21 +31,29 @@ def play_audiofile(fname, vol=1.0, nowait=False):
         raise ValueError("play_audiofile() cannot handle files of type .%s" % fname.split('.')[-1])
 
 def play_mp3file(fname, vol=1.0, nowait=False):
-    pygame.mixer.music.load(fname)
-    pygame.mixer.music.set_volume(vol)
-    pygame.mixer.music.play()
-    if not nowait:
-        while pygame.mixer.music.get_busy() == True:
-            continue
+    try:
+        pygame.mixer.music.load(fname)
+    except FileNotFoundError as e:
+        raise FileNotFoundError("play_mp3file() cannot play %s: it doesn't exist" % fname) from e
+    else:
+        pygame.mixer.music.set_volume(vol)
+        pygame.mixer.music.play()
+        if not nowait:
+            while pygame.mixer.music.get_busy() == True:
+                continue
 
 def play_oggfile(fname, vol=1.0, nowait=False):
-    sound1 = pygame.mixer.Sound(fname)
-    chan = pygame.mixer.find_channel(True)
-    chan.set_volume(vol,vol)
-    chan.play(sound1)
-    if not nowait:
-        while chan.get_busy() == True:
-            continue
+    try:
+        sound1 = pygame.mixer.Sound(fname)
+    except FileNotFoundError as e:
+        raise FileNotFoundError("FYI, play_oggfile() cannot play %s: it doesn't exist" % fname) from e
+    else:
+        chan = pygame.mixer.find_channel(True)
+        chan.set_volume(vol,vol)
+        chan.play(sound1)
+        if not nowait:
+            while chan.get_busy() == True:
+                continue
 
 
 def mp3_to_ogg_conversions(path):
@@ -88,7 +98,10 @@ def ogg_file_queue_thread_func(qu):
             continue
         else:
             print(f'Processing item {item}')
-            play_oggfile(item)
+            try:
+                play_oggfile(item)
+            except FileNotFoundError:
+                print("ogg_file_queue_thread_func() -- cannot play %s: it doesn't exist" % item)
             qu.task_done()
 
 from threading import Thread
@@ -108,4 +121,6 @@ consumer_thread.start()
 
 def queue_oggfile(fname):
     global ogg_queue
+    if not os.path.exists(fname):
+        raise FileNotFoundError("queue_oggfile() cannot queue %s: it doesn't exist" % fname)
     ogg_queue.put(fname)

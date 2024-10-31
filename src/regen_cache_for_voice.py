@@ -99,7 +99,7 @@ def cache_phrases_for_voice(voice:str):
                                                        "twelve newn",
                                                        "twelve newn", "twelve midnight",
                                                        "12 newn", "12 midnight",
-                                                       "time", '',
+                                                       "time", 'date',
                                                        "morning", "afternoon", "evening",
                                                        "good morning", "good afternoon", "good evening",
                                                        "midnight", "hours", "in the afternoon", "in the morning",

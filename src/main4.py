@@ -139,7 +139,10 @@ class AlarmsWindow(QMainWindow):
         global ALARMTONE_NAME
         ALARMTONE_NAME = alarmtone
         stop_sounds()
-        play_audiofile('%s/%s' % (SOUNDS_ALARMS_PATH, alarmtone), nowait=True)
+        try:
+            play_audiofile('%s/%s' % (SOUNDS_ALARMS_PATH, alarmtone), nowait=True)
+        except FileNotFoundError:
+            print("new_alarm_chosen() -- alarm sound file was not found. Therefore, I cannot play it.")()
         
     def setVisible(self, onoroff):
         stop_sounds()

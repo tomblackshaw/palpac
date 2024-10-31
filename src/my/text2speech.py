@@ -40,18 +40,14 @@ from os.path import isfile, join
 from pydub.exceptions import CouldntDecodeError
 
 from my.classes.exceptions import NoProfessionalVoicesError, MissingFromCacheError
-from my.consts import hours_lst, minutes_lst, Cmaj, farting_msgs_lst
-from my.stringutils import generate_random_alarm_message, generate_detokenized_message, pathname_of_phrase_audio, generate_random_string,\
-    OLD_pathname_of_phrase_audio
-from my.tools.sound.sing import songify_this_mp3
-from my.tools.sound.trim import convert_audio_recordings_list_into_one_audio_recording,\
-    convert_audio_recordings_list_into_an_mp3_file
+from my.consts import hours_lst, minutes_lst, farting_msgs_lst
+from my.stringutils import generate_random_alarm_message, generate_detokenized_message, pathname_of_phrase_audio
+from my.tools.sound.trim import convert_audio_recordings_list_into_one_audio_recording
 from pydub.audio_segment import AudioSegment
 from my.globals import ELEVENLABS_KEY_FILENAME, SOUNDS_FARTS_PATH 
 import time
 from my.tools.sound import play_audiofile, queue_oggfile, convert_one_mp3_to_ogg_file
 import pygame
-from shutil import copyfile
 
 if not os.path.exists(ELEVENLABS_KEY_FILENAME) or 0 != os.system("ping -c2 -W5 www.elevenlabs.io"):
     Text2SpeechSingleton = None
@@ -95,7 +91,7 @@ def get_first_prof_name(tts:Text2SpeechSingleton) -> str:
 
 def look_for_dupes():
     if 0 == os.system("""ls sounds/cache/*/*\\ * 2> /dev/null"""):
-        raise SystemError("Somehow, I ended up with spare files for audio cache")
+        os.system("""rm sounds/cache/*/*\\ *""") #        raise SystemError("Somehow, I ended up with spare files for audio cache")
 
 
 def speak_random_alarm(owner_name:str, time_24h:int, time_minutes:int, voice:str=None, tts=Text2SpeechSingleton):
@@ -198,7 +194,11 @@ def phrase_audio(voice:str, text:str, suffix, raise_exception_if_not_cached:bool
             try:
                 assert(text[0] not in ('?!;:,. (){}'))
             except AssertionError as e:
-                raise ValueError(">>>%s<<< is invalid. Its starting character sucks ass." % text)
+                raise ValueError(">>>%s<<< is invalid. Its starting character sucks ass." % text) from e
+            try:
+                os.unlink(outfile[:-4] + '.mp3')
+            except FileNotFoundError: 
+                pass
             with open(outfile[:-4] + '.mp3', 'wb') as f:
                 f.write(Text2SpeechSingleton.audio(text))
             Text2SpeechSingleton.voice = old_v
@@ -224,12 +224,23 @@ def list_phrases_to_handle(smart_phrase):
     while len(smart_phrase) > 0:
         i = smart_phrase.find('${')
         if i < 0:
-            phrases_to_handle.append(smart_phrase)
+            phrase_to_append = smart_phrase.strip(' ')
             smart_phrase = ''
         else:
-            phrases_to_handle.append(smart_phrase[:i])
+            phrase_to_append = smart_phrase[:i].strip(' ')
             j = smart_phrase.find('}', i)
             smart_phrase = smart_phrase[j+1:]
+        while len(smart_phrase) > 0 and smart_phrase[0] in "!?;:,. ":
+#            print("Skipping the first character of >>>%s<<<" % (smart_phrase))
+            smart_phrase=smart_phrase[1:]
+        alnums = sum(c.isdigit() for c in phrase_to_append) + sum(c.isalpha() for c in phrase_to_append)
+        if alnums == 0:
+#            print("Ignoring >>>%s<<< because it has no nutritional value" % phrase_to_append)
+            pass
+        elif phrase_to_append[0] in "!?;:,. ":
+            raise ValueError("The phrase >>>%s<<< contains punctuation." % phrase_to_append)
+        else:
+            phrases_to_handle.append(phrase_to_append)
     return phrases_to_handle
 
 
@@ -248,29 +259,20 @@ def deliberately_cache_a_smart_phrase(voice:str, smart_phrase:str):
     Ensure that an audio file for the supplied text exists. If it doesn't, make it happen.
     '''
     # FIXME WRITE DOX
+    print("Caching smart phrase >>>%s<<<" % smart_phrase)
     phrases_to_handle = list_phrases_to_handle(smart_phrase)
     for phrase in phrases_to_handle:
-        alnums = sum(c.isdigit() for c in phrase) + sum(c.isalpha() for c in phrase)
-        if alnums == 0:
-            print("Ignoring >>>%s<<< because it has no letters or numbers in it & is therefore unpronounceable." % phrase)
-            continue
-        phrase = phrase.strip(' ')
         print("Does >>>%s<<< have a cached audio file?" % phrase)
         if len(phrase) == 0:
             print("Who cares? It's empty.")
             continue
+        if phrase[0] in "!?;:,. ":
+            raise ValueError("Do not ask me to cache a phrase that starts with punctuation or a space.")
+        if phrase[-1] == ' ':
+            raise ValueError("Do not ask me to cache a phrase that ends with a space.")
+        if 0 == sum(c.isdigit() for c in phrase) + sum(c.isalpha() for c in phrase):
+            raise ValueError("Rejecting >>>%s<<< because it has no letters or numbers in it & is therefore unpronounceable." % phrase)
         phrase_path = pathname_of_phrase_audio(voice, phrase)
-        old_phrasepath = pathname_of_phrase_audio(voice, phrase)
-        for x in ('.ogg', '.mp3'):
-            try:
-                copyfile(phrase_path[:-4] + x, phrase_path.replace('_.ogg', '.ogg').replace('_.mp3','.mp3'))
-            except:
-                pass
-#        if phrase_path[-5] in ('_.mp3', '_.ogg'):
-#            os.rename()
-        if os.path.exists(old_phrasepath) and not os.path.exists(phrase_path):
-            print("Moving file from old to new format pathname")
-            os.rename(old_phrasepath, phrase_path)
         if 0 == os.system('file "%s" | grep Ogg' % pathname_of_phrase_audio(voice, phrase, suffix='mp3')):
             print("This mp3 file is actually ogg. So, I'm renaming it.")
             os.rename(pathname_of_phrase_audio(voice, phrase, suffix='mp3'),
@@ -307,7 +309,7 @@ def deliberately_cache_a_smart_phrase(voice:str, smart_phrase:str):
             except:
                 pass
 #             print("The output file SHOULD BE >>>%s<<<" % pathname_of_phrase_audio(voice, phrase, suffix='mp3'))
-            audio_op = phrase_audio(voice, phrase, suffix='mp3')
+            _= phrase_audio(voice, phrase, suffix='mp3')
             assert(os.path.exists(pathname_of_phrase_audio(voice, phrase, suffix='mp3')))
             try:
                 convert_one_mp3_to_ogg_file(phrase_path[:-4] + '.mp3', phrase_path[:-4] + '.ogg')              
@@ -316,6 +318,13 @@ def deliberately_cache_a_smart_phrase(voice:str, smart_phrase:str):
         assert(os.path.exists(phrase_path[:-4] + '.mp3'))
         assert(os.path.exists(phrase_path[:-4] + '.ogg'))
         print('the phrase path is', phrase_path, 'and both an mp3 file and an ogg file exist for it.')
+        check_that_files_are_mp3_and_ogg(voice, phrase)
+        
+def check_that_files_are_mp3_and_ogg(voice, phrase):
+    if 0 != os.system('file "%s" | grep MPEG' % pathname_of_phrase_audio(voice, phrase, suffix='mp3')):
+        raise SystemError(">>>%s<<< should be an MP3 but it's not." % pathname_of_phrase_audio(voice, phrase, suffix='mp3'))
+    if 0 != os.system('file "%s" | grep Ogg' % pathname_of_phrase_audio(voice, phrase, suffix='ogg')):
+        raise SystemError(">>>%s<<< should be an OGG but it's not." % pathname_of_phrase_audio(voice, phrase, suffix='ogg'))
 
 
 def smart_phrase_audio(voice:str, smart_phrase:str, owner:str=None, time_24h:int=None, time_minutes:int=None, trim_level:int=1, suffix='mp3') -> AudioSegment:

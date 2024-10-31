@@ -29,9 +29,9 @@
    <widget class="QSlider" name="volume_slider">
     <property name="geometry">
      <rect>
-      <x>115</x>
-      <y>12</y>
-      <width>71</width>
+      <x>60</x>
+      <y>10</y>
+      <width>151</width>
       <height>231</height>
      </rect>
     </property>
