@@ -318,7 +318,7 @@ def deliberately_cache_a_smart_phrase_SUB(voice:str, phrase:str):
     assert(pathname_of_phrase_audio(voice, phrase, suffix="ogg") == phrase_path[:-4] + '.ogg')
     if os.path.exists(pathname_of_phrase_audio(voice, phrase, suffix="mp3")) \
     and os.path.exists(pathname_of_phrase_audio(voice, phrase, suffix="ogg")):
-        print("Does {voice}'s >>>{phrase}<<< have a cached audio file? YES: {path} and .mp3".format(voice=voice, phrase=phrase,path=phrase_path))
+        print("Does {voice}'s >>>{phrase}<<< have a cached audio file? YES (mp3+ogg)".format(voice=voice, phrase=phrase))
     else:
         print("Does {voice}'s >>>{phrase}<<< have a cached audio file? NO. So, I'll create a pair (mp3+ogg).".format(voice=voice, phrase=phrase))
         if not os.path.exists(pathname_of_phrase_audio(voice, phrase, suffix="mp3")) \
@@ -336,7 +336,7 @@ def deliberately_cache_a_smart_phrase_SUB(voice:str, phrase:str):
             raise("Failed to convert", phrase_path[:-4] + '.mp3', "to", phrase_path[:-4] + '.ogg', "and now I have to figure out why") from e
         assert(os.path.exists(phrase_path[:-4] + '.mp3'))
         assert(os.path.exists(phrase_path[:-4] + '.ogg'))
-        print("Does {voice}'s >>>{phrase}<<< have a cached audio file? YES: {path} and .mp3 ... now".format(voice=voice, phrase=phrase,path=phrase_path))
+        print("Does {voice}'s >>>{phrase}<<< have a cached audio file? YES (mp3+ogg) ...now.".format(voice=voice, phrase=phrase))
     
 
         
