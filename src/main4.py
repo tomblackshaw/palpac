@@ -31,7 +31,7 @@ import sys
 from PyQt5 import uic
 
 from PyQt5.QtCore import QUrl, Qt, QObject, pyqtSignal
-from PyQt5.QtWidgets import QApplication, QMainWindow, QLabel, QStackedLayout, QWidget
+from PyQt5.QtWidgets import QApplication, QMainWindow, QLabel, QStackedLayout, QWidget, QMessageBox
 
 from my.gui import BrowserView, set_vdu_brightness, set_audio_volume, make_background_translucent, \
                 screenCaptureWidget, make_scrollbars_zeropixels_in_size, enable_touchscroll
@@ -158,7 +158,7 @@ class VoicesWindow(QMainWindow):
         self.randomizer_button.clicked.connect(self.randomizer_button_clicked)
         self.hello_button.clicked.connect(self.hello_button_clicked)
         self.wakeup_button.clicked.connect(self.wakeup_button_clicked)
-        path = SOUNDS_CACHE_PATH
+        _ = SOUNDS_CACHE_PATH
         # [self.voices_qlist.addItem(f,) for f in listdir(path) if isdir(join(path, f))]
         # [self.voices_qlist.setCurrentItem(x) for x in self.voices_qlist.findItems(VOICE_NAME, Qt.MatchExactly)]
         # self.voices_qlist.currentTextChanged.connect(self.new_voice_chosen)
@@ -187,9 +187,17 @@ class VoicesWindow(QMainWindow):
             play_audiofile(get_random_fart_fname(), nowait=True)
 
     def wakeup_button_clicked(self):
-        speak_a_random_alarm_message(owner=OWNER_NAME, voice=VOICE_NAME, 
+        try:
+            speak_a_random_alarm_message(owner=OWNER_NAME, voice=VOICE_NAME, 
                                      hour=datetime.datetime.now().hour, minute=datetime.datetime.now().minute, 
                                      snoozed=False, fail_quietly=True)
+        except MissingFromCacheError as e:
+            msg = QMessageBox()
+            msg.setStyleSheet("QMessageBox {font-size:32px}; QPushButton {color:red; font-family: Arial; font-size:32px;}")
+            msg.setWindowTitle("Voice Missing")
+            msg.setText("Please pick a different voice.")
+            _ = msg.exec_()
+              
 
     def new_voice_chosen(self, voice):
         global VOICE_NAME

@@ -20,7 +20,7 @@ def speak_a_random_alarm_message(owner, hour, minute, voice, snoozed=False):
     rndstr = generate_random_string(32)
     flat_filename = '/tmp/tts{rndstr}.flat.ogg'.format(rndstr=rndstr)
     my_txt = generate_random_alarm_message(owner_of_clock=owner, time_24h=hour, time_minutes=minute, snoozed=snoozed)
-    data = smart_phrase_audio(voice, my_txt)
+    data = smart_phrase_audio(voice=voice, my_txt=my_txt, owner=owner)
     data.export(flat_filename, format="ogg")
     play_audiofile(flat_filename) 
     os.unlink(flat_filename)
@@ -35,17 +35,17 @@ def just_fart(fart_vol:int=100):
     os.system('mpv --volume={vol} {fart}'.format(vol=fart_vol, fart=fart_mp3file))
     
     
-def just_apologize(voice:str, voice_vol:int=100):
-    data_apologize = smart_phrase_audio(voice, random.choice(farting_msgs_lst))
+def just_apologize(voice:str, owner:str, voice_vol:int=100):
+    data_apologize = smart_phrase_audio(voice=voice, smart_phrase=random.choice(farting_msgs_lst), owner=owner)
     apologize_mp3file = '/tmp/tts{rnd}'.format(rnd=generate_random_string(32))
     data_apologize.export(apologize_mp3file, format="mp3")
     os.system('mpv --volume={vol} {playme}'.format(vol=voice_vol, playme=apologize_mp3file))
     os.unlink(apologize_mp3file)
 
 
-def fart_and_apologize(voice:str, fart_vol:int=75,voice_vol:int=80):
+def fart_and_apologize(voice:str, owner:str, fart_vol:int=75,voice_vol:int=80):
     just_fart(fart_vol)
-    just_apologize(voice, voice_vol)
+    just_apologize(voice, owner, voice_vol)
 
 def generate_timedate_phrases_list(timedate_str:str) -> str:
     # FIXME WRITE DOX

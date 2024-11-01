@@ -153,10 +153,15 @@ from my.cachedspeech import smart_phrase_audio
 #         pass
 #
 #     def testDuffParams(self):
+#         self.assertRaises(ValueError, lambda: deliberately_cache_a_smart_phrase('Aria', ' ?'))
 #         self.assertRaises(TypeError, lambda : deliberately_cache_a_smart_phrase(voice=None, smart_phrase="One"))
 #         self.assertRaises(ValueError, lambda : deliberately_cache_a_smart_phrase(voice='AAAAA', smart_phrase="One"))
 #         self.assertFalse(os.path.exists('audio/cache/AAAAA'))
 #         self.assertRaises(TypeError, lambda : deliberately_cache_a_smart_phrase(voice='Aria', smart_phrase=None))
+#         self.assertRaises(ValueError, lambda: deliberately_cache_a_smart_phrase('Aria', '!'))
+#         self.assertRaises(ValueError, lambda: deliberately_cache_a_smart_phrase('Aria', '.'))
+#         self.assertRaises(ValueError, lambda: deliberately_cache_a_smart_phrase('Aria', '...'))
+#         self.assertRaises(ValueError, lambda: deliberately_cache_a_smart_phrase('Aria', ' ... '))
 #
 #     def testSpeakOne(self):
 #         for voice in ('Laura','Sarah'):
@@ -200,10 +205,10 @@ from my.cachedspeech import smart_phrase_audio
 #         self.assertTrue(os.path.exists(pathname_of_phrase_audio(voice, 'twO', 'ogg')))
 #         self.assertTrue(os.path.exists(pathname_of_phrase_audio(voice, 'tWo')))
 #         self.assertTrue(os.path.exists(pathname_of_phrase_audio(voice, 'two ', 'mp3')))
-#         self.assertTrue(os.path.exists(pathname_of_phrase_audio(voice, ' twO', 'ogg')))
-#         self.assertTrue(os.path.exists(pathname_of_phrase_audio(voice, 'tWo ')))
-#         self.assertTrue(os.path.exists(pathname_of_phrase_audio(voice, ' tWo')))
-#         self.assertTrue(os.path.exists(pathname_of_phrase_audio(voice, ' tWo ')))
+# #        self.assertFalse(os.path.exists(pathname_of_phrase_audio(voice, ' twO', 'ogg')))
+#         self.assertFalse(os.path.exists(pathname_of_phrase_audio(voice, 'tWo ')))
+#         self.assertFalse(os.path.exists(pathname_of_phrase_audio(voice, ' tWo')))
+#         self.assertFalse(os.path.exists(pathname_of_phrase_audio(voice, ' tWo ')))
 #         self.assertFalse(os.path.exists(pathname_of_phrase_audio(voice)))
 #         self.assertFalse(os.path.exists(pathname_of_phrase_audio(voice, ' ')))
 #         oggfiles = list_files_in_dir(pathname_of_phrase_audio(voice), endswith_str='ogg')
@@ -212,7 +217,6 @@ from my.cachedspeech import smart_phrase_audio
 #         self.assertEqual(oggfiles, ['two.ogg'])
 #         self.assertEqual(mp3files, ['two.mp3'])
 #         self.assertEqual(allfiles, ['two.ogg','two.mp3'])
-#
 #
 #     def testJustUsePunctuation(self):
 #         voice = 'Laura'
@@ -246,7 +250,7 @@ from my.cachedspeech import smart_phrase_audio
 #     def testSpeakThreeWithTime(self):
 #         voice = 'Laura'
 #         os.system('rm %s/{*,.*ogg,.*mp3}' % pathname_of_phrase_audio(voice))
-# #        os.system('rmdir %s' % pathname_of_phrase_audio(voice))
+#         os.system('rmdir %s' % pathname_of_phrase_audio(voice))
 # #        self.assertRaises(FileNotFoundError, lambda :list_files_in_dir(pathname_of_phrase_audio(voice)))
 #         os.mkdir(pathname_of_phrase_audio(voice))
 #         allfiles = list_files_in_dir(pathname_of_phrase_audio(voice))
@@ -254,19 +258,19 @@ from my.cachedspeech import smart_phrase_audio
 #         smart_phrase = "${hello_owner}. As Martin Luther King once said, Wake-up delayed is wake-up denied. It is now ${shorttime}."
 #         deliberately_cache_a_smart_phrase(voice, smart_phrase)
 #         allfiles = list_files_in_dir(pathname_of_phrase_audio(voice))
-#         self.assertEqual(allfiles, ["sounds/cache/{voice}/as_martin_luther_king_once_said,_wake-up_delayed_is_wake-up_denied^_it_is_now.mp3".format(voice=voice),
-#                                     "sounds/cache/{voice}/as_martin_luther_king_once_said,_wake-up_delayed_is_wake-up_denied^_it_is_now.ogg".format(voice=voice)])
+#         self.assertEqual(allfiles, ["as_martin_luther_king_once_said,_wake-up_delayed_is_wake-up_denied^_it_is_now.mp3",
+#                                     "as_martin_luther_king_once_said,_wake-up_delayed_is_wake-up_denied^_it_is_now.ogg"])
 
 
 
-# class Test_generate_detokenized_message(unittest.TestCase):
-#
-#     def setUp(self):
-#         pass
-#
-#     def tearDown(self):
-#         pass
-#
+class Test_generate_detokenized_message(unittest.TestCase):
+
+    def setUp(self):
+        pass
+
+    def tearDown(self):
+        pass
+
 #     def testMidnightMessage(self):
 #         voice = 'Laura'
 #         owner = OWNER_NAME
@@ -318,26 +322,26 @@ from my.cachedspeech import smart_phrase_audio
 #         shouldbe_basenames.sort()
 #         isactually_basenames.sort()
 #         self.assertEqual(shouldbe_basenames, isactually_basenames)
-#
-#     def testSpecificMessageEleven(self):
-#         voice = 'Aria'
-#         owner = OWNER_NAME
-#         phrase1 = "Hey, %s! Check it." % owner
-#         phrase2 = "Hey, %s! Check it," % owner
-#         phrase3 = "Hey, %s! Check it" % owner
-#         deliberately_cache_a_smart_phrase(voice, phrase1)
-#         deliberately_cache_a_smart_phrase(voice, phrase2)
-#         deliberately_cache_a_smart_phrase(voice, phrase3)
-#         deliberately_cache_a_smart_phrase(voice, phrase1)
-#         deliberately_cache_a_smart_phrase(voice, phrase2)
-#         deliberately_cache_a_smart_phrase(voice, phrase3)
+
+    def testSpecificMessageEleven(self):
+        voice = 'Aria'
+        owner = OWNER_NAME
+        phrase1 = "Hey, %s! Check it." % owner
+        phrase2 = "Hey, %s! Check it," % owner
+        phrase3 = "Hey, %s! Check it" % owner
+        deliberately_cache_a_smart_phrase(voice, phrase1)
+        deliberately_cache_a_smart_phrase(voice, phrase2)
+        deliberately_cache_a_smart_phrase(voice, phrase3)
+        deliberately_cache_a_smart_phrase(voice, phrase1)
+        deliberately_cache_a_smart_phrase(voice, phrase2)
+        deliberately_cache_a_smart_phrase(voice, phrase3)
 
 
 # class Test_this_one_thing(unittest.TestCase):
 #
 #     def test_list_phrases_to_handle(self):
 #         list_phrases_to_handle("Hello, world. What is the plan here?")
-    
+
     # def testSpecificMessageTwelve(self):
     #     voice = 'Aria'
     #     owner = OWNER_NAME
@@ -346,7 +350,7 @@ from my.cachedspeech import smart_phrase_audio
     #     for c in "!?;',. ":
     #         self.assertRaises(ValueError, lambda: deliberately_cache_a_smart_phrase(voice, "%sHey, %s! Check it." % (c, owner)))
 
-    
+
 # class Test_lots_of_random_alarm_messages(unittest.TestCase):
 #
 #     def setUp(self):
@@ -373,7 +377,7 @@ from my.cachedspeech import smart_phrase_audio
 #                                                                                snoozed=snoozed, fail_quietly=False)
 #                 except Exception as e:
 #                     raise e
-            
+
 #     def testKnockKnockMessage(self):
 #         voice = 'Laura'
 #         owner = OWNER_NAME

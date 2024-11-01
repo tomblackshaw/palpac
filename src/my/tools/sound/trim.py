@@ -42,7 +42,7 @@ def detect_leading_silence(sound:AudioSegment, silence_threshold:float=DEFAULT_S
     return trim_ms
 
 
-def convert_audio_recordings_list_into_one_audio_recording(data, trim_level:int=0) -> AudioSegment:
+def convert_audio_recordings_list_into_one_audio_recording(data, trim_level, suffix) -> AudioSegment:
     """Convert a list of audio data into one AudioSegment instance.
 
     Write the supplied list of data (probably MP3) to individual files.
@@ -55,6 +55,7 @@ def convert_audio_recordings_list_into_one_audio_recording(data, trim_level:int=
             access MP3 data #0, read data[0]. That's the first MP3 file.
             The second is data[1]. You get the picture, I hope.
         trim_level: If 0, don't trim. If 1, trim. If 2, trim aggressively.
+        suffix: mp3 or ogg
 
     Returns:
         AudioSegment: An instance of an AudioSegment, ready to be exported
@@ -68,11 +69,13 @@ def convert_audio_recordings_list_into_one_audio_recording(data, trim_level:int=
     # We use MP3 here. It doesn't matter why. We delete the file in the end anyway.
     filenames = ''
     for d in data:
-        fname = '/tmp/{rnd}.mp3'.format(rnd=generate_random_string(32))
+        fname = '/tmp/{rnd}.{suffix}'.format(rnd=generate_random_string(32), suffix=suffix)
         filenames += ' {fname}'.format(fname=fname)
         with open(fname, 'wb') as f:
             f.write(d)
-            untrimmed_audio = AudioSegment.from_mp3(fname)
+            untrimmed_audio = AudioSegment.from_mp3(fname) if suffix == 'mp3' \
+                            else AudioSegment.from_ogg(fname) if suffix == 'ogg' \
+                            else AudioSegment.from_file(fname)
         trimmed_aud = trim_my_audio(untrimmed_audio, trim_level)
         if sounds is None:
             sounds = trimmed_aud

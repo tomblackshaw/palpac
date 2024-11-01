@@ -40,7 +40,7 @@ from os.path import isfile, join
 from pydub.exceptions import CouldntDecodeError
 
 from my.classes.exceptions import NoProfessionalVoicesError, MissingFromCacheError
-from my.consts import hours_lst, minutes_lst, farting_msgs_lst
+from my.consts import hours_lst, minutes_lst, farting_msgs_lst, OWNER_NAME
 from my.stringutils import generate_random_alarm_message, generate_detokenized_message, pathname_of_phrase_audio
 from my.tools.sound.trim import convert_audio_recordings_list_into_one_audio_recording
 from pydub.audio_segment import AudioSegment
@@ -162,9 +162,10 @@ def play_dialogue_lst(tts, dialogue_lst:list):  # , stability=0.5, similarity_bo
 def phrase_audio(voice:str, text:str, suffix, raise_exception_if_not_cached:bool=False) -> bytes:
     alnums = sum(c.isdigit() for c in text) + sum(c.isalpha() for c in text)
     if alnums == 0:
-        print("Ignoring >>>%s<<< because it has no letters or numbers in it & is therefore unpronounceable." % text)
+#        print("Ignoring >>>%s<<< because it has no letters or numbers in it & is therefore unpronounceable." % text)
         return None
-
+    if '{' in text or '}' in text:
+        raise ValueError("{ or } is in >>>%s<<<" % text)
     # FIXME WRITE DOX
     outfile = pathname_of_phrase_audio(voice, text, suffix=suffix)
     text = text.lower().strip(' ')
@@ -173,12 +174,12 @@ def phrase_audio(voice:str, text:str, suffix, raise_exception_if_not_cached:bool
         while len(text) > 0 and text[0] in ' !?;:.,':
             text = text[1:]
     if len(text) == 0:
-        print("An empty phrase HAS no audio file associated with it.")
+#        print("An empty phrase HAS no audio file associated with it.")
         return None
     elif not os.path.exists(outfile):
         if raise_exception_if_not_cached:
             raise MissingFromCacheError("'{text}' (for {voice}) should have been cached not hasn't been.".format(text=text, voice=voice))
-        print(voice, '==>', text)
+#        print(voice, '==>', text)
         print("Generating speech audio (spoken by {voice}) for '{text}'".format(voice=voice, text=text))
         vers = sys.version_info
         look_for_dupes()
@@ -259,77 +260,99 @@ def deliberately_cache_a_smart_phrase(voice:str, smart_phrase:str):
     Ensure that an audio file for the supplied text exists. If it doesn't, make it happen.
     '''
     # FIXME WRITE DOX
-    print("Caching smart phrase >>>%s<<<" % smart_phrase)
+    assert('${owner}' not in smart_phrase)
+    print("Caching %s's smart phrase >>>%s<<<" % (voice, smart_phrase))
     phrases_to_handle = list_phrases_to_handle(smart_phrase)
+    if phrases_to_handle in (None, []):
+        raise ValueError(">>>%s<<< contained nothing of value. WTF." % smart_phrase)
     for phrase in phrases_to_handle:
-        print("Does >>>%s<<< have a cached audio file?" % phrase)
-        if len(phrase) == 0:
-            print("Who cares? It's empty.")
-            continue
-        if phrase[0] in "!?;:,. ":
-            raise ValueError("Do not ask me to cache a phrase that starts with punctuation or a space.")
-        if phrase[-1] == ' ':
-            raise ValueError("Do not ask me to cache a phrase that ends with a space.")
-        if 0 == sum(c.isdigit() for c in phrase) + sum(c.isalpha() for c in phrase):
-            raise ValueError("Rejecting >>>%s<<< because it has no letters or numbers in it & is therefore unpronounceable." % phrase)
-        phrase_path = pathname_of_phrase_audio(voice, phrase)
-        if 0 == os.system('file "%s" | grep Ogg' % pathname_of_phrase_audio(voice, phrase, suffix='mp3')):
-            print("This mp3 file is actually ogg. So, I'm renaming it.")
-            os.rename(pathname_of_phrase_audio(voice, phrase, suffix='mp3'),
-                      pathname_of_phrase_audio(voice, phrase, suffix='ogg'))
-        if 0 == os.system('file "%s" | grep MPEG' % pathname_of_phrase_audio(voice, phrase, suffix='ogg')):
-            print("This ogg file is actually mp3. So, I'm renaming it.")
-            os.rename(pathname_of_phrase_audio(voice, phrase, suffix='ogg'),
-                      pathname_of_phrase_audio(voice, phrase, suffix='mp3'))            
-        if os.system('file "%s" | fgrep ": empty"' % phrase_path) and os.path.exists(phrase_path):
-            print("FYI, >>>%s<<< was empty. I'll delete it now." % phrase_path)
-            os.unlink(phrase_path)
-        if os.path.exists(pathname_of_phrase_audio(voice, phrase, suffix="mp3")):
-#             print("Yes, it exists for MP3. Cool. Let's convert it to OGG, just in case.")
-            try:
-                convert_one_mp3_to_ogg_file(phrase_path[:-4] + '.mp3', phrase_path[:-4] + '.ogg')
-            except CouldntDecodeError:
-                print("Oh, dear. The source file sucks. I'll delete it and its ogg counterpart ==>", phrase_path[:-4] + '.mp3')
-                os.unlink(phrase_path[:-4] + '.mp3')
+        deliberately_cache_a_smart_phrase_SUB(voice, phrase)
+        try:
+            check_that_files_are_mp3_and_ogg(voice, phrase)
+        except SystemError:
+            print("Failed to cache >>>%s<<< for >>>%s<<<; retrying..." % (phrase, voice))
+            for suffix in ('mp3', 'ogg'):
                 try:
-                    os.unlink(phrase_path[:-4] + '.ogg')
-                except FileNotFoundError:
+                    os.unlink(pathname_of_phrase_audio(voice, phrase, suffix=suffix))
+                except FileNotFoundError: 
                     pass
-        assert(pathname_of_phrase_audio(voice, phrase, suffix="mp3") == phrase_path[:-4] + '.mp3')
-        assert(pathname_of_phrase_audio(voice, phrase, suffix="ogg") == phrase_path[:-4] + '.ogg')
-        if os.path.exists(pathname_of_phrase_audio(voice, phrase, suffix="mp3")) \
-        and os.path.exists(pathname_of_phrase_audio(voice, phrase, suffix="ogg")):
-            pass # print("Well, we still have an OGG and an MP3. Good.")
-        else:
-            if not os.path.exists(pathname_of_phrase_audio(voice, phrase, suffix="mp3")) \
-            and os.path.exists(pathname_of_phrase_audio(voice, phrase, suffix="ogg")):
-                print("We have the OGG but not the MP3. That is surprising. Still, we can cope.")
+            deliberately_cache_a_smart_phrase(voice, phrase)
+        
+def deliberately_cache_a_smart_phrase_SUB(voice:str, phrase:str):
+    print("Does %s's >>>%s<<< have a cached audio file?" % (voice, phrase))
+    if len(phrase) == 0:
+        raise ValueError("Why ask me to cache a string of zero length?")
+    if phrase[0] in "!?;:,. ":
+        raise ValueError("Do not ask me to cache a phrase that starts with punctuation or a space.")
+    if phrase[-1] == ' ':
+        raise ValueError("Do not ask me to cache a phrase that ends with a space.")
+    if 0 == sum(c.isdigit() for c in phrase) + sum(c.isalpha() for c in phrase):
+        raise ValueError("Rejecting >>>%s<<< because it has no letters or numbers in it & is therefore unpronounceable." % phrase)
+    phrase_path = pathname_of_phrase_audio(voice, phrase)
+    if 0 == os.system('file "%s" | grep Ogg' % pathname_of_phrase_audio(voice, phrase, suffix='mp3')):
+        print("This mp3 file is actually ogg. So, I'm renaming it.")
+        os.rename(pathname_of_phrase_audio(voice, phrase, suffix='mp3'),
+                  pathname_of_phrase_audio(voice, phrase, suffix='ogg'))
+    if 0 == os.system('file "%s" | grep MPEG' % pathname_of_phrase_audio(voice, phrase, suffix='ogg')):
+        print("This ogg file is actually mp3. So, I'm renaming it.")
+        os.rename(pathname_of_phrase_audio(voice, phrase, suffix='ogg'),
+                  pathname_of_phrase_audio(voice, phrase, suffix='mp3'))            
+    if 0 == os.system('file "%s" | fgrep ": empty"' % phrase_path) and os.path.exists(phrase_path):
+        print("FYI, >>>%s<<< was empty. I'll delete it now." % phrase_path)
+        os.unlink(phrase_path)
+    if os.path.exists(pathname_of_phrase_audio(voice, phrase, suffix="mp3")) \
+    and not os.path.exists(pathname_of_phrase_audio(voice, phrase, suffix="ogg")): 
+        print("Does %s's >>>%s<<< have a cached audio file? Yes, MP3; no, OGG. Let's convert MP3 to OGG, just in case." % (voice, phrase))
+        try:
+            convert_one_mp3_to_ogg_file(phrase_path[:-4] + '.mp3', phrase_path[:-4] + '.ogg')
+            assert(os.path.exists(pathname_of_phrase_audio(voice, phrase, suffix="ogg")))
+            assert(os.path.exists(pathname_of_phrase_audio(voice, phrase, suffix="mp3")))
+        except CouldntDecodeError:
+            print("Oh, dear. The source file sucks. I'll delete it and its ogg counterpart ==>", phrase_path[:-4] + '.mp3')
+            os.unlink(phrase_path[:-4] + '.mp3')
             try:
-                os.unlink(pathname_of_phrase_audio(voice, phrase, suffix="ogg"))
-            except:
+                os.unlink(phrase_path[:-4] + '.ogg')
+            except FileNotFoundError:
                 pass
-#             print("The output file SHOULD BE >>>%s<<<" % pathname_of_phrase_audio(voice, phrase, suffix='mp3'))
-            _= phrase_audio(voice, phrase, suffix='mp3')
-            assert(os.path.exists(pathname_of_phrase_audio(voice, phrase, suffix='mp3')))
-            try:
-                convert_one_mp3_to_ogg_file(phrase_path[:-4] + '.mp3', phrase_path[:-4] + '.ogg')              
-            except Exception as e:
-                raise("Failed to convert", phrase_path[:-4] + '.mp3', "to", phrase_path[:-4] + '.ogg', "and now I have to figure out why") from e
+    assert(pathname_of_phrase_audio(voice, phrase, suffix="mp3") == phrase_path[:-4] + '.mp3')
+    assert(pathname_of_phrase_audio(voice, phrase, suffix="ogg") == phrase_path[:-4] + '.ogg')
+    if os.path.exists(pathname_of_phrase_audio(voice, phrase, suffix="mp3")) \
+    and os.path.exists(pathname_of_phrase_audio(voice, phrase, suffix="ogg")):
+        print("Does {voice}'s >>>{phrase}<<< have a cached audio file? YES: {path} and .mp3".format(voice=voice, phrase=phrase,path=phrase_path))
+    else:
+        print("Does {voice}'s >>>{phrase}<<< have a cached audio file? NO. So, I'll create a pair (mp3+ogg).".format(voice=voice, phrase=phrase))
+        if not os.path.exists(pathname_of_phrase_audio(voice, phrase, suffix="mp3")) \
+        and os.path.exists(pathname_of_phrase_audio(voice, phrase, suffix="ogg")):
+            print("We have the OGG but not the MP3. That is surprising. Still, we can cope.")
+        try:
+            os.unlink(pathname_of_phrase_audio(voice, phrase, suffix="ogg"))
+        except:
+            pass
+        _= phrase_audio(voice, phrase, suffix='mp3')
+        assert(os.path.exists(pathname_of_phrase_audio(voice, phrase, suffix='mp3')))
+        try:
+            convert_one_mp3_to_ogg_file(phrase_path[:-4] + '.mp3', phrase_path[:-4] + '.ogg')              
+        except Exception as e:
+            raise("Failed to convert", phrase_path[:-4] + '.mp3', "to", phrase_path[:-4] + '.ogg', "and now I have to figure out why") from e
         assert(os.path.exists(phrase_path[:-4] + '.mp3'))
         assert(os.path.exists(phrase_path[:-4] + '.ogg'))
-        print('the phrase path is', phrase_path, 'and both an mp3 file and an ogg file exist for it.')
-        check_that_files_are_mp3_and_ogg(voice, phrase)
+        print("Does {voice}'s >>>{phrase}<<< have a cached audio file? YES: {path} and .mp3 ... now".format(voice=voice, phrase=phrase,path=phrase_path))
+    
+
         
 def check_that_files_are_mp3_and_ogg(voice, phrase):
-    if 0 != os.system('file "%s" | grep MPEG' % pathname_of_phrase_audio(voice, phrase, suffix='mp3')):
+    if 0 != os.system('file "%s" | grep MPEG > /dev/null' % pathname_of_phrase_audio(voice, phrase, suffix='mp3')):
         raise SystemError(">>>%s<<< should be an MP3 but it's not." % pathname_of_phrase_audio(voice, phrase, suffix='mp3'))
-    if 0 != os.system('file "%s" | grep Ogg' % pathname_of_phrase_audio(voice, phrase, suffix='ogg')):
+    if 0 != os.system('file "%s" | grep Ogg > /dev/null' % pathname_of_phrase_audio(voice, phrase, suffix='ogg')):
         raise SystemError(">>>%s<<< should be an OGG but it's not." % pathname_of_phrase_audio(voice, phrase, suffix='ogg'))
 
 
-def smart_phrase_audio(voice:str, smart_phrase:str, owner:str=None, time_24h:int=None, time_minutes:int=None, trim_level:int=1, suffix='mp3') -> AudioSegment:
+def smart_phrase_audio(voice:str, smart_phrase:str, owner:str, time_24h:int=None, time_minutes:int=None, trim_level:int=1, suffix='ogg') -> AudioSegment:
+    assert(suffix in ('mp3','ogg'))
+    assert(owner == OWNER_NAME) #     assert(owner not in (None, '', 'mp3', 'ogg'))
     # FIXME WRITE DOX
     # FIXME This is a badly written subroutine. Clean it up. Document it. Thank you.
+    smart_phrase = smart_phrase.replace('${owner}', owner) # This way, 'Hello ${owner}' is stored as 'Hello, Charlie' or whatever.
     look_for_dupes()
     if owner is not None and time_24h is not None and time_minutes is not None:
         detokenized_phrase = generate_detokenized_message(owner, time_24h, time_minutes, smart_phrase)
@@ -382,7 +405,7 @@ def smart_phrase_audio(voice:str, smart_phrase:str, owner:str=None, time_24h:int
                 else:
                     raise MissingFromCacheError("{voice} => {searchforthis} <= {outfile} => is missing from the cache".format(searchforthis=searchforthis, voice=voice, outfile=outfile))
         firstwordno += 1
-    return convert_audio_recordings_list_into_one_audio_recording(data=data, trim_level=trim_level)
+    return convert_audio_recordings_list_into_one_audio_recording(data=data, trim_level=trim_level, suffix=suffix)
 
 
 

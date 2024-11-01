@@ -11,6 +11,7 @@ from pydub.exceptions import CouldntDecodeError
 import os
 from os import listdir
 from os.path import isfile, join
+from my.classes.exceptions import MissingFromCacheError
 
 
 pygame.mixer.init()
@@ -122,5 +123,5 @@ consumer_thread.start()
 def queue_oggfile(fname):
     global ogg_queue
     if not os.path.exists(fname):
-        raise FileNotFoundError("queue_oggfile() cannot queue %s: it doesn't exist" % fname)
+        raise MissingFromCacheError("queue_oggfile() cannot queue %s: it doesn't exist" % fname)
     ogg_queue.put(fname)

@@ -351,6 +351,8 @@ def pathname_of_phrase_audio(voice:str, text:str=None, suffix:str='ogg') -> str:
         raise ValueError("You asked me for the pathname of an empty or null string.")
     elif text[0] in "!?;:,.' ":
         raise ValueError("Do not ask me for the pathname of a phrase that starts with punctuation or a space. Such a phrase should not exist.")
+    elif text[-1] == ' ':
+        raise ValueError("Do not ask me for the pathname of a phrase that ends with a space.")
     elif '...' in text:
         raise ValueError("We do not tolerate '...' in our texts.")
     elif suffix not in ('mp3', 'ogg'):
@@ -361,13 +363,6 @@ def pathname_of_phrase_audio(voice:str, text:str=None, suffix:str='ogg') -> str:
                                                     cache=SOUNDS_CACHE_PATH, 
                                                     voice=voice, 
                                                     text=text.lower().replace(' ','_').replace('.','^')).replace('!','&').replace('"',"'")
-
-
-def OLD_pathname_of_phrase_audio(voice:str, text:str, suffix:str='ogg') -> str:
-    if len(text) > 0 and text[0] == '.':
-        text = text[1:]
-    return '{cache}/{voice}/{text}.{suffix}'.format(cache=SOUNDS_CACHE_PATH, voice=voice, text=text.lower().replace(' ', '_'), suffix=suffix)
-
 
 def list_files_in_dir(path, endswith_str=None):
     return [f for f in listdir(path) if isfile(join(path, f)) and not f.startswith('.') and (endswith_str is None or f.endswith(endswith_str))]
