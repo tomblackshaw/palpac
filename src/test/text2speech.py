@@ -8,21 +8,9 @@ Created on May 22, 2024
 text2speech test
 """
 
-import random
 import unittest
-from my.text2speech import *
-from my.stringutils import *
-from my.consts import *
-
-from my.stringutils import generate_detokenized_message, pathname_of_phrase_audio, list_files_in_dir
-from my.text2speech import Text2SpeechSingleton as tts, deliberately_cache_a_smart_phrase,\
-    get_list_of_files_for_speaking_a_random_alarm_message, smart_phrase_filenames
-import os
-from my.consts import hello_owner_lst, OWNER_NAME
-from my.classes.exceptions import MissingFromCacheError
-from regen_cache_for_voice import cache_this_smart_phrase
-from my.cachedspeech import smart_phrase_audio
-
+from my.consts import OWNER_NAME
+from my.text2speech import deliberately_cache_a_smart_phrase
 
 # class TestOne(unittest.TestCase):
 #

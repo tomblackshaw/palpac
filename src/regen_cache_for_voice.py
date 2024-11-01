@@ -28,7 +28,6 @@ from my.text2speech import smart_phrase_audio, deliberately_cache_a_smart_phrase
 from my.text2speech import Text2SpeechSingleton as tts
 from my.globals import SOUNDS_ALARMS_PATH, SOUNDS_FARTS_PATH
 from my.tools.sound import mp3_to_ogg_conversions
-from pydub.exceptions import CouldntDecodeError
 import sys
 
 def cache_this_smart_phrase(voice:str, smart_phrase:str, owner:str):
