@@ -53,7 +53,8 @@ FACES_DCT = {'neon 1':'ui/clocks/neon-clock-css-jquery/dist/index.html',
              'slide':'ui/clocks/slide-clock/dist/index.html',
              'challenge':'ui/clocks/dev-challenge-week-3/dist/index.html',
              'another':'ui/clocks/another-canvas-clock/dist/index.html',
-    }
+    } # FIXME: ugly
+FACES_LST = list(FACES_DCT.keys()) # FIXME: ugly
 ZOOMS_DCT = {'neon 1':.9,
               'neon 2':1.16,
               'analog 1':1.46,

@@ -30,12 +30,12 @@ import sys
 
 from PyQt5 import uic
 
-from PyQt5.QtCore import QUrl, Qt, QObject, pyqtSignal
+from PyQt5.QtCore import QUrl, Qt, QObject, pyqtSignal, QSize
 from PyQt5.QtWidgets import QApplication, QMainWindow, QLabel, QStackedLayout, QWidget, QMessageBox
 
 from my.gui import BrowserView, set_vdu_brightness, set_audio_volume, make_background_translucent, \
                 screenCaptureWidget, make_scrollbars_zeropixels_in_size, enable_touchscroll
-from my.globals import FACES_DCT, TOUCHSCREEN_SIZE_X, TOUCHSCREEN_SIZE_Y, ZOOMS_DCT, SOUNDS_CACHE_PATH, SOUNDS_ALARMS_PATH
+from my.globals import FACES_DCT, FACES_LST, TOUCHSCREEN_SIZE_X, TOUCHSCREEN_SIZE_Y, ZOOMS_DCT, SOUNDS_CACHE_PATH, SOUNDS_ALARMS_PATH
 from os.path import join, isdir, isfile
 from os import listdir
 from my.text2speech import speak_a_random_alarm_message, fart_and_apologize, get_random_fart_fname
@@ -45,11 +45,13 @@ from my.classes import singleton
 from my.tools.sound import stop_sounds, play_audiofile
 from my.classes.exceptions import MissingFromCacheError
 import random
+from PyQt5.QtGui import QIcon
 
 BASEDIR = os.path.dirname(__file__) # Base directory of me, the executable script
 DEFAULT_CLOCK_NAME = list(FACES_DCT.keys())[-1]
 VOICE_NAME = [f for f in listdir(SOUNDS_CACHE_PATH) if isdir(join(SOUNDS_CACHE_PATH, f))][0]
 ALARMTONE_NAME = [f for f in listdir(SOUNDS_ALARMS_PATH) if isfile(join(SOUNDS_ALARMS_PATH, f))][0]
+CLOCKFACE_NUMBER = 0
 
 @singleton
 class _MyQtSignals(QObject):
@@ -97,9 +99,54 @@ class VolumeWindow(QMainWindow):
         make_background_translucent(self)
         self.volume_slider.valueChanged.connect(set_audio_volume)
 
-        
+
+
 class ClocksWindow(QMainWindow):    
-    '''Choose which clockface'''
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        uic.loadUi(os.path.join(BASEDIR, "ui/clocks.ui"), self)
+        make_background_translucent(self)
+        self.previousface_button.clicked.connect(self.previous_face) # 'Previous Face' button was pushed
+        self.nextface_button.clicked.connect(self.next_face) # 'Next Face' button was pushed
+        self.chooseface_button.clicked.connect(self.choose_face) # 'Choose Face' button was pushed
+        self.populate()
+        MyQtSignals.setFace.emit(FACES_LST[CLOCKFACE_NUMBER]) # on the watchface, NOT this 'clock-choosing' window
+
+    def previous_face(self):
+        global CLOCKFACE_NUMBER
+        CLOCKFACE_NUMBER = (CLOCKFACE_NUMBER -1 + len(FACES_LST)) % len(FACES_LST)
+        self.populate()
+
+    def next_face(self):
+        global CLOCKFACE_NUMBER
+        CLOCKFACE_NUMBER = (CLOCKFACE_NUMBER + 1) % len(FACES_LST)
+        self.populate()
+    
+    def choose_face(self):
+        self.face_changed(FACES_LST[CLOCKFACE_NUMBER])
+        self.setVisible(False)
+      
+    def populate(self):
+        self.setUpdatesEnabled(False)
+        self.nextface_button.setIcon(QIcon(freezeframe_fname(FACES_LST[(CLOCKFACE_NUMBER + 1) % len(FACES_LST)])))        
+#        self.nextface_button.setIconSize(QSize(100,100))
+        self.previousface_button.setIcon(QIcon(freezeframe_fname(FACES_LST[(CLOCKFACE_NUMBER + len(FACES_LST) - 1) % len(FACES_LST)])))
+#        self.previousface_button.setIconSize(QSize(100,100))
+        self.chooseface_button.setIcon(QIcon(freezeframe_fname(FACES_LST[CLOCKFACE_NUMBER])))
+#        self.chooseface_button.setIconSize(QSize(100,100))
+        self.setUpdatesEnabled(True)
+
+    def face_changed(self, x):
+        if not os.path.exists(freezeframe_fname(x)): # TODO: ...or the cache is >3 days old?
+            print("Sorry. I don't have a freezeframe pic of %s; I'll load the clock face instead." % x)
+            MyQtSignals.setFace.emit(x)
+            MyQtSignals.hideSettings.emit()
+        else:
+            MyQtSignals.freezeFace.emit(x)
+            
+            
+'''
+class ClocksWindow(QMainWindow):    
     def __init__(self, parent=None):
         super().__init__(parent)
         initial_clock_name = DEFAULT_CLOCK_NAME
@@ -118,7 +165,7 @@ class ClocksWindow(QMainWindow):
             MyQtSignals.hideSettings.emit()
         else:
             MyQtSignals.freezeFace.emit(x)
-
+'''
 
 
 class AlarmsWindow(QMainWindow):    
@@ -285,6 +332,8 @@ class ClockFace(BrowserView):
         self.load_file('{cwd}/{relpath}'.format(cwd=os.getcwd(), relpath=FACES_DCT[face_name]))
         self.setZoomFactor(ZOOMS_DCT[self.face_name] if self.face_name in ZOOMS_DCT.keys() else 1)
         make_scrollbars_zeropixels_in_size(self)
+        global CLOCKFACE_NUMBER
+        CLOCKFACE_NUMBER = FACES_LST.index(face_name)
         self.setUpdatesEnabled(True)
 
     def load_file(self, local_file):
@@ -309,7 +358,8 @@ class MainWindow(QMainWindow):
     clicked. If the user tries to click on the clockface, they actually click on
     the overlay window, which will trigger the configurator window. Then, if the
     user clicks outside the configurator window, the overlay window will hide it
-    again.
+    again. That is how the clockface is clickable: it isn't, but the overlay
+    window *is* clickable.
 
     In this way, the overlay window reveals and hides the configurator window.
 

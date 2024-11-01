@@ -115,8 +115,6 @@ def cache_phrases_for_voice(voice:str, owner:str):
     cache_this_list_of_smart_phrases_for_voice(voice, alarm_messages_lst, owner=owner)
     cache_this_list_of_smart_phrases_for_voice(voice, hours_lst, owner=owner)
     cache_this_list_of_smart_phrases_for_voice(voice, minutes_lst, owner=owner)
-    cache_this_list_of_smart_phrases_for_voice(voice, farting_msgs_lst, owner=owner)
-
 
 
 
@@ -124,7 +122,7 @@ if __name__ == '__main__':
     mp3_to_ogg_conversions(SOUNDS_ALARMS_PATH)
     mp3_to_ogg_conversions(SOUNDS_FARTS_PATH)
     the_voices_i_care_about = tts.all_voices if len(sys.argv) == 1 else (sys.argv[1],)
-    cache_this_smart_phrase('Aria', 'Charlie.', 'Charlie')
+#    cache_this_smart_phrase('Aria', 'Charlie.', 'Charlie')
     for this_voice in the_voices_i_care_about:
         print("Working on", this_voice)
         cache_phrases_for_voice(this_voice, OWNER_NAME) # ...which generates mp3 and ogg files
