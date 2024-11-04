@@ -398,7 +398,7 @@ class _Text2SpeechClass:
             noof_attempts = noof_attempts - 1
             try:
                 return self._audio(text, getgenerator, stream)
-            except Exception as e:
+            except Exception as e:  # pylint: disable=broad-exception-caught
                 if noof_attempts <= 0:
                     raise e
                 else:
