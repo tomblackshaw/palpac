@@ -70,7 +70,7 @@ def make_background_translucent(q:QObject):
 
 
 def enable_touchscroll(q:QObject):
-        QScroller.grabGesture(q, QScroller.LeftMouseButtonGesture) # Enable scroll-with-mouse-button
+    QScroller.grabGesture(q, QScroller.LeftMouseButtonGesture) # Enable scroll-with-mouse-button
 
 
 def make_scrollbars_zeropixels_in_size(w):
