@@ -26,7 +26,6 @@ Attributes:
 .. _Style Guide:
    https://sphinxcontrib-napoleon.readthedocs.io/en/latest/example_google.html
 
-
 """
 
 import os
@@ -49,10 +48,20 @@ import time
 from my.tools.sound import play_audiofile, queue_oggfile, convert_one_mp3_to_ogg_file
 import pygame
 
-if not os.path.exists(ELEVENLABS_KEY_FILENAME) or 0 != os.system("ping -c2 -W5 www.elevenlabs.io"):
-    Text2SpeechSingleton = None
-    print("""We cannot use ElevenLabs. Either we're offline or there's no API key. Sorry.
-Let's just hope you're using the cache & not trying to call ElevenLabs...""")
+
+Text2SpeechSingleton = None
+if os.path.exists(ELEVENLABS_KEY_FILENAME):
+    if 0 == os.system("ping -c2 -W5 www.elevenlabs.io"):
+        try:
+            from my.classes.text2speechclass import _Text2SpeechClass
+            Text2SpeechSingleton = _Text2SpeechClass()
+        except (ModuleNotFoundError, ImportError) as my_e:
+            if 'circular' in str(my_e):
+                raise my_e
+            Text2SpeechSingleton = None  # compatibility w/ Python 3.8
+    else:
+        print("""We cannot use ElevenLabs: we're offline! Sorry. Let's just
+        hope you're using the cache & not trying to call ElevenLabs...""")
 else:
     try:
         from my.classes.text2speechclass import _Text2SpeechClass
