@@ -36,7 +36,7 @@ MAX_LATLONG_TIMEOUT = 999
 LAZY_SILENCE_THRESHOLD = -65.0
 DEFAULT_SILENCE_THRESHOLD = -50.0
 SNIPPY_SILENCE_THRESHOLD = -30.0
-FACES_DCT = {'neon 1':'ui/clocks/neon-clock-css-jquery/dist/index.html',
+_faces_dct = {'neon 1':'ui/clocks/neon-clock-css-jquery/dist/index.html',
              'neon 2':'ui/clocks/this-neon/dist/index.html',
              'braun':'ui/clocks/braun-clock/dist/index.html',
              'analog 1':'ui/clocks/analog-clock-1/dist/index.html',
@@ -52,16 +52,17 @@ FACES_DCT = {'neon 1':'ui/clocks/neon-clock-css-jquery/dist/index.html',
              'slide':'ui/clocks/slide-clock/dist/index.html',
              'challenge':'ui/clocks/dev-challenge-week-3/dist/index.html',
              'another':'ui/clocks/another-canvas-clock/dist/index.html',
-    } # FIXME: ugly
-FACES_LST = list(FACES_DCT.keys()) # FIXME: ugly
-ZOOMS_DCT = {'neon 1':.9,
-              'neon 2':1.16,
-              'analog 1':1.46,
-              'simple':1.75,
-              'another':0.93,
-              'digital 1':1.1,
-              '3D':1.5,
-              'braun':1.3,
+    }
+PATHNAMES_OF_CLOCKFACES = [_faces_dct[k] for k in _faces_dct]
+ZOOMS_DCT = {_faces_dct['neon 1']:.9,
+              _faces_dct['neon 2']:1.16,
+              _faces_dct['analog 1']:1.46,
+              _faces_dct['simple']:1.75,
+              _faces_dct['another']:0.93,
+              _faces_dct['digital 1']:1.1,
+              _faces_dct['3D']:1.5,
+              _faces_dct['braun']:1.3,
               }
 
 TOUCHSCREEN_SIZE_X, TOUCHSCREEN_SIZE_Y = 480, 480 
+

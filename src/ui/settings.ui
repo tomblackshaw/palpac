@@ -26,7 +26,7 @@
    <string>MainWindow</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <widget class="QPushButton" name="clocks_button">
+   <widget class="QPushButton" name="faces_button">
     <property name="geometry">
      <rect>
       <x>290</x>
