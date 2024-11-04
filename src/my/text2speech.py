@@ -261,18 +261,17 @@ def decoded_token(token:str, hello_owner:str, owner:str, shorttime:str, one_minu
     return newval
 
 
-def deliberately_cache_a_smart_phrase(voice:str, smart_phrase:str):
+def deliberately_cache_a_smart_sentence(voice:str, smart_phrase:str):
     '''
     Ensure that an audio file for the supplied text exists. If it doesn't, make it happen.
     '''
-    # FIXME WRITE DOX
     assert('${owner}' not in smart_phrase)
-    print("Does %s's >>>%s<<< smart phrase need caching?" % (voice, smart_phrase))
+    print("Does %s's >>>%s<<< smart phrase have a cached audio set?" % (voice, smart_phrase))
     phrases_to_handle = list_phrases_to_handle(smart_phrase)
     if phrases_to_handle in (None, []):
         raise ValueError(">>>%s<<< contained nothing of value. WTF." % smart_phrase)
     for phrase in phrases_to_handle:
-        deliberately_cache_a_smart_phrase_SUB(voice, phrase)
+        cache_one_phrase(voice, phrase) #...unless it has already been cached.
         try:
             check_that_files_are_mp3_and_ogg(voice, phrase)
         except SystemError:
@@ -282,9 +281,9 @@ def deliberately_cache_a_smart_phrase(voice:str, smart_phrase:str):
                     os.unlink(pathname_of_phrase_audio(voice, phrase, suffix=suffix))
                 except FileNotFoundError: 
                     pass
-            deliberately_cache_a_smart_phrase(voice, phrase)
+            deliberately_cache_a_smart_sentence(voice, phrase)
         
-def deliberately_cache_a_smart_phrase_SUB(voice:str, phrase:str):
+def cache_one_phrase(voice:str, phrase:str):
     print("Does %s's >>>%s<<< have a cached audio file?" % (voice, phrase))
     if len(phrase) == 0:
         raise ValueError("Why ask me to cache a string of zero length?")
@@ -357,7 +356,6 @@ def check_that_files_are_mp3_and_ogg(voice, phrase):
 def smart_phrase_audio(voice:str, smart_phrase:str, owner:str, time_24h:int=None, time_minutes:int=None, trim_level:int=1, suffix='ogg') -> AudioSegment:
     assert(suffix in ('mp3','ogg'))
     assert(owner == OWNER_NAME) #     assert(owner not in (None, '', 'mp3', 'ogg'))
-    # FIXME WRITE DOX
     # FIXME This is a badly written subroutine. Clean it up. Document it. Thank you.
     smart_phrase = smart_phrase.replace('${owner}', owner) # This way, 'Hello ${owner}' is stored as 'Hello, Charlie' or whatever.
     look_for_dupes()
