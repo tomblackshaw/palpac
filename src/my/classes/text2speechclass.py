@@ -11,11 +11,6 @@ lot of cool stuff in here.
 .. _Style Guide:
    https://sphinxcontrib-napoleon.readthedocs.io/en/latest/example_google.html
 
-
-tts.sing("Hi there. My name is Elder Grant, and I would like to share with you the most amazing book.",
-"a4 f#4 a4 f#4 a4 f#4 a4 f#4 a4 f#4 a4 f#4 a4 54 a4 f#4 d4 e4 f#4 g4". split(' '), squelch=1)
-
-
 import os
 os.system('''for i in $(wpctl status | grep HDMI | tr ' ' '\n' | tr '.' '\n' | grep -x "[0-9]*"); do  wpctl set-volume $i 100% 2> /dev/null; done''')
 from my.text2speech import Text2SpeechSingleton as tts
@@ -59,7 +54,6 @@ from my.classes import singleton, ReadWriteLock
 from my.classes.exceptions import ElevenLabsMissingKeyError, ElevenLabsAPIError, ElevenLabsDownError
 from my.globals import ELEVENLABS_KEY_FILENAME
 from my.stringutils import flatten, generate_random_string
-from my.tools.sound.sing import autotune_this_mp3
 from my.tools.sound.trim import convert_audio_recordings_list_into_an_mp3_file
 
 
@@ -473,16 +467,5 @@ class _Text2SpeechClass:
                 )
             self.stream(audio_stream)
 
-    def sing(self, txt:str, notes:list, squelch:int):
-        # TODO: WRITE ME
-        audio = [self.audio(text=txt)]
-        rndstr = generate_random_string(42)
-        exportfile = '/tmp/tts{rndstr}.mp3'.format(rndstr=rndstr)
-        autotunedfile = '/tmp/tts{rndstr}.autotuned.mp3'.format(rndstr=rndstr)
-        convert_audio_recordings_list_into_an_mp3_file(audio, exportfile)
-        autotune_this_mp3(exportfile, autotunedfile, notes, squelch)
-        os.system('mpv --speed=0.5 {autotunedfile}'.format(autotunedfile=autotunedfile))
-        os.unlink(exportfile)
-        os.unlink(autotunedfile)
 
 
