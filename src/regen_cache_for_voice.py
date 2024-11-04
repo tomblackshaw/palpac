@@ -21,8 +21,7 @@ Todo:
 
 """
 
-from my.consts import hello_owner_lst, alarm_messages_lst, hours_lst, minutes_lst, postsnooze_alrm_msgs_lst, \
-                                    farting_msgs_lst, OWNER_NAME
+from my.consts import OWNER_NAME, alarm_messages_lst, postsnooze_alrm_msgs_lst, hours_lst, minutes_lst, hello_owner_lst
 from my.text2speech import smart_phrase_audio, deliberately_cache_a_smart_phrase, look_for_dupes
 
 from my.text2speech import Text2SpeechSingleton as tts
