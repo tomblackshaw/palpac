@@ -22,7 +22,7 @@ Todo:
 """
 
 from my.consts import OWNER_NAME, alarm_messages_lst, postsnooze_alrm_msgs_lst, hours_lst, minutes_lst, hello_owner_lst
-from my.text2speech import smart_phrase_audio, deliberately_cache_a_smart_phrase, look_for_dupes
+from my.text2speech import smart_phrase_audio, deliberately_cache_a_smart_sentence, look_for_dupes
 
 from my.text2speech import Text2SpeechSingleton as tts
 from my.globals import SOUNDS_ALARMS_PATH, SOUNDS_FARTS_PATH
@@ -30,7 +30,7 @@ from my.tools.sound import mp3_to_ogg_conversions
 import sys
 from my.stringutils import generate_detokenized_message
 
-def cache_this_smart_phrase(voice:str, smart_phrase:str, owner:str):
+def cache_and_check_smart_sentence(voice:str, smart_phrase:str, owner:str):
     """With this voice, generate the audio for speaking this phrase.
 
     Args:
@@ -45,7 +45,7 @@ def cache_this_smart_phrase(voice:str, smart_phrase:str, owner:str):
 
     """
     look_for_dupes()
-    deliberately_cache_a_smart_phrase(voice, smart_phrase.replace('${owner}', owner))
+    deliberately_cache_a_smart_sentence(voice, smart_phrase.replace('${owner}', owner))
     for suffix in ('mp3', 'ogg'):
         look_for_dupes()
 #        try:
@@ -55,43 +55,43 @@ def cache_this_smart_phrase(voice:str, smart_phrase:str, owner:str):
         look_for_dupes()
 
 
-def cache_this_list_of_smart_phrases_for_voice(voice:str, lst, owner, minimum_len_for_punc=2, maximum_len_for_punc=20):
+def cache_and_check_list_of_smart_sentences(voice:str, lst, owner, minimum_len_for_punc=2, maximum_len_for_punc=20):
     pronounceable_punctuation = '?!,.'
     for smart_phrase in lst:
         assert(not smart_phrase.endswith(' '))
-        cache_this_smart_phrase(voice=voice, smart_phrase=smart_phrase.replace('${owner}', owner), owner=owner)
+        cache_and_check_smart_sentence(voice=voice, smart_phrase=smart_phrase.replace('${owner}', owner), owner=owner)
         if len(smart_phrase) == 0:
             print("IGNORING >><< because it's empty")
             continue
         elif len(smart_phrase) >= minimum_len_for_punc and len(smart_phrase) < maximum_len_for_punc:
             # I'll not do all the punctuation: why bother? It's a LOOONNNNGGG sentence.
-            cache_this_smart_phrase(voice, smart_phrase, owner)
+            cache_and_check_smart_sentence(voice, smart_phrase, owner)
         else:
             if smart_phrase[-1] in pronounceable_punctuation:
                 smart_phrase = smart_phrase[:-1]
-            cache_this_smart_phrase(voice, smart_phrase, owner)
+            cache_and_check_smart_sentence(voice, smart_phrase, owner)
             for extra_char in  pronounceable_punctuation:
-                cache_this_smart_phrase(voice, smart_phrase + extra_char, owner)
+                cache_and_check_smart_sentence(voice, smart_phrase + extra_char, owner)
 
 
 def cache_phrases_for_voice(voice:str, owner:str):
     # Cache the most common "HELLO OWNER" messages
     for time_24h in (0, 4, 8, 12, 16, 20):
-        cache_this_list_of_smart_phrases_for_voice(voice=voice, owner=owner, lst=[
+        cache_and_check_list_of_smart_sentences(voice=voice, owner=owner, lst=[
              generate_detokenized_message(owner=owner, time_24h=time_24h, time_minutes=0, message_template=m) for m in hello_owner_lst
              ])
-    cache_this_smart_phrase(voice=voice, smart_phrase=owner, owner=owner)
-    cache_this_smart_phrase(voice=voice, smart_phrase=owner + ',', owner=owner)
-    cache_this_smart_phrase(voice=voice, smart_phrase=owner + '.', owner=owner)
-    cache_this_smart_phrase(voice=voice, smart_phrase=owner + '?', owner=owner)
-    cache_this_smart_phrase(voice=voice, smart_phrase=owner + '!', owner=owner)
-    cache_this_list_of_smart_phrases_for_voice(voice, hello_owner_lst, owner)
-    cache_this_list_of_smart_phrases_for_voice(voice, ["Good morning, %s" % owner,
+    cache_and_check_smart_sentence(voice=voice, smart_phrase=owner, owner=owner)
+    cache_and_check_smart_sentence(voice=voice, smart_phrase=owner + ',', owner=owner)
+    cache_and_check_smart_sentence(voice=voice, smart_phrase=owner + '.', owner=owner)
+    cache_and_check_smart_sentence(voice=voice, smart_phrase=owner + '?', owner=owner)
+    cache_and_check_smart_sentence(voice=voice, smart_phrase=owner + '!', owner=owner)
+    cache_and_check_list_of_smart_sentences(voice, hello_owner_lst, owner)
+    cache_and_check_list_of_smart_sentences(voice, ["Good morning, %s" % owner,
                                                        "Good afternoon, %s" % owner,
                                                        "Good evening, %s" % owner,
                                                        ], owner)
-    cache_this_list_of_smart_phrases_for_voice(voice, ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'], owner=owner)
-    cache_this_list_of_smart_phrases_for_voice(voice, ["o'clock", "A.M.", "P.M.",
+    cache_and_check_list_of_smart_sentences(voice, ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'], owner=owner)
+    cache_and_check_list_of_smart_sentences(voice, ["o'clock", "A.M.", "P.M.",
                                                        "twelve newn",
                                                        "twelve newn", "twelve midnight",
                                                        "12 newn", "12 midnight",
@@ -100,10 +100,10 @@ def cache_phrases_for_voice(voice:str, owner:str):
                                                        "good morning", "good afternoon", "good evening",
                                                        "midnight", "hours", "in the afternoon", "in the morning",
                                                        "in the evening",], owner=owner)
-    cache_this_list_of_smart_phrases_for_voice(voice, postsnooze_alrm_msgs_lst, owner=owner)
-    cache_this_list_of_smart_phrases_for_voice(voice, alarm_messages_lst, owner=owner)
-    cache_this_list_of_smart_phrases_for_voice(voice, hours_lst, owner=owner)
-    cache_this_list_of_smart_phrases_for_voice(voice, minutes_lst, owner=owner)
+    cache_and_check_list_of_smart_sentences(voice, postsnooze_alrm_msgs_lst, owner=owner)
+    cache_and_check_list_of_smart_sentences(voice, alarm_messages_lst, owner=owner)
+    cache_and_check_list_of_smart_sentences(voice, hours_lst, owner=owner)
+    cache_and_check_list_of_smart_sentences(voice, minutes_lst, owner=owner)
 
 
 
@@ -111,7 +111,7 @@ if __name__ == '__main__':
     mp3_to_ogg_conversions(SOUNDS_ALARMS_PATH)
     mp3_to_ogg_conversions(SOUNDS_FARTS_PATH)
     the_voices_i_care_about = tts.all_voices if len(sys.argv) == 1 else (sys.argv[1],)
-#    cache_this_smart_phrase('Aria', 'Charlie.', 'Charlie')
+#    cache_and_check_smart_sentence('Aria', 'Charlie.', 'Charlie')
     for this_voice in the_voices_i_care_about:
         print("Working on", this_voice)
         cache_phrases_for_voice(this_voice, OWNER_NAME) # ...which generates mp3 and ogg files
