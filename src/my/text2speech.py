@@ -49,12 +49,14 @@ from my.tools.sound import play_audiofile, queue_oggfile, convert_one_mp3_to_ogg
 import pygame
 
 
+print("my.text2speech -- importing/creating text2speech singleton")
 Text2SpeechSingleton = None
 if os.path.exists(ELEVENLABS_KEY_FILENAME):
     if 0 == os.system("ping -c2 -W5 www.elevenlabs.io"):
         try:
             from my.classes.text2speechclass import _Text2SpeechClass
             Text2SpeechSingleton = _Text2SpeechClass()
+            print("Yay. Online? Check. Elevenlabs OK? Check. Key? Check. Woohoo!")
         except (ModuleNotFoundError, ImportError) as my_e:
             if 'circular' in str(my_e):
                 raise my_e
@@ -63,13 +65,8 @@ if os.path.exists(ELEVENLABS_KEY_FILENAME):
         print("""We cannot use ElevenLabs: we're offline! Sorry. Let's just
         hope you're using the cache & not trying to call ElevenLabs...""")
 else:
-    try:
-        from my.classes.text2speechclass import _Text2SpeechClass
-        Text2SpeechSingleton = _Text2SpeechClass()
-    except (ModuleNotFoundError, ImportError) as my_e:
-        if 'circular' in str(my_e):
-            raise my_e
-        Text2SpeechSingleton = None  # compatibility w/ Python 3.8
+    print("""We cannot use ElevenLabs: there's no API key. Sorry. Let's
+    just hope you're using the cache & not trying to call ElevenLabs...""")
 
 
 def get_first_prof_name(tts:Text2SpeechSingleton) -> str:
