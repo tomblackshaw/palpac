@@ -1,12 +1,24 @@
-'''
+# -*- coding: utf-8 -*-
+"""Tools to trim the silence from either end of audio files.
+
 Created on Aug 21, 2024
 
 @author: Tom Blackshaw
 
-This module contains functions that trim silence from either end of audio samples, concatenate
-audio recordings, and so on. Technically, I'm not sure why it should be called 'trim' as opposed
-to 'trim_and_concat', but that's okay. No one is perfect.
-'''
+This module contains functions that trim silence from either end of audio samples,
+concatenate audio recordings, and so on. Technically, I'm not sure why it should
+be called 'trim' as opposed to 'trim_and_concat', but that's okay. No one is perfect.
+
+Examples:
+    TODO writeme
+
+Todo:
+    * Write examples
+
+.. _Google Python Style Guide:
+   http://google.github.io/styleguide/pyguide.html
+
+"""
 
 import os
 

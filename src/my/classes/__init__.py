@@ -16,7 +16,16 @@ Classes:
 
 Attributes:
     none
-
+    
+Example:
+    from my.classes.randomquoteclass import SomeClassToBeSingletonized
+    ClassySingleton = SomeClassToBeSingletonized()
+    ...
+    [elsewhere]
+    from this.source.file import ClassySingleton as cs
+    print(cs.value)
+    cs.value = 5
+    etc. etc.
 """
 
 from threading import Condition, Lock, Thread
