@@ -29,8 +29,9 @@ import time
 
 from my.classes.exceptions import StillAwaitingCachedValue, WebAPITimeoutError, WebAPIOutputError, WebAPIOverloadError
 from my.classes.selfcachingcall import SelfCachingCall
+from my.classes import singleton
 
-
+@singleton
 class _RandomQuoteClass:
     """Return a random quote when asked for one.
 
