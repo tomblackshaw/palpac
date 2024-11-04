@@ -267,7 +267,7 @@ def deliberately_cache_a_smart_phrase(voice:str, smart_phrase:str):
     '''
     # FIXME WRITE DOX
     assert('${owner}' not in smart_phrase)
-    print("Caching %s's smart phrase >>>%s<<<" % (voice, smart_phrase))
+    print("Does %s's >>>%s<<< smart phrase need caching?" % (voice, smart_phrase))
     phrases_to_handle = list_phrases_to_handle(smart_phrase)
     if phrases_to_handle in (None, []):
         raise ValueError(">>>%s<<< contained nothing of value. WTF." % smart_phrase)
