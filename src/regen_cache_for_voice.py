@@ -29,13 +29,14 @@ from my.text2speech import Text2SpeechSingleton as tts
 from my.globals import SOUNDS_ALARMS_PATH, SOUNDS_FARTS_PATH
 from my.tools.sound import mp3_to_ogg_conversions
 import sys
+from my.stringutils import generate_detokenized_message
 
 def cache_this_smart_phrase(voice:str, smart_phrase:str, owner:str):
     """With this voice, generate the audio for speaking this phrase.
 
     Args:
-        param1 (int): The first parameter.
-        param2 (str): The second parameter.
+        voice (str): The name of the voice to be speaking.
+        smart_phrase (str): The smart phrase to be cached.
 
     Returns:
         bool: The return value. True for success, False otherwise.
@@ -75,6 +76,12 @@ def cache_this_list_of_smart_phrases_for_voice(voice:str, lst, owner, minimum_le
 
 
 def cache_phrases_for_voice(voice:str, owner:str):
+    # Cache the most common "HELLO OWNER" messages
+    for time_24h in (0, 4, 8, 12, 16, 20):
+        cache_this_list_of_smart_phrases_for_voice(voice=voice, owner=owner, lst=[
+             generate_detokenized_message(owner=owner, time_24h=time_24h, time_minutes=0, message_template=m) for m in hello_owner_lst
+             ])
+    return
     cache_this_smart_phrase(voice=voice, smart_phrase=owner, owner=owner)
     cache_this_smart_phrase(voice=voice, smart_phrase=owner + ',', owner=owner)
     cache_this_smart_phrase(voice=voice, smart_phrase=owner + '.', owner=owner)
@@ -84,22 +91,6 @@ def cache_phrases_for_voice(voice:str, owner:str):
     cache_this_list_of_smart_phrases_for_voice(voice, ["Good morning, %s" % owner,
                                                        "Good afternoon, %s" % owner,
                                                        "Good evening, %s" % owner,
-                                                       "Good morning",
-                                                       "Good afternoon",
-                                                       "Good evening",
-                                                       "Good morning!",
-                                                       "Good afternoon!",
-                                                       "Good evening!",
-                                                       "Good morning.",
-                                                       "Good afternoon.",
-                                                       "Good evening.",
-                                                       "Hello %s" % owner,
-                                                       "Hello, %s" % owner,
-                                                       "Hi %s" % owner,
-                                                       "Hi, %s" % owner,
-                                                       "Hey %s" % owner,
-                                                       "Hey, %s" % owner,
-                                                       "Greetings %s" % owner
                                                        ], owner)
     cache_this_list_of_smart_phrases_for_voice(voice, ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'], owner=owner)
     cache_this_list_of_smart_phrases_for_voice(voice, ["o'clock", "A.M.", "P.M.",

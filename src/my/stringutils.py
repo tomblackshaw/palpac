@@ -343,7 +343,6 @@ def generate_random_alarm_message(owner_of_clock:str, time_24h:int,  time_minute
     return message
 
 
-
 def pathname_of_phrase_audio(voice:str, text:str=None, suffix:str='ogg') -> str:
     if text is None:
         return SOUNDS_CACHE_PATH + os.sep + voice

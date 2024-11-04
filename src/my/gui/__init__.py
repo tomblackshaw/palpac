@@ -14,7 +14,7 @@ This module contains GUI-related tools.
 
 import os
 from PyQt5.QtCore import Qt, QObject
-from PyQt5.QtWidgets import QApplication, QScroller
+from PyQt5.QtWidgets import QApplication, QScroller, QMessageBox
 
 
 try: 
@@ -93,4 +93,10 @@ def screenCaptureWidget(widget, parent_pos, filename, fileformat='png'):
                                        rfg.width(), rfg.height())
     screenshot.save(filename, fileformat)  
 
+def popup_message(title, text):
+    msg = QMessageBox()
+    msg.setStyleSheet("QMessageBox {font-size:32px}; QPushButton {color:red; font-family: Arial; font-size:32px;}")
+    msg.setWindowTitle(title)
+    msg.setText(text)
+    _ = msg.exec_()
 

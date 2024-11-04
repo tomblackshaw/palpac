@@ -40,7 +40,7 @@ from os.path import isfile, join
 from pydub.exceptions import CouldntDecodeError
 
 from my.classes.exceptions import NoProfessionalVoicesError, MissingFromCacheError
-from my.consts import hours_lst, minutes_lst, farting_msgs_lst, OWNER_NAME
+from my.consts import hours_lst, minutes_lst, farting_msgs_lst, OWNER_NAME, hello_owner_lst
 from my.stringutils import generate_random_alarm_message, generate_detokenized_message, pathname_of_phrase_audio
 from my.tools.sound.trim import convert_audio_recordings_list_into_one_audio_recording
 from pydub.audio_segment import AudioSegment
@@ -493,8 +493,14 @@ def get_list_of_files_for_speaking_a_random_alarm_message(owner, hour, minute, v
     return fnames
 
 def speak_a_random_alarm_message(owner, hour, minute, voice, snoozed=False, fail_quietly=True):
-    # FIXME WRITE DOX
     for f in get_list_of_files_for_speaking_a_random_alarm_message(owner, hour, minute, voice, snoozed, fail_quietly):
+        queue_oggfile(f)
+
+def speak_a_random_hello_message(owner, voice, fail_quietly=True):
+    message_template = random.choice(hello_owner_lst)
+    message = generate_detokenized_message(owner=owner, time_24h=0, time_minutes=0, message_template=message_template)
+    fnames = smart_phrase_filenames(voice, message, fail_quietly=fail_quietly)
+    for f in fnames:
         queue_oggfile(f)
 
 def get_random_fart_fname():

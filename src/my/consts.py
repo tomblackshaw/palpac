@@ -132,19 +132,31 @@ WMO_code_warnings_dct = {
 }
 
 hello_owner_lst = [
+"""Lovely ${morning_or_afternoon_or_evening}, ${owner}""",
+"""Good ${morning_or_afternoon_or_evening}, ${owner}""",
+"""Hi ${morning_or_afternoon_or_evening}, ${owner}""",
+"""What up, ${owner}""",
+"""Yo ${owner}""",
+"""What it do, ${owner}""",
+"""${owner}! Bruh!""",
+"""${owner}! What the sigma?""",
+"""What up, my rizzler!""",
+"""Zang, ${owner}!""",
+"""Yeet, yeet, yeet, ${owner}, my rizzler!""", 
 """${owner}. ${owner}? ${owner} ${owner} ${owner}! Ugh. Hey! Good ${morning_or_afternoon_or_evening}""",
 """Good ${morning_or_afternoon_or_evening}, ${owner}""",
 """Hey yoe, ${owner}! Good ${morning_or_afternoon_or_evening}""",
 """What's crackalackin', ${owner}""",
 """Excuse me, ${owner}, may I have a word?""",
-"""Oh my, ${owner}, I have such news! Have you the time? You do now.""",
+"""Oh my, ${owner}, I have such news! Have you the time? You do now""",
 """Ground control to Major ${owner}""",
-"""Oh captain, my captain? ${owner}, you salty dog!""",
+"""Oh captain, my captain? ${owner}, you salty dog""",
 """Okay, Rip Van ${owner}""",
 """Hey, ${owner}! Check it""",
 ]
 
 alarm_messages_lst = [
+"""No cap, lateness is cringe. Don't be Ohio, pookie! It's ${shorttime}. Flex your drip, get mad lit, and go mogging.""", 
 """Swab the decks, hoist the main sail, and give those jolly jack tars a good whipping! It's ${shorttime}. Up and atom!""",
 """${hello_owner}. It's ${one_minute_later}. Just kidding, it's actually ${shorttime} but it'll be ${one_minute_later} soon. Or will it? You'd better get up and check.""",
 """Knock, knock! Who's there? Get a warrant. Oh, and by the way, it's ${shorttime}.""",
@@ -203,6 +215,7 @@ alarm_messages_lst = [
 ]
 
 postsnooze_alrm_msgs_lst = [
+"""Oversleeping is dog water, ${owner}. It's ${shorttime}. Skirrrt!""",
 """It is now ${shorttime}, and you're Day Loo Loo if you think you can lie in bed all day. Just put the fries in the bag, bro.""",
 """So, ${owner}, were those few extra minutes worthwhile? Ring. Ring. Ring, ring. Yep, it's ${shorttime} now.""",
 """Hi, my name's ${owner}, and I don't like getting up. It's ${shorttime}. Stop snoozing.""",

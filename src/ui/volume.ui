@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>264</width>
-    <height>300</height>
+    <width>480</width>
+    <height>220</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -32,7 +32,7 @@
       <x>60</x>
       <y>10</y>
       <width>151</width>
-      <height>231</height>
+      <height>161</height>
      </rect>
     </property>
     <property name="mouseTracking">

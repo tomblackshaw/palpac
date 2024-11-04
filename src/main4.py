@@ -34,11 +34,11 @@ from PyQt5.QtCore import QUrl, Qt, QObject, pyqtSignal, QSize
 from PyQt5.QtWidgets import QApplication, QMainWindow, QLabel, QStackedLayout, QWidget, QMessageBox
 
 from my.gui import BrowserView, set_vdu_brightness, set_audio_volume, make_background_translucent, \
-                screenCaptureWidget, make_scrollbars_zeropixels_in_size, enable_touchscroll
+                screenCaptureWidget, make_scrollbars_zeropixels_in_size, enable_touchscroll, popup_message
 from my.globals import FACES_DCT, FACES_LST, TOUCHSCREEN_SIZE_X, TOUCHSCREEN_SIZE_Y, ZOOMS_DCT, SOUNDS_CACHE_PATH, SOUNDS_ALARMS_PATH
 from os.path import join, isdir, isfile
 from os import listdir
-from my.text2speech import speak_a_random_alarm_message, fart_and_apologize, get_random_fart_fname
+from my.text2speech import speak_a_random_alarm_message, fart_and_apologize, get_random_fart_fname, speak_a_random_hello_message
 import datetime
 from my.consts import OWNER_NAME
 from my.classes import singleton
@@ -51,7 +51,7 @@ BASEDIR = os.path.dirname(__file__) # Base directory of me, the executable scrip
 DEFAULT_CLOCK_NAME = list(FACES_DCT.keys())[-1]
 VOICE_NAME = [f for f in listdir(SOUNDS_CACHE_PATH) if isdir(join(SOUNDS_CACHE_PATH, f))][0]
 ALARMTONE_NAME = [f for f in listdir(SOUNDS_ALARMS_PATH) if isfile(join(SOUNDS_ALARMS_PATH, f))][0]
-CLOCKFACE_NUMBER = 0
+CLOCKFACE_NUMBER = random.randint(0, len(FACES_LST))
 
 @singleton
 class _MyQtSignals(QObject):
@@ -101,73 +101,26 @@ class VolumeWindow(QMainWindow):
 
 
 
-class ClocksWindow(QMainWindow):    
+class PickfaceWindow(QMainWindow):    
     def __init__(self, parent=None):
         super().__init__(parent)
         uic.loadUi(os.path.join(BASEDIR, "ui/clocks.ui"), self)
         make_background_translucent(self)
-        self.previousface_button.clicked.connect(self.previous_face) # 'Previous Face' button was pushed
-        self.nextface_button.clicked.connect(self.next_face) # 'Next Face' button was pushed
-        self.chooseface_button.clicked.connect(self.choose_face) # 'Choose Face' button was pushed
-        self.populate()
-        MyQtSignals.setFace.emit(FACES_LST[CLOCKFACE_NUMBER]) # on the watchface, NOT this 'clock-choosing' window
+        self.randomizer_button.clicked.connect(self.pickface_at_random) # 'Choose Face' button was pushed
 
-    def previous_face(self):
-        global CLOCKFACE_NUMBER
-        CLOCKFACE_NUMBER = (CLOCKFACE_NUMBER -1 + len(FACES_LST)) % len(FACES_LST)
-        self.populate()
-
-    def next_face(self):
-        global CLOCKFACE_NUMBER
-        CLOCKFACE_NUMBER = (CLOCKFACE_NUMBER + 1) % len(FACES_LST)
-        self.populate()
-    
-    def choose_face(self):
-        self.face_changed(FACES_LST[CLOCKFACE_NUMBER])
-        self.setVisible(False)
-      
-    def populate(self):
-        self.setUpdatesEnabled(False)
-        self.nextface_button.setIcon(QIcon(freezeframe_fname(FACES_LST[(CLOCKFACE_NUMBER + 1) % len(FACES_LST)])))        
-#        self.nextface_button.setIconSize(QSize(100,100))
-        self.previousface_button.setIcon(QIcon(freezeframe_fname(FACES_LST[(CLOCKFACE_NUMBER + len(FACES_LST) - 1) % len(FACES_LST)])))
-#        self.previousface_button.setIconSize(QSize(100,100))
-        self.chooseface_button.setIcon(QIcon(freezeframe_fname(FACES_LST[CLOCKFACE_NUMBER])))
-#        self.chooseface_button.setIconSize(QSize(100,100))
-        self.setUpdatesEnabled(True)
-
-    def face_changed(self, x):
-        if not os.path.exists(freezeframe_fname(x)): # TODO: ...or the cache is >3 days old?
-            print("Sorry. I don't have a freezeframe pic of %s; I'll load the clock face instead." % x)
-            MyQtSignals.setFace.emit(x)
+    def pickface_at_random(self):
+        new_face = FACES_LST[CLOCKFACE_NUMBER]
+        assert(len(FACES_LST) > 1)
+        while new_face == FACES_LST[CLOCKFACE_NUMBER]: 
+            new_face = random.choice(FACES_LST)
+        if not os.path.exists(freezeframe_fname(new_face)): 
+            print("Sorry. I don't have a freezeframe pic of %s; I'll load the clock face instead." % new_face)
+            MyQtSignals.setFace.emit(new_face)
             MyQtSignals.hideSettings.emit()
         else:
-            MyQtSignals.freezeFace.emit(x)
+            MyQtSignals.freezeFace.emit(new_face)
             
-            
-'''
-class ClocksWindow(QMainWindow):    
-    def __init__(self, parent=None):
-        super().__init__(parent)
-        initial_clock_name = DEFAULT_CLOCK_NAME
-        uic.loadUi(os.path.join(BASEDIR, "ui/clocks.ui"), self)
-        make_background_translucent(self)
-        [self.faces_qlist.addItem(k) for k in FACES_DCT.keys()]
-        [self.faces_qlist.setCurrentItem(x) for x in self.faces_qlist.findItems(initial_clock_name, Qt.MatchExactly)]
-        MyQtSignals.setFace.emit(initial_clock_name)
-        self.faces_qlist.currentTextChanged.connect(self.face_changed)
-        enable_touchscroll(self.faces_qlist)
-        
-    def face_changed(self, x):
-        if not os.path.exists(freezeframe_fname(x)): # TODO: ...or the cache is >3 days old?
-            print("Sorry. I don't have a freezeframe pic of %s; I'll load the clock face instead." % x)
-            MyQtSignals.setFace.emit(x)
-            MyQtSignals.hideSettings.emit()
-        else:
-            MyQtSignals.freezeFace.emit(x)
-'''
-
-
+   
 class AlarmsWindow(QMainWindow):    
     '''Choose which alarm'''
     def __init__(self, parent=None):
@@ -202,7 +155,8 @@ class VoicesWindow(QMainWindow):
         super().__init__(parent)
         uic.loadUi(os.path.join(BASEDIR, "ui/voices.ui"), self)
         make_background_translucent(self)
-        self.randomizer_button.clicked.connect(self.randomizer_button_clicked)
+        self.randomizer_button.clicked.connect(self.voice_at_random)
+        self.fart_button.clicked.connect(self.fart_button_clicked)
         self.hello_button.clicked.connect(self.hello_button_clicked)
         self.wakeup_button.clicked.connect(self.wakeup_button_clicked)
         _ = SOUNDS_CACHE_PATH
@@ -211,14 +165,16 @@ class VoicesWindow(QMainWindow):
         # self.voices_qlist.currentTextChanged.connect(self.new_voice_chosen)
         # enable_touchscroll(self.voices_qlist)
 
-    
-    def randomizer_button_clicked(self):
+    def voice_at_random(self):
         print("RANDOM VOICE SELECTED")
-        while  True:
+        attempts = 0
+        while attempts < 100:
+            attempts += 1
             try:
                 vox = random.choice([f for f in listdir(SOUNDS_CACHE_PATH) if isdir(join(SOUNDS_CACHE_PATH, f))])
-                self.new_voice_chosen(vox)
-                break
+                if vox != VOICE_NAME:
+                    self.new_voice_chosen(vox)
+                    break
             except:
                 print("This voice failed. Trying another...")
         
@@ -227,11 +183,17 @@ class VoicesWindow(QMainWindow):
     #                                         cache=SOUNDS_CACHE_PATH, voice=VOICE_NAME, owner=OWNER_NAME.lower()), 
     #                    nowait=True)    
     
-    def hello_button_clicked(self):
+    def fart_button_clicked(self):
         try:
             fart_and_apologize(VOICE_NAME)
         except MissingFromCacheError:
             play_audiofile(get_random_fart_fname(), nowait=True)
+            
+    def hello_button_clicked(self):
+        try:
+            speak_a_random_hello_message(owner=OWNER_NAME, voice=VOICE_NAME)
+        except MissingFromCacheError:
+            popup_message("Voice Missing", "Please pick a different voice.")
 
     def wakeup_button_clicked(self):
         try:
@@ -239,12 +201,10 @@ class VoicesWindow(QMainWindow):
                                      hour=datetime.datetime.now().hour, minute=datetime.datetime.now().minute, 
                                      snoozed=False, fail_quietly=True)
         except MissingFromCacheError as e:
-            msg = QMessageBox()
-            msg.setStyleSheet("QMessageBox {font-size:32px}; QPushButton {color:red; font-family: Arial; font-size:32px;}")
-            msg.setWindowTitle("Voice Missing")
-            msg.setText("Please pick a different voice.")
-            _ = msg.exec_()
-              
+            popup_message("Voice Missing", "Please pick a different voice.")
+
+
+
 
     def new_voice_chosen(self, voice):
         global VOICE_NAME
@@ -282,23 +242,30 @@ class SettingsWindow(QMainWindow):
         self.all_subwindows = []
         self.configure_a_subwindow(AlarmsWindow, self.alarms_button)
         self.configure_a_subwindow(VolumeWindow, self.volume_button)
-        self.configure_a_subwindow(ClocksWindow, self.clocks_button)
+        self.configure_a_subwindow(PickfaceWindow, self.clocks_button)
         self.configure_a_subwindow(VoicesWindow, self.voices_button)
         self.configure_a_subwindow(TestingWindow,self.testing_button)
         self.configure_a_subwindow(BrightnessWindow, self.brightness_button)
         
     def configure_a_subwindow(self, a_class, a_button):
         a_window = a_class(self)
+        a_window.parent_menubutton = a_button # The button that activates me
         a_window.hide()
         a_button.clicked.connect(lambda: self.choose_window(a_window))
         self.all_subwindows.append(a_window)
     
     def choose_window(self, chosen_subwindow=None):
+        # Hide/show the chosen window (or, if no window was chosen, hide *all* windows)
         for w in self.all_subwindows:
             if w == chosen_subwindow:
                 w.setVisible(not w.isVisible())
             else:
                 w.hide()
+        for w in self.all_subwindows:
+            w.parent_menubutton.setVisible(False if chosen_subwindow is not None \
+                                                and w != chosen_subwindow \
+                                                and chosen_subwindow.isVisible() \
+                                                else True)
 
     def hide(self):
         self.choose_window(None) # No subwindow was chosen. Therefore, this will hide all of them.
@@ -327,24 +294,24 @@ class ClockFace(BrowserView):
         self.setFixedSize(TOUCHSCREEN_SIZE_X, TOUCHSCREEN_SIZE_Y)
 
     def choose_face(self, face_name):
-        self.setUpdatesEnabled(False)
-        self.face_name = face_name
-        self.load_file('{cwd}/{relpath}'.format(cwd=os.getcwd(), relpath=FACES_DCT[face_name]))
-        self.setZoomFactor(ZOOMS_DCT[self.face_name] if self.face_name in ZOOMS_DCT.keys() else 1)
-        make_scrollbars_zeropixels_in_size(self)
         global CLOCKFACE_NUMBER
+        self.setUpdatesEnabled(False)
         CLOCKFACE_NUMBER = FACES_LST.index(face_name)
+        self.load_file('{cwd}/{relpath}'.format(cwd=os.getcwd(), relpath=FACES_DCT[face_name]))
+        self.setZoomFactor(ZOOMS_DCT[face_name] if face_name in ZOOMS_DCT.keys() else 1)
+        make_scrollbars_zeropixels_in_size(self)
         self.setUpdatesEnabled(True)
 
     def load_file(self, local_file):
-        self.setZoomFactor(1)
+        self.setZoomFactor(1) # Do this BEFORE loading file.
         the_url = 'file://{local_file}'.format(local_file=local_file)
         self.load(QUrl(the_url))
         make_scrollbars_zeropixels_in_size(self)
 
     def freeze_face(self, face_name):
         self.setUpdatesEnabled(False)
-        self.face_name = face_name
+        global CLOCKFACE_NUMBER
+        CLOCKFACE_NUMBER = FACES_LST.index(face_name)
         self.load_file(freezeframe_fname(face_name)) # Show the freezeframe
         self.setUpdatesEnabled(True)
 
@@ -391,11 +358,13 @@ class MainWindow(QMainWindow):
         self.settings.hide()
         MyQtSignals.hideSettings.connect(self.hide_settings_screen)
         MyQtSignals.showSettings.connect(self.show_settings_screen)
+        MyQtSignals.setFace.emit(FACES_LST[CLOCKFACE_NUMBER])
 
     def show_settings_screen(self):
         '''Make the Settings screen the top widget. Behind it, show a freezeframe of the clockface.'''
-        screenCaptureWidget(self, self.clockface.pos(), freezeframe_fname(self.clockface.face_name))
-        MyQtSignals.freezeFace.emit(self.clockface.face_name)
+        face_name = FACES_LST[CLOCKFACE_NUMBER]
+        screenCaptureWidget(self, self.clockface.pos(), freezeframe_fname(face_name))
+        MyQtSignals.freezeFace.emit(face_name)
         self.settings.show()
         self.our_layout.setCurrentWidget(self.settings)
         
@@ -403,7 +372,7 @@ class MainWindow(QMainWindow):
         '''Hide the Settings screen. Go back to displaying an animated clockface.'''
         self.settings.hide()
         self.our_layout.setCurrentWidget(self.beard)
-        MyQtSignals.setFace.emit(self.clockface.face_name)
+        MyQtSignals.setFace.emit(FACES_LST[CLOCKFACE_NUMBER])
 
     def mousePressEvent(self, event):
         '''If the user clicks on the beard that covers the clockface, let's launch the Settings window; otherwise, let's hide it.'''
