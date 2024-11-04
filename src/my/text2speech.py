@@ -326,14 +326,15 @@ def deliberately_cache_a_smart_phrase_SUB(voice:str, phrase:str):
             print("We have the OGG but not the MP3. That is surprising. Still, we can cope.")
         try:
             os.unlink(pathname_of_phrase_audio(voice, phrase, suffix="ogg"))
-        except:
+        except FileNotFoundError as _:
             pass
         _= phrase_audio(voice, phrase, suffix='mp3')
         assert(os.path.exists(pathname_of_phrase_audio(voice, phrase, suffix='mp3')))
         try:
             convert_one_mp3_to_ogg_file(phrase_path[:-4] + '.mp3', phrase_path[:-4] + '.ogg')              
         except Exception as e:
-            raise("Failed to convert", phrase_path[:-4] + '.mp3', "to", phrase_path[:-4] + '.ogg', "and now I have to figure out why") from e
+            errstr = "Failed to convert", phrase_path[:-4] + '.mp3', "to", phrase_path[:-4] + '.ogg', "and now I have to figure out why"
+            raise SystemError(errstr) from e
         assert(os.path.exists(phrase_path[:-4] + '.mp3'))
         assert(os.path.exists(phrase_path[:-4] + '.ogg'))
         print("Does {voice}'s >>>{phrase}<<< have a cached audio file? YES (mp3+ogg) ...now.".format(voice=voice, phrase=phrase))
