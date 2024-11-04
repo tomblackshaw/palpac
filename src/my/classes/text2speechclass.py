@@ -440,21 +440,20 @@ class _Text2SpeechClass:
             for d in data:
                 play(d)
 
-    def stream(self, data:bytes): # FIXME: What type is data?
+    def stream(self, data:bytes):
         from elevenlabs import stream
         if type(data) is str:
             raise ValueError("Please supply audio data, not a string, when calling me.")
         stream(data)
 
-    def say(self, txt:str, stream:bool=False):
-        # TODO: WRITE ME
-        if type(txt) is not str:
+    def say(self, text:str, stream:bool=False):
+        if type(text) is not str:
             raise ValueError("Please supply a string, when calling me.")
         elif stream is False:
-            self.play(self.audio(text=txt))
+            self.play(self.audio(text=text))
         else:
             audio_stream = self.client.generate(
-                    text=txt,
+                    text=text,
                     voice=self.voice,
                     optimize_streaming_latency=1,  # Adjust as needed
                     output_format="mp3_44100_128",  # Adjust as needed
