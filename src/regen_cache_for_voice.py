@@ -81,7 +81,6 @@ def cache_phrases_for_voice(voice:str, owner:str):
         cache_this_list_of_smart_phrases_for_voice(voice=voice, owner=owner, lst=[
              generate_detokenized_message(owner=owner, time_24h=time_24h, time_minutes=0, message_template=m) for m in hello_owner_lst
              ])
-    return
     cache_this_smart_phrase(voice=voice, smart_phrase=owner, owner=owner)
     cache_this_smart_phrase(voice=voice, smart_phrase=owner + ',', owner=owner)
     cache_this_smart_phrase(voice=voice, smart_phrase=owner + '.', owner=owner)
