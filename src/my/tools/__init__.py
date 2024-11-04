@@ -23,7 +23,6 @@ from my.classes.exceptions import PyQtUICompilerError
 
 def timeit(method):
 
-    # TODO: Write me.
     def timed(*args, **kw):
         ts = time.time()
         result = method(*args, **kw)
