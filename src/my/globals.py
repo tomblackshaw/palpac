@@ -20,7 +20,6 @@ Attributes:
 
 """
 import os
-import sys
 
 # def where_is_binary(binary_name):
 #     try:
