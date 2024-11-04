@@ -26,7 +26,6 @@ from pydub.audio_segment import AudioSegment
 
 from my.globals import DEFAULT_SILENCE_THRESHOLD, SNIPPY_SILENCE_THRESHOLD, LAZY_SILENCE_THRESHOLD
 from my.stringutils import generate_random_string
-from pydub.exceptions import CouldntDecodeError
 
 
 def detect_leading_silence(sound:AudioSegment, silence_threshold:float=DEFAULT_SILENCE_THRESHOLD, chunk_size:int=10) -> int:
