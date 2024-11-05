@@ -2,6 +2,7 @@
 """my.classes
 
 Created on May 19, 2024
+Updated on Nov 05, 2024
 
 @author: Tom Blackshaw
 
@@ -16,7 +17,7 @@ Classes:
 
 Attributes:
     none
-    
+
 Example:
     from my.classes.randomquoteclass import SomeClassToBeSingletonized
     ClassySingleton = SomeClassToBeSingletonized()

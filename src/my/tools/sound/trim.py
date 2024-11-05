@@ -2,6 +2,7 @@
 """Tools to trim the silence from either end of audio files.
 
 Created on Aug 21, 2024
+Updated on Nov 05, 2024
 
 @author: Tom Blackshaw
 

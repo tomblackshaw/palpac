@@ -2,6 +2,11 @@
 # -*- coding: utf-8 -*-
 """Sheepdip for a clock display.
 
+Created on Aug 19, 2024
+Updated on Nov 05, 2024
+
+@author: Tom Blackshaw
+
 This module contains classes and a main function to display a JavaScript-based
 clock of the user's choosing. It also provides a configurator window, which is
 accessed when the user clicks on the clock. Ordinarily, this wouldn't be much
@@ -16,10 +21,10 @@ clickable window, which in turn will hide the configurator window.
 
 In this way, the user is given the impression that (1) the clock is clickable,
 (2) clicking on it will let the user reconfigure it 'live', and (3) clicking on
-it again will hide the configuration tools. 
+it again will hide the configuration tools.
 
 .. _Google Python Style Guide:
-   http://google.github.io/styleguide/pyguide.html   
+   http://google.github.io/styleguide/pyguide.html
 
 """
 

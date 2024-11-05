@@ -1,6 +1,11 @@
 # -*- coding: utf-8 -*-
 """Wraparound for audio playback, courtesy of pydub and pygame.
 
+Created on Aug 21, 2024
+Updated on Nov 05, 2024
+
+@author: Tom Blackshaw
+
 This module contains functions for converting audio (from mp3 to ogg) and
 queuing their background playbcck (using a thread).
 

@@ -2,6 +2,7 @@
 """my.globals
 
 Created on May 19, 2024
+Updated on Nov 05, 2024
 
 @author: Tom Blackshaw
 
@@ -27,8 +28,7 @@ import os
 #     except IndexError as e:
 #         raise FileNotFoundError(e)
 
- 
-ELEVENLABS_KEY_FILENAME = '%s%s%s' % (os.path.expanduser('~'), os.sep, '.eleven_api_key') # e.g. /home/foo/.eleven_api_key
+ELEVENLABS_KEY_FILENAME = '%s%s%s' % (os.path.expanduser('~'), os.sep, '.eleven_api_key')  # e.g. /home/foo/.eleven_api_key
 SOUNDS_CACHE_PATH = 'sounds/cache'
 SOUNDS_ALARMS_PATH = 'sounds/alarms'
 SOUNDS_FARTS_PATH = 'sounds/farts'

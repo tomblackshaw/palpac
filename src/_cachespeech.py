@@ -2,10 +2,10 @@
 
 '''
 Created on Aug 17, 2024
+Updated on Nov 05, 2024
 
 @author: Tom Blackshaw
 '''
-
 
 import sys
 from my.text2speech import phrase_audio

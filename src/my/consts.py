@@ -2,6 +2,7 @@
 """my.consts
 
 Created on May 19, 2024
+Updated on Nov 05, 2024
 
 @author: Tom Blackshaw
 
@@ -25,8 +26,6 @@ SOURCE: https://www.nodc.noaa.gov/archive/arc0021/0002199/1.1/data/0-data/HTML/W
 """
 
 OWNER_NAME = 'Charlie'
-
-
 
 hello_owner_lst = [
 """Lovely ${morning_or_afternoon_or_evening}, ${owner}""",
