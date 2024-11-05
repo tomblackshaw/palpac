@@ -317,7 +317,7 @@ def generate_detokenized_message(owner:str, time_24h:int, time_minutes:int, mess
     return newval
 
 
-def generate_random_alarm_message(owner_of_clock:str, time_24h:int,  time_minutes:int, snoozed:bool=False) -> str:
+def generate_random_alarm_message(owner_of_clock:str, time_24h:int, time_minutes:int, snoozed:bool=False) -> str:
     """Example function with types documented in the docstring.
 
     `PEP 484`_ type annotations are supported. If attribute, parameter, and
@@ -360,18 +360,11 @@ def pathname_of_phrase_audio(voice:str, text:str=None, suffix:str='ogg') -> str:
     else:
         text = text.strip(' ')
         return '{cache}/{voice}/{text}.{suffix}'.format(suffix=suffix,
-                                                    cache=SOUNDS_CACHE_PATH, 
-                                                    voice=voice, 
-                                                    text=text.lower().replace(' ','_').replace('.','^')).replace('!','&').replace('"',"'")
+                                                    cache=SOUNDS_CACHE_PATH,
+                                                    voice=voice,
+                                                    text=text.lower().replace(' ', '_').replace('.', '^')).replace('!', '&').replace('"', "'")
+
 
 def list_files_in_dir(path, endswith_str=None):
     return [f for f in listdir(path) if isfile(join(path, f)) and not f.startswith('.') and (endswith_str is None or f.endswith(endswith_str))]
-
-
-
-
-
-
-
-
 

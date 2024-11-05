@@ -17,18 +17,18 @@ import os
 from PyQt5.QtCore import Qt, QObject
 from PyQt5.QtWidgets import QApplication, QScroller, QMessageBox
 
-
-try: 
+try:
     from PyQt5.QtWebEngineWidgets import QWebEngineView as BrowserView
     from PyQt5.QtWebEngineWidgets import QWebEngineSettings as BrowserSettings
 #    print("We are using QtWebEngineWidgets, which is good. It has JavascriptEnable(true/false) as an option.")
-except ImportError: # QtWebKitWidgets was removed in Qt 5.6; you're using an ancient library.
+except ImportError:  # QtWebKitWidgets was removed in Qt 5.6; you're using an ancient library.
     from PyQt5.QtWebKitWidgets import QWebView as BrowserView
     print("We ae using QtWebKitWidgets, which was deprecated in Qt 5.5 and removed in Qt 5.6; that's not great.")
+
     class BrowserSettings(QObject):
+
         def __init__(self):
             raise ImportError("MISSING BrowserSettings CLASS - you're using an ancient web browser widget.")
-
 
 
 def set_vdu_brightness(brightness:int):
@@ -64,14 +64,14 @@ def make_window_transparent(q:QObject, opacity=0.):
     q.setWindowOpacity(opacity)  # Turn entire window transparent
     q.setStyleSheet('QWidget{background: #000000}')  # Turn background transparent too
 
-    
+
 def make_background_translucent(q:QObject):
     q.setAttribute(Qt.WA_TranslucentBackground)  # Turn background of window transparent
     q.setWindowFlags(Qt.FramelessWindowHint)
 
 
 def enable_touchscroll(q:QObject):
-    QScroller.grabGesture(q, QScroller.LeftMouseButtonGesture) # Enable scroll-with-mouse-button
+    QScroller.grabGesture(q, QScroller.LeftMouseButtonGesture)  # Enable scroll-with-mouse-button
 
 
 def make_scrollbars_zeropixels_in_size(w):
@@ -83,16 +83,17 @@ def make_scrollbars_zeropixels_in_size(w):
 def getRelativeFrameGeometry(widget):
     g = widget.geometry()
     fg = widget.frameGeometry()
-    return fg.translated(-g.left(),-g.top())
+    return fg.translated(-g.left(), -g.top())
 
 
 def screenCaptureWidget(widget, parent_pos, filename, fileformat='png'):
 #    rfg = getRelativeFrameGeometry(QApplication.primaryScreen())
     rfg = widget.frameGeometry()
     screen = QApplication.primaryScreen()
-    screenshot = screen.grabWindow( widget.winId(), rfg.left()+parent_pos.x(), rfg.top() + parent_pos.y(),
+    screenshot = screen.grabWindow(widget.winId(), rfg.left() + parent_pos.x(), rfg.top() + parent_pos.y(),
                                        rfg.width(), rfg.height())
-    screenshot.save(filename, fileformat)  
+    screenshot.save(filename, fileformat)
+
 
 def popup_message(title, text):
     msg = QMessageBox()

@@ -63,7 +63,6 @@ def logit(s:str, logfile_fname:str='/tmp/null.txt'):
     print(s)
 
 
-
 def object_from_dictionary(dct:dict):
     '''Turn a dictionary into a simple object'''
 
@@ -74,5 +73,4 @@ def object_from_dictionary(dct:dict):
     for k in dct.keys():
         setattr(o, k, dct[k])
     return o
-
 

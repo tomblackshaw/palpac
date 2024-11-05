@@ -87,7 +87,6 @@ def get_elevenlabs_clientclass(key_filename:str) -> ElevenLabs:
     return client
 
 
-
 @singleton
 class _Text2SpeechClass:
     """Class that wraps around the Eleven Labs client class.
@@ -124,6 +123,7 @@ class _Text2SpeechClass:
         *professional* voice is chosen at random from only that group.
 
     """
+
     def __init__(self):
         self.key_filename = ELEVENLABS_KEY_FILENAME
         self.client = get_elevenlabs_clientclass(self.key_filename)
@@ -171,7 +171,7 @@ class _Text2SpeechClass:
             self.__api_models = value
         finally:
             self.__api_models_lock.release_write()
-            
+
     @api_models.deleter
     def api_models(self):
         del self.__api_models
@@ -193,7 +193,7 @@ class _Text2SpeechClass:
                 raise ValueError("When setting api_voices, specify a string & not a {t}".format(t=str(type(value))))
             self.__api_voices = value
         finally:
-            self.__api_voices_lock.release_write()    
+            self.__api_voices_lock.release_write()
 
     @api_voices.deleter
     def api_voices(self):
@@ -216,7 +216,7 @@ class _Text2SpeechClass:
                 raise ValueError("When setting advanced, specify a bool & not a {t}".format(t=str(type(value))))
             self.__advanced = value
         finally:
-            self.__advanced_lock.release_write()    
+            self.__advanced_lock.release_write()
 
     @advanced.deleter
     def advanced(self):
@@ -239,7 +239,7 @@ class _Text2SpeechClass:
                 raise ValueError("When setting models, specify a string & not a {t}".format(t=str(type(value))))
             self.__model = value
         finally:
-            self.__model_lock.release_write()    
+            self.__model_lock.release_write()
 
     @model.deleter
     def model(self):
@@ -262,7 +262,7 @@ class _Text2SpeechClass:
                 raise ValueError("When setting stability, specify a floating & not a {t}".format(t=float(type(value))))
             self.__stability = value
         finally:
-            self.__stability_lock.release_write()    
+            self.__stability_lock.release_write()
 
     @stability.deleter
     def stability(self):
@@ -285,8 +285,7 @@ class _Text2SpeechClass:
                 raise ValueError("When setting similarity, specify a floating & not a {t}".format(t=float(type(value))))
             self.__similarity = value
         finally:
-            self.__similarity_lock.release_write()    
-
+            self.__similarity_lock.release_write()
 
     @similarity.deleter
     def similarity(self):
@@ -309,7 +308,7 @@ class _Text2SpeechClass:
                 raise ValueError("When setting style, specify a floating & not a {t}".format(t=float(type(value))))
             self.__style = value
         finally:
-            self.__style_lock.release_write()    
+            self.__style_lock.release_write()
 
     @style.deleter
     def style(self):
@@ -332,7 +331,7 @@ class _Text2SpeechClass:
                 raise TypeError("When setting boost, specify a booling & not a {t}".format(t=bool(type(value))))
             self.__boost = value
         finally:
-            self.__boost_lock.release_write()    
+            self.__boost_lock.release_write()
 
     @boost.deleter
     def boost(self):
@@ -382,7 +381,7 @@ class _Text2SpeechClass:
                 raise ValueError("{name} is not a recognized voice name.".format(name=value))
             self.__voice = value
         finally:
-            self.__voice_lock.release_write()    
+            self.__voice_lock.release_write()
 
     @voice.deleter
     def voice(self):
@@ -405,7 +404,7 @@ class _Text2SpeechClass:
                 else:
                     print(">>>%s<<< audio acquisition failed. Retrying..." % text)
         raise SystemError("You should never get here.")
-            
+
     def _audio(self, text:str, getgenerator:bool=False, stream:bool=False):
         if self.advanced is False:
             audio = self.client.generate(text=text, voice=self.voice, stream=stream)
@@ -426,7 +425,7 @@ class _Text2SpeechClass:
         except ApiError as e:
             raise ElevenLabsAPIError("Unable to retrieve audio from the ElevenLabs engine. Did you pay your subscription?") from e
 
-    def play(self, data, force_mpv:bool=True, trim_level:int=0): # 
+    def play(self, data, force_mpv:bool=True, trim_level:int=0):  #
         if type(data) is str:
             raise ValueError("Please supply audio data, not a string, when calling me.")
         if type(data) not in (list, tuple):
@@ -466,6 +465,4 @@ class _Text2SpeechClass:
                   }
                 )
             self.stream(audio_stream)
-
-
 

@@ -71,8 +71,9 @@ class ReadWriteLock:
 
     Attributes:
         locked: Status of lock. True if locked, False if not.
-    
+
     """
+
     def __init__(self):
         self._read_ready_lck = Lock()
         self._read_ready = Condition(self._read_ready_lck)

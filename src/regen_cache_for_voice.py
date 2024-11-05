@@ -31,6 +31,7 @@ from my.tools.sound import mp3_to_ogg_conversions
 import sys
 from my.stringutils import generate_detokenized_message
 
+
 def cache_and_check_smart_sentence(voice:str, smart_phrase:str, owner:str):
     """With this voice, generate the audio for speaking this phrase.
 
@@ -100,12 +101,11 @@ def cache_phrases_for_voice(voice:str, owner:str):
                                                        "morning", "afternoon", "evening",
                                                        "good morning", "good afternoon", "good evening",
                                                        "midnight", "hours", "in the afternoon", "in the morning",
-                                                       "in the evening",], owner=owner)
+                                                       "in the evening", ], owner=owner)
     cache_and_check_list_of_smart_sentences(voice, postsnooze_alrm_msgs_lst, owner=owner)
     cache_and_check_list_of_smart_sentences(voice, alarm_messages_lst, owner=owner)
     cache_and_check_list_of_smart_sentences(voice, hours_lst, owner=owner)
     cache_and_check_list_of_smart_sentences(voice, minutes_lst, owner=owner)
-
 
 
 if __name__ == '__main__':
@@ -115,5 +115,5 @@ if __name__ == '__main__':
 #    cache_and_check_smart_sentence('Aria', 'Charlie.', 'Charlie')
     for this_voice in the_voices_i_care_about:
         print("Working on", this_voice)
-        cache_phrases_for_voice(this_voice, OWNER_NAME) # ...which generates mp3 and ogg files
+        cache_phrases_for_voice(this_voice, OWNER_NAME)  # ...which generates mp3 and ogg files
 

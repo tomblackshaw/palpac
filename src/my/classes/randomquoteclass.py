@@ -32,6 +32,7 @@ from my.classes.exceptions import StillAwaitingCachedValue, WebAPITimeoutError, 
 from my.classes.selfcachingcall import SelfCachingCall
 from my.classes import singleton
 
+
 @singleton
 class _RandomQuoteClass:
     """Return a random quote when asked for one.
@@ -43,6 +44,7 @@ class _RandomQuoteClass:
         quote (str): Cached quote.
 
     """
+
     def __init__(self):
         from my.stringutils import get_random_zenquote
         self._our_zenquote_caching_call = SelfCachingCall(15, get_random_zenquote)
@@ -81,5 +83,4 @@ class _RandomQuoteClass:
             raise WebAPITimeoutError("The ZenQuotes website timed out") from e
         except WebAPIOutputError:
             raise WebAPIOutputError("The ZenQuotes website returned an incomprehensible output") from e
-
 

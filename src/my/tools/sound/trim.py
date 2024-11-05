@@ -148,6 +148,6 @@ def convert_audio_recordings_list_into_an_mp3_file(data, exportfile:str, trim_le
         Unknown.
 
     """
-    suffix = 'mp3' if exportfile.endswith( 'mp3') else 'ogg'
+    suffix = 'mp3' if exportfile.endswith('mp3') else 'ogg'
     sounds = convert_audio_recordings_list_into_one_audio_recording(data=data, trim_level=trim_level, suffix=suffix)
     sounds.export(exportfile, format=suffix)

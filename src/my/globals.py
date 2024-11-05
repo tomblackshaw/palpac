@@ -64,5 +64,5 @@ ZOOMS_DCT = {_faces_dct['neon 1']:.9,
               _faces_dct['braun']:1.3,
               }
 
-TOUCHSCREEN_SIZE_X, TOUCHSCREEN_SIZE_Y = 480, 480 
+TOUCHSCREEN_SIZE_X, TOUCHSCREEN_SIZE_Y = 480, 480
 

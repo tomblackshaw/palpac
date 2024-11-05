@@ -38,7 +38,6 @@ from threading import Thread
 from queue import Empty, Queue
 
 
-
 def stop_sounds():
     pygame.mixer.music.stop()
     pygame.mixer.stop()
@@ -54,6 +53,7 @@ def play_audiofile(fname, vol=1.0, nowait=False):
     else:
         raise ValueError("play_audiofile() cannot handle files of type .%s" % fname.split('.')[-1])
 
+
 def play_mp3file(fname, vol=1.0, nowait=False):
     try:
         pygame.mixer.music.load(fname)
@@ -66,6 +66,7 @@ def play_mp3file(fname, vol=1.0, nowait=False):
             while pygame.mixer.music.get_busy() == True:
                 continue
 
+
 def play_oggfile(fname, vol=1.0, nowait=False):
     try:
         sound1 = pygame.mixer.Sound(fname)
@@ -73,7 +74,7 @@ def play_oggfile(fname, vol=1.0, nowait=False):
         raise FileNotFoundError("FYI, play_oggfile() cannot play %s: it doesn't exist" % fname) from e
     else:
         chan = pygame.mixer.find_channel(True)
-        chan.set_volume(vol,vol)
+        chan.set_volume(vol, vol)
         chan.play(sound1)
         if not nowait:
             while chan.get_busy() == True:
@@ -101,7 +102,7 @@ def mp3_to_ogg_voice_conversions(voice:str):
     mp3_to_ogg_conversions(path)
 
 
-def convert_one_mp3_to_ogg_file(mp3fname, oggfname):    
+def convert_one_mp3_to_ogg_file(mp3fname, oggfname):
     assert(os.path.exists(mp3fname))
     try:
         os.unlink(oggfname)
@@ -134,7 +135,6 @@ def queue_oggfile(fname):
     if not os.path.exists(fname):
         raise MissingFromCacheError("queue_oggfile() cannot queue %s: it doesn't exist" % fname)
     ogg_queue.put(fname)
-
 
 ######################## MAIN-ish ###########################
 

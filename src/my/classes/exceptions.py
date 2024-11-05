@@ -193,6 +193,7 @@ class ElevenLabsMissingKeyError(Text2SpeechError):
 
 class ElevenLabsWebsiteError(Text2SpeechError):
     """If the Eleven Labs website appears to be down"""
+
     def __init__(self, message):  # pylint: disable=useless-parent-delegation
 
         super().__init__(message)
@@ -200,12 +201,14 @@ class ElevenLabsWebsiteError(Text2SpeechError):
 
 class ElevenLabsAPIError(ElevenLabsWebsiteError):
     """If the Eleven Labs API returns an error"""
+
     def __init__(self, message):  # pylint: disable=useless-parent-delegation
 
         super().__init__(message)
 
 
 class ElevenLabsDownError(ElevenLabsWebsiteError):
+
     def __init__(self, message):  # pylint: disable=useless-parent-delegation
 
         super().__init__(message)
@@ -225,6 +228,4 @@ class NoProfessionalVoicesError(VoiceNotFoundError):
     def __init__(self, message):  # pylint: disable=useless-parent-delegation
 
         super().__init__(message)
-
-
 

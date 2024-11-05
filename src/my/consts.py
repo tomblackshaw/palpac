@@ -38,7 +38,7 @@ hello_owner_lst = [
 """${owner}! What the sigma?""",
 """What up, my rizzler!""",
 """Zang, ${owner}!""",
-"""Yeet, yeet, yeet, ${owner}, my rizzler!""", 
+"""Yeet, yeet, yeet, ${owner}, my rizzler!""",
 """${owner}. ${owner}? ${owner} ${owner} ${owner}! Ugh. Hey! Good ${morning_or_afternoon_or_evening}""",
 """Good ${morning_or_afternoon_or_evening}, ${owner}""",
 """Hey yoe, ${owner}! Good ${morning_or_afternoon_or_evening}""",
@@ -52,7 +52,7 @@ hello_owner_lst = [
 ]
 
 alarm_messages_lst = [
-"""No cap, lateness is cringe. Don't be Ohio, pookie! It's ${shorttime}. Flex your drip, get mad lit, and go mogging.""", 
+"""No cap, lateness is cringe. Don't be Ohio, pookie! It's ${shorttime}. Flex your drip, get mad lit, and go mogging.""",
 """Swab the decks, hoist the main sail, and give those jolly jack tars a good whipping! It's ${shorttime}. Up and atom!""",
 """${hello_owner}. It's ${one_minute_later}. Just kidding, it's actually ${shorttime} but it'll be ${one_minute_later} soon. Or will it? You'd better get up and check.""",
 """Knock, knock! Who's there? Get a warrant. Oh, and by the way, it's ${shorttime}.""",
