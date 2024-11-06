@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>480</width>
-    <height>220</height>
+    <height>260</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -46,7 +46,7 @@
     </property>
     <property name="icon">
      <iconset>
-      <normaloff>icons/random.png</normaloff>icons/random.png</iconset>
+      <normaloff>icons/unkface.png</normaloff>icons/unkface.png</iconset>
     </property>
     <property name="iconSize">
      <size>

@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>480</width>
-    <height>220</height>
+    <height>260</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -29,10 +29,10 @@
    <widget class="QSlider" name="brightness_slider">
     <property name="geometry">
      <rect>
-      <x>50</x>
-      <y>-30</y>
+      <x>90</x>
+      <y>10</y>
       <width>291</width>
-      <height>231</height>
+      <height>271</height>
      </rect>
     </property>
     <property name="sizePolicy">
