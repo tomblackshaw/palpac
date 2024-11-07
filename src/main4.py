@@ -34,7 +34,7 @@ import sys
 from PyQt5 import uic
 
 from PyQt5.QtCore import QUrl, Qt, QObject, pyqtSignal
-from PyQt5.QtWidgets import QApplication, QMainWindow, QLabel, QStackedLayout, QWidget
+from PyQt5.QtWidgets import QApplication, QMainWindow, QLabel, QStackedLayout, QWidget, QVBoxLayout
 
 from my.gui import BrowserView, set_vdu_brightness, set_audio_volume, make_background_translucent, \
                 screenCaptureWidget, make_scrollbars_zeropixels_in_size, enable_touchscroll, popup_message
@@ -51,11 +51,15 @@ from my.classes.exceptions import MissingFromCacheError
 import random
 import pwd
 import time
+from PyQt5.QtGui import QFont
+from my.classes.stolenslider import StolenSlider
 
 BASEDIR = os.path.dirname(__file__)  # Base directory of me, the executable script
 VOICE_NAME = [f for f in listdir(SOUNDS_CACHE_PATH) if isdir(join(SOUNDS_CACHE_PATH, f))][0]
 ALARMTONE_NAME = [f for f in listdir(SOUNDS_ALARMS_PATH) if isfile(join(SOUNDS_ALARMS_PATH, f))][0]
 MY_CLOCKFACE = random.choice(PATHNAMES_OF_CLOCKFACES)
+BRIGHTNESS = 100
+VOLUME = 8
 
 
 @singleton
@@ -84,10 +88,33 @@ class BrightnessWindow(QMainWindow):
     def __init__(self, parent=None):
         super().__init__(parent)
         uic.loadUi(os.path.join(BASEDIR, "ui/brightness.ui"), self)
-        self.brightness_slider.valueChanged.connect(self.brightness_changed)
+        self.timer = None
+        self.slider = StolenSlider(self)
+        self.slider.setRange(1, 100)
+        self.slider.setSingleStep(20)
+        self.slider.setDecimals(0)
+        self.slider.setFloat(False)
+        self.slider.setSuffix("%")
+        self.slider.setValue(BRIGHTNESS)
+        font = QFont()
+        font.setFamily('Times')
+        font.setPointSize(24)
+        font.setBold(True)
+        self.slider.setFont(font)
+        layout = QVBoxLayout()
+        layout.addWidget(self.slider)
+        self.central_widget.setLayout(layout)
+#        self.slider_frame.setCentralWidget(self.slider)
+#        self.setCentralWidget(self.slider)
+        # self.slider_1.setMinimumWidth(100)
+        # self.slider_1.setFixedHeight(18)
         make_background_translucent(self)
+        self.brightness_changed(BRIGHTNESS)
+        self.slider.valueChanged.connect(self.brightness_changed)
 
     def brightness_changed(self, x):
+        global BRIGHTNESS
+        BRIGHTNESS = x
         set_vdu_brightness(x)
 
 
@@ -97,8 +124,34 @@ class VolumeWindow(QMainWindow):
     def __init__(self, parent=None):
         super().__init__(parent)
         uic.loadUi(os.path.join(BASEDIR, "ui/volume.ui"), self)
-        self.volume_slider.valueChanged.connect(set_audio_volume)
+        self.timer = None
+        self.slider = StolenSlider(self)
+        self.slider.setRange(1, 11)
+        self.slider.setSingleStep(1)
+        self.slider.setDecimals(0)
+        self.slider.setFloat(False)
+        self.slider.setSuffix("")
+        self.slider.setValue(BRIGHTNESS)
+        font = QFont()
+        font.setFamily('Times')
+        font.setPointSize(24)
+        font.setBold(True)
+        self.slider.setFont(font)
+        layout = QVBoxLayout()
+        layout.addWidget(self.slider)
+        self.central_widget.setLayout(layout)
+#        self.slider_frame.setCentralWidget(self.slider)
+#        self.setCentralWidget(self.slider)
+        # self.slider_1.setMinimumWidth(100)
+        # self.slider_1.setFixedHeight(18)
         make_background_translucent(self)
+        self.volume_changed(VOLUME)
+        self.slider.valueChanged.connect(self.volume_changed)
+
+    def volume_changed(self, x):
+        global VOLUME
+        VOLUME = x
+        set_audio_volume(x)
 
 
 class PickfaceWindow(QMainWindow):
@@ -106,8 +159,8 @@ class PickfaceWindow(QMainWindow):
     def __init__(self, parent=None):
         super().__init__(parent)
         uic.loadUi(os.path.join(BASEDIR, "ui/clocks.ui"), self)
-        self.randomizer_button.clicked.connect(self.pickface_at_random)  # 'Choose Face' button was pushed
         make_background_translucent(self)
+        self.randomizer_button.clicked.connect(self.pickface_at_random)  # 'Choose Face' button was pushed
 
     def pickface_at_random(self):
         global MY_CLOCKFACE
@@ -127,14 +180,13 @@ class AlarmsWindow(QMainWindow):
     def __init__(self, parent=None):
         super().__init__(parent)
         uic.loadUi(os.path.join(BASEDIR, "ui/alarms.ui"), self)
-        self.alarms_qlist.currentTextChanged.connect(self.new_alarm_chosen)
         make_background_translucent(self)
         path = SOUNDS_ALARMS_PATH
         [self.alarms_qlist.addItem(f) for f in listdir(path) if isfile(join(path, f)) and f.endswith('.ogg')]  # pylint: disable=expression-not-assigned
         [self.alarms_qlist.setCurrentItem(x) for x in self.alarms_qlist.findItems(ALARMTONE_NAME, Qt.MatchExactly)]  # pylint: disable=expression-not-assigned
         for q in (self.alarms_qlist, self.hour_qlist, self.minutesA_qlist, self.minutesB_qlist, self.ampm_qlist):
             enable_touchscroll(q)
-        print("QQQ please add the 'scroller rounder-up' so that the selecting of a given hour/minute/second causes all dials to line up neatly.")
+        self.alarms_qlist.currentTextChanged.connect(self.new_alarm_chosen)
 
     def new_alarm_chosen(self, alarmtone):
         global ALARMTONE_NAME
@@ -156,12 +208,12 @@ class VoicesWindow(QMainWindow):
     def __init__(self, parent=None):
         super().__init__(parent)
         uic.loadUi(os.path.join(BASEDIR, "ui/voices.ui"), self)
-        self.randomizer_button.clicked.connect(self.voice_at_random)
         self.fart_button.clicked.connect(self.fart_button_clicked)
         self.hello_button.clicked.connect(self.hello_button_clicked)
         self.wakeup_button.clicked.connect(self.wakeup_button_clicked)
         make_background_translucent(self)
         _ = SOUNDS_CACHE_PATH
+        self.randomizer_button.clicked.connect(self.voice_at_random)
 
     def voice_at_random(self):
         print("RANDOM VOICE SELECTED")
@@ -244,10 +296,10 @@ class SettingsWindow(QMainWindow):
                         ]
 
     def configure_a_subwindow(self, a_class, a_button):
-        a_button.clicked.connect(lambda: self.choose_window(a_window))
         a_window = a_class(self)
         a_window.menubutton = a_button  # The button that activates me
         a_window.hide()
+        a_button.clicked.connect(lambda: self.choose_window(a_window))
         return(a_window)
 
     def choose_window(self, chosen_subwindow=None):
@@ -297,10 +349,10 @@ class ClockFace(BrowserView):
     def __init__(self, parent=None):
         super().__init__(parent)
         self.previous_shown_file = None
-        Yo.showClockFace.connect(self.show_clockface)
         Yo.showImage.connect(self.show_image)
         self.setWindowFlags(Qt.FramelessWindowHint)
         self.setFixedSize(TOUCHSCREEN_SIZE_X, TOUCHSCREEN_SIZE_Y)
+        Yo.showClockFace.connect(self.show_clockface)
 
     def show_clockface(self, face_path):
         self.setUpdatesEnabled(False)
@@ -351,9 +403,6 @@ class MainWindow(QMainWindow):
 
     def __init__(self, parent=None):
         super().__init__(parent)
-        Yo.hideSettings.connect(self.hide_settings_screen)
-        Yo.showSettings.connect(self.show_settings_screen)
-        Yo.takePictureOfCurrentClockFace.connect(self.take_picture_of_current_clock_face)
         self.setWindowFlags(Qt.FramelessWindowHint)
         self.our_layout = QStackedLayout()
         self.beard = QLabel("")  # This label (which is invisible) is *stacked* in front of the clock, making it clickable.
@@ -366,9 +415,11 @@ class MainWindow(QMainWindow):
         i_am_not_sure_what_this_is_for = QWidget()
         i_am_not_sure_what_this_is_for.setLayout(self.our_layout)
         self.setCentralWidget(i_am_not_sure_what_this_is_for)
-        self.settings.hide()
         print("Initial clockface is....", MY_CLOCKFACE.split('/')[2])
-        Yo.showClockFace.emit(MY_CLOCKFACE)
+        Yo.hideSettings.connect(self.hide_settings_screen)
+        Yo.showSettings.connect(self.show_settings_screen)
+        Yo.takePictureOfCurrentClockFace.connect(self.take_picture_of_current_clock_face)
+        self.hide_settings_screen()  # ...which also emits the clockface
 
     def take_picture_of_current_clock_face(self):
 #        print("Taking a snapshot of the", MY_CLOCKFACE.split('/')[2])
@@ -377,6 +428,7 @@ class MainWindow(QMainWindow):
 
     def show_settings_screen(self):
         '''Make the Settings screen the top widget. Behind it, show a snapshot of the clockface.'''
+        print("SHOW SETTINGS SCREEN")
         self.take_picture_of_current_clock_face()
         Yo.showImage.emit(face_snapshot_fname(MY_CLOCKFACE))
         self.settings.show()
@@ -385,8 +437,9 @@ class MainWindow(QMainWindow):
     def hide_settings_screen(self):
         '''Hide the Settings screen. Go back to displaying an animated clockface.'''
         self.our_layout.setCurrentWidget(self.beard)
-        Yo.showClockFace.emit(MY_CLOCKFACE)
+        print("HIDING SETTINGS SCREEN")
         self.settings.hide()
+        Yo.showClockFace.emit(MY_CLOCKFACE)
 
     def mousePressEvent(self, event):
         '''If the user clicks on the beard that covers the clockface, let's launch the Settings window; otherwise, let's hide it.'''

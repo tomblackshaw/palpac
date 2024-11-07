@@ -30,7 +30,8 @@ OWNER_NAME = 'Charlie'
 hello_owner_lst = [
 """Lovely ${morning_or_afternoon_or_evening}, ${owner}""",
 """Good ${morning_or_afternoon_or_evening}, ${owner}""",
-"""Hi ${morning_or_afternoon_or_evening}, ${owner}""",
+"""Hi, ${owner}""",
+"""What a lovely ${morning_or_afternoon_or_evening}, ${owner}""",
 """What up, ${owner}""",
 """Yo ${owner}""",
 """What it do, ${owner}""",

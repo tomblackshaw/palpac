@@ -192,7 +192,7 @@ def phrase_audio(voice:str, text:str, suffix, raise_exception_if_not_cached:bool
         if major_ver < 3 or minor_ver < 11:  # Some versions of Python can't handle Eleven Labs. Therefore, we call the bash script, will calls the correct version. Or something.
             os.system('''./_cachespeech.sh "{voice}" "{text}" "{outfile}"'''.format(voice=voice, text=text, outfile=outfile))
         else:
-            print("Writing >%s<" % outfile[:-4] + '.mp3')
+            print("Writing >>>%s<<<" % (outfile[:-4] + '.mp3'))
             old_v = Text2SpeechSingleton.voice
             Text2SpeechSingleton.voice = voice
             look_for_dupes()
@@ -419,7 +419,7 @@ def smart_phrase_filenames(voice:str, smart_phrase:str, owner:str=None, time_24h
         detokenized_phrase = detokenized_phrase.replace('12 newn', '12:00 P.M.').replace('12 midnight', '12:00 A.M.')
     else:
         detokenized_phrase = ''.join(r + ' ' for r in list_phrases_to_handle(smart_phrase)).strip(' ')
-    detokenized_phrase = detokenized_phrase.lower()
+    detokenized_phrase = detokenized_phrase.lower().replace('..', '.!')  # e.g. a.m.., p.m..
     audiofilenames = []
     all_words = [r.lower().strip(' ') for r in detokenized_phrase.split(' ')]
     firstwordno = 0
@@ -489,12 +489,14 @@ def generate_timedate_phrases_list(timedate_str:str) -> str:
 
 def get_list_of_files_for_speaking_a_random_alarm_message(owner, hour, minute, voice, snoozed=False, fail_quietly=False):
     my_txt = generate_random_alarm_message(owner_of_clock=owner, time_24h=hour, time_minutes=minute, snoozed=snoozed)
+    print("Random alarm message:", my_txt)
     fnames = smart_phrase_filenames(voice, my_txt, fail_quietly=fail_quietly)
     return fnames
 
 
 def speak_a_random_alarm_message(owner, hour, minute, voice, snoozed=False, fail_quietly=True):
     for f in get_list_of_files_for_speaking_a_random_alarm_message(owner, hour, minute, voice, snoozed, fail_quietly):
+        print("Playing", f)
         queue_oggfile(f)
 
 
@@ -503,6 +505,7 @@ def speak_a_random_hello_message(owner, voice, fail_quietly=True):
     message = generate_detokenized_message(owner=owner, time_24h=0, time_minutes=0, message_template=message_template)
     fnames = smart_phrase_filenames(voice, message, fail_quietly=fail_quietly)
     for f in fnames:
+        print("Playing", f)
         queue_oggfile(f)
 
 

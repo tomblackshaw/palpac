@@ -61,7 +61,7 @@
    <widget class="QPushButton" name="brightness_button">
     <property name="geometry">
      <rect>
-      <x>210</x>
+      <x>200</x>
       <y>360</y>
       <width>96</width>
       <height>96</height>
