@@ -62,17 +62,18 @@ def cache_and_check_list_of_smart_sentences(voice:str, lst, owner:str, do_punctu
     pronounceable_punctuation = '?!,.'
     for smart_phrase in lst:
         assert(not smart_phrase.endswith(' '))
-        cache_and_check_smart_sentence(voice=voice, smart_phrase=smart_phrase.replace('${owner}', owner), owner=owner)
         if len(smart_phrase) == 0:
             print("IGNORING >><< because it's empty")
-        elif do_punctuation:
-            if smart_phrase[-1] in pronounceable_punctuation and not smart_phrase.endswith('.m.'):
-                smart_phrase = smart_phrase[:-1]
-            cache_and_check_smart_sentence(voice, smart_phrase, owner)
-            for extra_char in pronounceable_punctuation:
-                cache_and_check_smart_sentence(voice, smart_phrase + extra_char, owner)
         else:
-            cache_and_check_smart_sentence(voice, smart_phrase, owner)
+            smart_phrase = smart_phrase.replace('${owner}', owner)
+            if not do_punctuation:
+                cache_and_check_smart_sentence(voice=voice, smart_phrase=smart_phrase, owner=owner)
+            else:
+                if smart_phrase[-1] in pronounceable_punctuation and not smart_phrase.endswith('.m.'):
+                    smart_phrase = smart_phrase[:-1]
+                cache_and_check_smart_sentence(voice, smart_phrase, owner)
+                for extra_char in pronounceable_punctuation:
+                    cache_and_check_smart_sentence(voice, smart_phrase=smart_phrase + extra_char, owner=owner)
 
 
 def cache_phrases_for_voice(voice:str, owner:str):
@@ -95,12 +96,17 @@ def cache_phrases_for_voice(voice:str, owner:str):
                                                        "time", 'date',
                                                        "morning", "afternoon", "evening",
                                                        "good morning", "good afternoon", "good evening",
-                                                       "midnight", "hours", "in the afternoon", "in the morning",
+                                                       "midnight", "minutes", "hours", "in the afternoon", "in the morning",
                                                        "in the evening", ], owner=owner)
     cache_and_check_list_of_smart_sentences(voice, postsnooze_alrm_msgs_lst, owner=owner, do_punctuation=False)
     cache_and_check_list_of_smart_sentences(voice, alarm_messages_lst, owner=owner, do_punctuation=False)
     cache_and_check_list_of_smart_sentences(voice, hours_lst, owner=owner)
     cache_and_check_list_of_smart_sentences(voice, minutes_lst, owner=owner)
+
+# def do_stuff(q):
+#     while True:
+#         cache_phrases_for_voice(q.get(), OWNER_NAME)
+#         q.task_done()
 
 
 if __name__ == '__main__':
@@ -111,4 +117,14 @@ if __name__ == '__main__':
         print("Working on", my_voice)
         cache_phrases_for_voice(my_voice, OWNER_NAME)  # ...which generates mp3 and ogg files
     sys.exit(0)
+    # q = Queue(maxsize=0)
+    # workers = []
+    # num_threads = 8
+    # for i in range(num_threads):
+    #     worker = Thread(target=do_stuff, args=(q,))
+    #     worker.setDaemon(True)
+    #     worker.start()
+    # for this_voice in tts.all_voices:
+    #     q.put(this_voice)
+    # q.join()
 
