@@ -324,6 +324,7 @@ class SettingsWindow(QMainWindow):
         if chosen_subwindow is not None and visibility_of_chosen_subwindow is False:
             chosen_subwindow.setVisible(True)
             chosen_subwindow.menubutton.setVisible(True)
+            chosen_subwindow.activateWindow()
         # Third, if there *is* no specific subwindow, display all icons.
         else:
             for w in self.all_subwindows:
