@@ -158,7 +158,7 @@ class PickfaceWindow(QMainWindow):
 
     def __init__(self, parent=None):
         super().__init__(parent)
-        uic.loadUi(os.path.join(BASEDIR, "ui/clocks.ui"), self)
+        uic.loadUi(os.path.join(BASEDIR, "ui/cfgclock.ui"), self)
         make_background_translucent(self)
         self.randomizer_button.clicked.connect(self.pickface_at_random)  # 'Choose Face' button was pushed
 
