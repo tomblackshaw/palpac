@@ -43,8 +43,9 @@ from os.path import join, isdir, isfile
 from os import listdir
 from my.text2speech import speak_a_random_alarm_message, fart_and_apologize, get_random_fart_fname, speak_a_random_hello_message
 from my.text2speech import Text2SpeechSingleton as tts
-import datetime
+
 from my.consts import OWNER_NAME
+from my import BASEDIR
 from my.classes import singleton
 from my.tools.sound import stop_sounds, play_audiofile
 from my.classes.exceptions import MissingFromCacheError
@@ -53,8 +54,10 @@ import pwd
 import time
 from PyQt5.QtGui import QFont
 from my.classes.stolenslider import StolenSlider
-
-BASEDIR = os.path.dirname(__file__)  # Base directory of me, the executable script
+from my.gui.tenkey import TenkeyDialog
+from my.stringutils import is_valid_date
+import timesetter
+from datetime import datetime
 VOICE_NAME = [f for f in listdir(SOUNDS_CACHE_PATH) if isdir(join(SOUNDS_CACHE_PATH, f))][0]
 ALARMTONE_NAME = [f for f in listdir(SOUNDS_ALARMS_PATH) if isfile(join(SOUNDS_ALARMS_PATH, f))][0]
 MY_CLOCKFACE = random.choice(PATHNAMES_OF_CLOCKFACES)
@@ -80,6 +83,11 @@ def face_snapshot_fname(face_path):
     homedir = pwd.getpwuid(os.getuid()).pw_dir
     assert('"' not in face_path)
     return('{home}/dotpalpac/thumbs/{faceish}.png'.format(home=homedir, faceish=face_path.replace('/', '_')))
+
+
+def set_the_system_clock(year, month, day, hour, minute):
+    target_time = datetime(year=year, month=month, day=day, hour=hour, minute=minute, second=0)
+    timesetter.set(target_time)
 
 
 class BrightnessWindow(QMainWindow):
@@ -154,13 +162,23 @@ class VolumeWindow(QMainWindow):
         set_audio_volume(x)
 
 
-class PickfaceWindow(QMainWindow):
+class FaceDateTimeWindow(QMainWindow):
 
     def __init__(self, parent=None):
         super().__init__(parent)
         uic.loadUi(os.path.join(BASEDIR, "ui/cfgclock.ui"), self)
         make_background_translucent(self)
         self.randomizer_button.clicked.connect(self.pickface_at_random)  # 'Choose Face' button was pushed
+        self.currentdate_button.clicked.connect(self.set_current_date)
+        self.currentyear_button.clicked.connect(self.set_current_year)
+        self.currenttime_button.clicked.connect(self.set_current_time)
+        self.get_current_date()
+
+    def get_current_date(self):
+        the_date = datetime.now()
+        self.currentyear_button.setText(str(the_date.year))
+        self.currentdate_button.setText('%02d/%02d' % (the_date.month, the_date.day))
+        self.currenttime_button.setText('%02d:%02d' % (the_date.hour, the_date.minute))
 
     def pickface_at_random(self):
         global MY_CLOCKFACE
@@ -172,6 +190,64 @@ class PickfaceWindow(QMainWindow):
             MY_CLOCKFACE = random.choice(PATHNAMES_OF_CLOCKFACES)
         print("Random clockface chosen:", MY_CLOCKFACE.split('/')[2])
         Yo.showClockFace.emit(MY_CLOCKFACE)
+
+    def set_current_date(self):
+        output, ok = TenkeyDialog.getOutput(formatstring='../..', minlen=4, maxlen=4)
+        if ok and self.is_our_date_string_valid():
+            try:
+                self.set_system_clock()
+            except Exception as e:
+                popup_message(str(type(e)), "Failed to set time/date.")
+            else:
+                self.currentdate_button.setText(output)
+
+    def set_system_clock(self):
+        y = self.currentyear_button.text()
+        d = self.currentdate_button.text()
+        set_the_system_clock(year=int(y),
+                            month=int(d[:2]),
+                            day=int(d[3:]),
+                            hour=int(self.currenttime_button.text()[:2]),
+                            minute=int(self.currenttime_button.text()[3:]))
+
+    def set_current_year(self):
+        output, ok = TenkeyDialog.getOutput(formatstring='....', minlen=4, maxlen=4)
+        if ok and self.is_our_date_string_valid():
+            try:
+                self.set_system_clock()
+            except Exception as e:
+                popup_message(str(type(e)), "Failed to set time/date.")
+            else:
+                self.currentyear_button.setText(output)
+
+    def set_current_time(self):
+        output, ok = TenkeyDialog.getOutput(formatstring='..:..', minlen=4, maxlen=4)
+        if ok and self.is_our_time_string_valid():
+            try:
+                self.set_system_clock()
+            except Exception as e:
+                popup_message(str(type(e)), "Failed to set time/date.")
+            else:
+                self.currenttime_button.setText(output)
+
+    def is_our_date_string_valid(self):
+        y = self.currentyear_button.text()
+        d = self.currentdate_button.text()
+        if len(y) == 4 \
+        and len(d) == 5 \
+        and is_valid_date(int(y), int(d[:2]), int(d[3:])):
+            return True
+        else:
+            return False
+
+    def is_our_time_string_valid(self):
+        t = self.currenttime_button.text()
+        if len(t) == 5 \
+        and int(t[:2]) < 24 \
+        and int(t[3:]) < 60:
+            return True
+        else:
+            return False
 
 
 class AlarmsWindow(QMainWindow):
@@ -245,8 +321,9 @@ class VoicesWindow(QMainWindow):
     def wakeup_button_clicked(self):
         stop_sounds()
         try:
+            t = datetime.now()
             speak_a_random_alarm_message(owner=OWNER_NAME, voice=VOICE_NAME,
-                                     hour=datetime.datetime.now().hour, minute=datetime.datetime.now().minute,
+                                     hour=t, minute=t,
                                      snoozed=False, fail_quietly=True)
         except MissingFromCacheError as e:
             popup_message("Voice Missing", "Please pick a different voice.")
@@ -291,7 +368,7 @@ class SettingsWindow(QMainWindow):
                         self.configure_a_subwindow(VoicesWindow, self.voices_button),
                         self.configure_a_subwindow(VolumeWindow, self.volume_button),
                         self.configure_a_subwindow(TestingWindow, self.testing_button),
-                        self.configure_a_subwindow(PickfaceWindow, self.faces_button),
+                        self.configure_a_subwindow(FaceDateTimeWindow, self.faces_button),
                         self.configure_a_subwindow(BrightnessWindow, self.brightness_button)
                         ]
 

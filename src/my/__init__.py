@@ -21,3 +21,6 @@ Attributes:
    https://sphinxcontrib-napoleon.readthedocs.io/en/latest/example_google.html
 
 """
+import os
+
+BASEDIR = os.path.dirname(os.path.dirname(__file__))  # Base directory of me, the executable script

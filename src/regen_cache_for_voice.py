@@ -96,7 +96,7 @@ def cache_phrases_for_voice(voice:str, owner:str):
                                                        "time", 'date',
                                                        "morning", "afternoon", "evening",
                                                        "good morning", "good afternoon", "good evening",
-                                                       "midnight", "minutes", "hours", "in the afternoon", "in the morning",
+                                                       "midnight", "hours", "minutes", "in the afternoon", "in the morning",
                                                        "in the evening", ], owner=owner)
     cache_and_check_list_of_smart_sentences(voice, postsnooze_alrm_msgs_lst, owner=owner, do_punctuation=False)
     cache_and_check_list_of_smart_sentences(voice, alarm_messages_lst, owner=owner, do_punctuation=False)
@@ -112,7 +112,7 @@ def cache_phrases_for_voice(voice:str, owner:str):
 if __name__ == '__main__':
     mp3_to_ogg_conversions(SOUNDS_ALARMS_PATH)
     mp3_to_ogg_conversions(SOUNDS_FARTS_PATH)
-    the_voices_i_care_about = tts.all_voices if len(sys.argv) == 1 else (sys.argv[1],)
+    the_voices_i_care_about = (sys.argv[1],) if len(sys.argv) > 1 else tts.all_voices  # [:20]
     for my_voice in the_voices_i_care_about:
         print("Working on", my_voice)
         cache_phrases_for_voice(my_voice, OWNER_NAME)  # ...which generates mp3 and ogg files

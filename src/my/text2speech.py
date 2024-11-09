@@ -516,12 +516,12 @@ def get_random_fart_fname():
     return fart_mp3file
 
 
-def fart_and_apologize(voice:str, fart_vol=0.5):  # , voice_vol=1.0):
+def fart_and_apologize(voice:str, fart_vol=0.5):
     phrases_fnames = [r for r in smart_phrase_filenames(voice=voice, smart_phrase=choice(farting_msgs_lst))]
     fart_fname = get_random_fart_fname()
     fart_duration = pygame.mixer.Sound(fart_fname).get_length()
     play_audiofile(fart_fname, vol=fart_vol, nowait=True)
     time.sleep(min(1.0, fart_duration * 2. / 3.))
     for f in phrases_fnames:
-        queue_oggfile(f)  # , vol=voice_vol)
+        queue_oggfile(f)
 

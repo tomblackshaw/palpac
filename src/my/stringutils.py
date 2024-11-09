@@ -368,3 +368,17 @@ def pathname_of_phrase_audio(voice:str, text:str=None, suffix:str='ogg') -> str:
 def list_files_in_dir(path, endswith_str=None):
     return [f for f in listdir(path) if isfile(join(path, f)) and not f.startswith('.') and (endswith_str is None or f.endswith(endswith_str))]
 
+
+def is_valid_date(year, month, day):
+    day_count_for_month = [0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
+    if year % 4 == 0 and (year % 100 != 0 or year % 400 == 0):
+        day_count_for_month[2] = 29
+    return (1 <= month <= 12 and 1 <= day <= day_count_for_month[month])
+
+
+def is_valid_time(hours, minutes):
+    if hours < 0 or hours > 23 or minutes < 0 or minutes > 59:
+        return False
+    else:
+        return True
+

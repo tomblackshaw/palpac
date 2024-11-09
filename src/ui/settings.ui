@@ -29,8 +29,8 @@
    <widget class="QPushButton" name="faces_button">
     <property name="geometry">
      <rect>
-      <x>290</x>
-      <y>310</y>
+      <x>190</x>
+      <y>370</y>
       <width>96</width>
       <height>96</height>
      </rect>
@@ -46,7 +46,7 @@
     </property>
     <property name="icon">
      <iconset>
-      <normaloff>icons/clocks3.png</normaloff>icons/clocks3.png</iconset>
+      <normaloff>icons/setclk.png</normaloff>icons/setclk.png</iconset>
     </property>
     <property name="iconSize">
      <size>
@@ -61,8 +61,8 @@
    <widget class="QPushButton" name="brightness_button">
     <property name="geometry">
      <rect>
-      <x>200</x>
-      <y>360</y>
+      <x>290</x>
+      <y>310</y>
       <width>96</width>
       <height>96</height>
      </rect>
@@ -83,7 +83,7 @@
     </property>
     <property name="icon">
      <iconset>
-      <normaloff>icons/setbright.png</normaloff>icons/setbright.png</iconset>
+      <normaloff>icons/cfgbry.png</normaloff>icons/cfgbry.png</iconset>
     </property>
     <property name="iconSize">
      <size>
@@ -98,7 +98,7 @@
    <widget class="QPushButton" name="volume_button">
     <property name="geometry">
      <rect>
-      <x>30</x>
+      <x>10</x>
       <y>240</y>
       <width>96</width>
       <height>96</height>
@@ -194,7 +194,7 @@
    <widget class="QPushButton" name="alarms_button">
     <property name="geometry">
      <rect>
-      <x>110</x>
+      <x>90</x>
       <y>330</y>
       <width>96</width>
       <height>96</height>
