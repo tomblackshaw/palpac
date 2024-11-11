@@ -52,7 +52,7 @@ _faces_dct = {'neon 1':'ui/clocks/neon-clock-css-jquery/dist/index.html',
              'slide':'ui/clocks/slide-clock/dist/index.html',
              'challenge':'ui/clocks/dev-challenge-week-3/dist/index.html',
              'another':'ui/clocks/another-canvas-clock/dist/index.html',
-             'reddy':'ui/clocks/reddy-clock/dist/index.html',
+             'reddy':'ui/clocks/reddy-clock/index.html',
     }
 PATHNAMES_OF_CLOCKFACES = [_faces_dct[k] for k in _faces_dct]
 ZOOMS_DCT = {_faces_dct['neon 1']:.9,
