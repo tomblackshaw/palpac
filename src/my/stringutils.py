@@ -382,3 +382,23 @@ def is_valid_time(hours, minutes):
     else:
         return True
 
+
+def is_date_string_valid(year_str, mmdd_str):
+    y = year_str
+    d = mmdd_str
+    if len(y) == 4 \
+    and len(d) == 5 \
+    and is_valid_date(int(y), int(d[:2]), int(d[3:])):
+        return True
+    else:
+        return False
+
+
+def is_time_string_valid(hhmm_str):
+    t = hhmm_str
+    if len(t) == 5 \
+    and int(t[:2]) < 24 \
+    and int(t[3:]) < 60:
+        return True
+    else:
+        return False

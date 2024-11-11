@@ -119,8 +119,9 @@ EOF
 chmod +x /etc/cron.minutely/reboot_if_wifi_dies
 sed -i s/CONF_SWAPSIZE=.*/CONF_SWAPSIZE=2048/ /etc/dphys-swapfile
 sed -i s/'exit 0'// /etc/rc.local
-
-
+cat << 'EOF' >> /etc/sudoers
+m       ALL=(ALL:ALL) /usr/bin/date
+EOF
 cat << 'EOF' >> /etc/rc.local
 cpufreq-set -g powersave # ondemand
 if [ -e "/boot/firmware/hostname" ] || [ -e "/boot/firmware/wpa_supplicant.conf" ] ; then
@@ -631,8 +632,8 @@ shave_three_seconds_off_boot() {
 #!/bin/bash
 # -retro -rw -background # https://www.computerhope.com/unix/ux.htm
 /usr/bin/X -retro -nolisten &
-for i in {1..20}; do
-    DISPLAY=:0 xhost + && su -l m -c "DISPLAY=:0 /usr/bin/ratpoison"
+for i in {1..999}; do
+    DISPLAY=:0 xhost + && su -l m -c "DISPLAY=:0 /home/m/autorun" >> /tmp/log.txt 2>> /tmp/log.txt
     sleep 0.4
 done
 exit 0

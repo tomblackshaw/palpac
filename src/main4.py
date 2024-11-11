@@ -51,12 +51,10 @@ from my.tools.sound import stop_sounds, play_audiofile
 from my.classes.exceptions import MissingFromCacheError
 import random
 import pwd
-import time
 from PyQt5.QtGui import QFont
 from my.classes.stolenslider import StolenSlider
 from my.gui.tenkey import TenkeyDialog
-from my.stringutils import is_valid_date
-import timesetter
+from my.stringutils import is_time_string_valid, is_date_string_valid
 from datetime import datetime
 VOICE_NAME = [f for f in listdir(SOUNDS_CACHE_PATH) if isdir(join(SOUNDS_CACHE_PATH, f))][0]
 ALARMTONE_NAME = [f for f in listdir(SOUNDS_ALARMS_PATH) if isfile(join(SOUNDS_ALARMS_PATH, f))][0]
@@ -86,8 +84,11 @@ def face_snapshot_fname(face_path):
 
 
 def set_the_system_clock(year, month, day, hour, minute):
-    target_time = datetime(year=year, month=month, day=day, hour=hour, minute=minute, second=0)
-    timesetter.set(target_time)
+    cmd = '''sudo date -s "%02d/%02d/%04d %02d:%02d"''' % (month, day, year, hour, minute)
+    print("cmd = >>>%s<<<" % cmd)
+    if 0 != os.system(cmd):
+        print("Failed to run" % cmd)
+        raise PermissionError("Unable to set time/date")
 
 
 class BrightnessWindow(QMainWindow):
@@ -172,82 +173,91 @@ class FaceDateTimeWindow(QMainWindow):
         self.currentdate_button.clicked.connect(self.set_current_date)
         self.currentyear_button.clicked.connect(self.set_current_year)
         self.currenttime_button.clicked.connect(self.set_current_time)
-        self.get_current_date()
+        self.year_str = None
+        self.date_str = None
+        self.time_str = None
+        self.get_current_date_and_time()
 
-    def get_current_date(self):
+    def is_our_date_string_valid(self):
+        return is_date_string_valid(self.currentyear_button.text(), self.currentdate_button.text())
+
+    def is_our_time_string_valid(self):
+        return is_time_string_valid(self.currenttime_button.text())
+
+    def get_current_date_and_time(self):
         the_date = datetime.now()
-        self.currentyear_button.setText(str(the_date.year))
-        self.currentdate_button.setText('%02d/%02d' % (the_date.month, the_date.day))
-        self.currenttime_button.setText('%02d:%02d' % (the_date.hour, the_date.minute))
+        self.year_str = str(the_date.year)
+        self.date_str = '%02d/%02d' % (the_date.month, the_date.day)
+        self.time_str = '%02d:%02d' % (the_date.hour, the_date.minute)
+        self.currentyear_button.setText(self.year_str)
+        self.currentdate_button.setText(self.date_str)
+        self.currenttime_button.setText(self.time_str)
 
     def pickface_at_random(self):
         global MY_CLOCKFACE
         if len(PATHNAMES_OF_CLOCKFACES) <= 1:
             print("Can't pick a clockface at random: there's only one available!")
-            return
-        old_face_path = MY_CLOCKFACE
-        while old_face_path == MY_CLOCKFACE:
-            MY_CLOCKFACE = random.choice(PATHNAMES_OF_CLOCKFACES)
-        print("Random clockface chosen:", MY_CLOCKFACE.split('/')[2])
-        Yo.showClockFace.emit(MY_CLOCKFACE)
+        else:
+            old_face_path = MY_CLOCKFACE
+            while old_face_path == MY_CLOCKFACE:
+                MY_CLOCKFACE = random.choice(PATHNAMES_OF_CLOCKFACES)
+            print("Random clockface chosen:", MY_CLOCKFACE.split('/')[2])
+            Yo.showClockFace.emit(MY_CLOCKFACE)
+
+    def set_system_clock(self):
+        y = self.year_str  # self.currentyear_button.text()
+        d = self.date_str  # self.currentdate_button.text()
+        hh = self.time_str[:2]  # self.currenttime_button.text()[:2]
+        mm = self.time_str[3:]  # self.mintuself.currenttime_button.text()[3:]
+        print("y =", y)
+        print("d =", d)
+        print("hh=", hh)
+        print("mm=", mm)
+        try:
+            set_the_system_clock(year=int(y),
+                            month=int(d[:2]),
+                            day=int(d[3:]),
+                            hour=int(hh),
+                            minute=int(mm))
+        except PermissionError as e:
+            popup_message(str(type(e)), "You do not have the authority to set the date.")
+            self.get_current_date_and_time()
+        except Exception as e:  # pylint: disable=broad-exception-caught
+            popup_message(str(type(e)), "Failed to set date: %s" % str(type(e)))
+            self.get_current_date_and_time()
 
     def set_current_date(self):
         output, ok = TenkeyDialog.getOutput(formatstring='../..', minlen=4, maxlen=4)
-        if ok and self.is_our_date_string_valid():
-            try:
-                self.set_system_clock()
-            except Exception as e:
-                popup_message(str(type(e)), "Failed to set time/date.")
-            else:
-                self.currentdate_button.setText(output)
-
-    def set_system_clock(self):
-        y = self.currentyear_button.text()
-        d = self.currentdate_button.text()
-        set_the_system_clock(year=int(y),
-                            month=int(d[:2]),
-                            day=int(d[3:]),
-                            hour=int(self.currenttime_button.text()[:2]),
-                            minute=int(self.currenttime_button.text()[3:]))
+        if not ok:
+            print("Canceled the date-setter")
+        elif not self.is_our_date_string_valid():
+            popup_message("Bad Date", "You specified a dodgy date.")
+        else:
+            self.date_str = output
+            self.currentdate_button.setText(output)
+        self.set_system_clock()
 
     def set_current_year(self):
         output, ok = TenkeyDialog.getOutput(formatstring='....', minlen=4, maxlen=4)
-        if ok and self.is_our_date_string_valid():
-            try:
-                self.set_system_clock()
-            except Exception as e:
-                popup_message(str(type(e)), "Failed to set time/date.")
-            else:
-                self.currentyear_button.setText(output)
+        if not ok:
+            print("Canceled the year-setter")
+        elif not self.is_our_date_string_valid():
+            popup_message("Bad Year", "You specified a dodgy year.")
+        else:
+            self.year_str = output
+            self.currentyear_button.setText(output)
+        self.set_system_clock()
 
     def set_current_time(self):
         output, ok = TenkeyDialog.getOutput(formatstring='..:..', minlen=4, maxlen=4)
-        if ok and self.is_our_time_string_valid():
-            try:
-                self.set_system_clock()
-            except Exception as e:
-                popup_message(str(type(e)), "Failed to set time/date.")
-            else:
-                self.currenttime_button.setText(output)
-
-    def is_our_date_string_valid(self):
-        y = self.currentyear_button.text()
-        d = self.currentdate_button.text()
-        if len(y) == 4 \
-        and len(d) == 5 \
-        and is_valid_date(int(y), int(d[:2]), int(d[3:])):
-            return True
+        if not ok:
+            print("Canceled the time-setter")
+        elif not self.is_our_time_string_valid():
+            popup_message("Bad Time", "You specified a dodgy time.")
         else:
-            return False
-
-    def is_our_time_string_valid(self):
-        t = self.currenttime_button.text()
-        if len(t) == 5 \
-        and int(t[:2]) < 24 \
-        and int(t[3:]) < 60:
-            return True
-        else:
-            return False
+            self.time_str = output
+            self.currenttime_button.setText(output)
+        self.set_system_clock()
 
 
 class AlarmsWindow(QMainWindow):
@@ -292,17 +302,18 @@ class VoicesWindow(QMainWindow):
         self.randomizer_button.clicked.connect(self.voice_at_random)
 
     def voice_at_random(self):
-        print("RANDOM VOICE SELECTED")
         attempts = 0
         while attempts < 100:
             attempts += 1
+            vox = "???"
             try:
                 vox = random.choice([f for f in listdir(SOUNDS_CACHE_PATH) if isdir(join(SOUNDS_CACHE_PATH, f))])
                 if vox != VOICE_NAME:
                     self.new_voice_chosen(vox)
                     break
-            except Exception as e:
-                print("This voice failed. Trying another...")
+            except Exception as _:  # pylint: disable=broad-exception-caught
+                print("This voice >>>%s<<< failed. Trying another..." % vox)
+        print("Random voice >>>%s<<< selected" % vox)
 
     def fart_button_clicked(self):
         stop_sounds()
@@ -323,9 +334,9 @@ class VoicesWindow(QMainWindow):
         try:
             t = datetime.now()
             speak_a_random_alarm_message(owner=OWNER_NAME, voice=VOICE_NAME,
-                                     hour=t, minute=t,
+                                     hour=t.hour, minute=t.minute,
                                      snoozed=False, fail_quietly=True)
-        except MissingFromCacheError as e:
+        except MissingFromCacheError as _:
             popup_message("Voice Missing", "Please pick a different voice.")
 
     def new_voice_chosen(self, voice):
@@ -522,9 +533,9 @@ class MainWindow(QMainWindow):
     def mousePressEvent(self, event):
         '''If the user clicks on the beard that covers the clockface, let's launch the Settings window; otherwise, let's hide it.'''
         if self.our_layout.currentWidget() == self.beard:
-            Yo.showSettings.emit()
+            self.show_settings_screen()  #            Yo.showSettings.emit()
         else:
-            Yo.hideSettings.emit()
+            self.hide_settings_screen()  #            Yo.hideSettings.emit()
         super().mousePressEvent(event)
 
 

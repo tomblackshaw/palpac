@@ -69,7 +69,7 @@
     </property>
     <property name="font">
      <font>
-      <pointsize>96</pointsize>
+      <pointsize>64</pointsize>
      </font>
     </property>
     <property name="text">
@@ -81,13 +81,13 @@
      <rect>
       <x>30</x>
       <y>160</y>
-      <width>220</width>
+      <width>211</width>
       <height>72</height>
      </rect>
     </property>
     <property name="font">
      <font>
-      <pointsize>72</pointsize>
+      <pointsize>48</pointsize>
      </font>
     </property>
     <property name="text">
@@ -97,15 +97,15 @@
    <widget class="QPushButton" name="currentyear_button">
     <property name="geometry">
      <rect>
-      <x>250</x>
+      <x>269</x>
       <y>160</y>
-      <width>200</width>
+      <width>181</width>
       <height>72</height>
      </rect>
     </property>
     <property name="font">
      <font>
-      <pointsize>72</pointsize>
+      <pointsize>48</pointsize>
      </font>
     </property>
     <property name="text">

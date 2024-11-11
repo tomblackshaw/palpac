@@ -77,25 +77,27 @@ class TenkeyDialog(QDialog):
 
     def digit_pushed(self, i):
         print("%d pushed" % i)
-        if len(self.youtyped) < self.maxlen:
-            self.youtyped += str(i)
+        if len(self.get_youtyped()) < self.maxlen:
+            self.set_youtyped(self.get_youtyped() + str(i))
         else:
             print("Sorry. Ignoring it. Max len already.")
         self.hide_and_show_aux_buttons_appropriately()
 
-    @property
-    def youtyped(self):
+#    @property
+#    def youtyped(self):
+    def get_youtyped(self):
         return self.__youtyped
 
-    @youtyped.setter
-    def youtyped(self, value):
+#    @youtyped.setter
+#    def youtyped(self, value):
+    def set_youtyped(self, value):
         self.__youtyped = value
         self.enteredtext_lineedit.setText(format_the_number_string(self.formatstring, value))
 
     def backspace_pushed(self):
         print("backspace pushed")
-        if len(self.youtyped) > 0:
-            self.youtyped = self.youtyped[:-1]
+        if len(self.get_youtyped()) > 0:
+            self.set_youtyped(self.get_youtyped()[:-1])
         else:
             print("Sorry. Ignoring it. Zero length already.")
         self.hide_and_show_aux_buttons_appropriately()
@@ -105,18 +107,18 @@ class TenkeyDialog(QDialog):
         self.reject()
 
     def accept_pushed(self):
-        if self.minlen <= len(self.youtyped) <= self.maxlen:
+        if self.minlen <= len(self.get_youtyped()) <= self.maxlen:
             print("accept pushed")
             self.accept()
         else:
             print("ignored: wrong length")
 
     def hide_and_show_aux_buttons_appropriately(self):
-        if len(self.youtyped) == 0:
+        if len(self.get_youtyped()) == 0:
             self.backspace_button.hide()
             self.cancel_button.show()
             self.accept_button.hide()
-        elif len(self.youtyped) < self.minlen or len(self.youtyped) > self.maxlen:
+        elif len(self.get_youtyped()) < self.minlen or len(self.get_youtyped()) > self.maxlen:
             self.backspace_button.show()
             self.cancel_button.show()
             self.accept_button.hide()
@@ -128,8 +130,8 @@ class TenkeyDialog(QDialog):
     @staticmethod
     def getOutput(parent=None, formatstring=None, minlen=None, maxlen=None):
         dialog = TenkeyDialog(parent=parent, formatstring=formatstring, minlen=minlen, maxlen=maxlen)
-        dialog.move(QPoint(TOUCHSCREEN_SIZE_X // 2 - dialog.size().width(), TOUCHSCREEN_SIZE_Y // 2 - dialog.size().height()))
-        dialog.move(QApplication.desktop().screen().rect().center())  # - dialog.rect().center())
+#        dialog.move(QPoint(TOUCHSCREEN_SIZE_X // 2 - dialog.size().width(), TOUCHSCREEN_SIZE_Y // 2 - dialog.size().height()))
+#        dialog.move(QApplication.desktop().screen().rect().center())  # - dialog.rect().center())
         result = dialog.exec_()
         s = dialog.enteredtext_lineedit.text()
         return (s, result == QDialog.Accepted)
