@@ -75,6 +75,9 @@
     <property name="text">
      <string>00:00</string>
     </property>
+    <property name="flat">
+     <bool>false</bool>
+    </property>
    </widget>
   </widget>
  </widget>
