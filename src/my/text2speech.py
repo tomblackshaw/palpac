@@ -34,14 +34,16 @@ import random
 import string
 import sys
 from random import choice
+from datetime import datetime
 from os import listdir
 from os.path import isfile, join
 
 from pydub.exceptions import CouldntDecodeError
 
 from my.classes.exceptions import NoProfessionalVoicesError, MissingFromCacheError
-from my.consts import hours_lst, minutes_lst, farting_msgs_lst, OWNER_NAME, hello_owner_lst
-from my.stringutils import generate_random_alarm_message, generate_detokenized_message, pathname_of_phrase_audio
+from my.consts import hours_lst, minutes_lst, farting_msgs_lst, OWNER_NAME, hello_owner_lst, wannasnooze_msgs_lst, \
+    postsnooze_alrm_msgs_lst, alarm_messages_lst
+from my.stringutils import generate_detokenized_message, pathname_of_phrase_audio
 from my.tools.sound.trim import convert_audio_recordings_list_into_one_audio_recording
 from pydub.audio_segment import AudioSegment
 from my.globals import ELEVENLABS_KEY_FILENAME, SOUNDS_FARTS_PATH
@@ -99,36 +101,34 @@ def look_for_dupes():
     if 0 == os.system("""ls sounds/cache/*/*\\ * 2> /dev/null"""):
         os.system("""rm sounds/cache/*/*\\ *""")  #        raise SystemError("Somehow, I ended up with spare files for audio cache")
 
+# def speak_random_alarm(owner_name:str, time_24h:int, time_minutes:int, voice:str=None, tts=Text2SpeechSingleton):
+#     """Speak an alarm warning.
+#
+#     In the specified voice, to the specified owner of the alarm clock, speak an alarm
+#     to alert the alarm clock user that a specific time has come.
+#
+#     Args:
+#         owner_name: First name of the owner of the alarm clock.
+#         time_24h: The time that has come (hours).
+#         time_minutes: The time that has come (minutes).
+#         voice: The name of the voice that I am to use.
+#
+#     """
+#     if voice is None:
+#         voice = tts.random_voice
+#     message = generate_random_alarm_message(owner_name, time_24h, time_minutes, voice)
+#     prof_name = get_first_prof_name(tts)  # [r for r in tts.api_voices if r.samples is not None][0].name
+#     if voice == prof_name:
+#         d = tts.audio(text=message, advanced=True, model='eleven_multilingual_v2', stability=0.30, similarity_boost=0.01, style=0.90, use_speaker_boost=True)
+#     else:
+#         d = tts.audio(text=message)
+#     tts.play(d)
 
-def speak_random_alarm(owner_name:str, time_24h:int, time_minutes:int, voice:str=None, tts=Text2SpeechSingleton):
-    """Speak an alarm warning.
-
-    In the specified voice, to the specified owner of the alarm clock, speak an alarm
-    to alert the alarm clock user that a specific time has come.
-
-    Args:
-        owner_name: First name of the owner of the alarm clock.
-        time_24h: The time that has come (hours).
-        time_minutes: The time that has come (minutes).
-        voice: The name of the voice that I am to use.
-
-    """
-    if voice is None:
-        voice = tts.random_voice
-    message = generate_random_alarm_message(owner_name, time_24h, time_minutes, voice)
-    prof_name = get_first_prof_name(tts)  # [r for r in tts.api_voices if r.samples is not None][0].name
-    if voice == prof_name:
-        d = tts.audio(text=message, advanced=True, model='eleven_multilingual_v2', stability=0.30, similarity_boost=0.01, style=0.90, use_speaker_boost=True)
-    else:
-        d = tts.audio(text=message)
-    tts.play(d)
-
-
-def speak_totally_randomized_alarm_and_time(owner_of_clock:str):
-    """It does what it says on the tin."""
-    time_24h = random.randint(0, 24)
-    time_minutes = random.randint(0, 60)
-    speak_random_alarm(owner_of_clock, time_24h, time_minutes)
+# def speak_totally_randomized_alarm_and_time(owner_of_clock:str):
+#     """It does what it says on the tin."""
+#     time_24h = random.randint(0, 24)
+#     time_minutes = random.randint(0, 60)
+#     speak_random_alarm(owner_of_clock, time_24h, time_minutes)
 
 
 def play_dialogue_lst(tts, dialogue_lst:list):  # , stability=0.5, similarity_boost=0.01, style=0.5):
@@ -484,29 +484,63 @@ def generate_timedate_phrases_list(timedate_str:str) -> str:
     elif the_ampm == '':
         return (hours_lst[int(the_hr)] + '?', minutes_lst[int(the_min)])
     else:
-        return (hours_lst[int(the_hr)] + '?', minutes_lst[int(the_min)], the_ampm + '.')
+        return (hours_lst[int(the_hr)] + '?', minutes_lst[int(the_min)], the_ampm + ',')
 
 
-def get_list_of_files_for_speaking_a_random_alarm_message(owner, hour, minute, voice, snoozed=False, fail_quietly=False):
-    my_txt = generate_random_alarm_message(owner_of_clock=owner, time_24h=hour, time_minutes=minute, snoozed=snoozed)
-    print("Random alarm message:", my_txt)
-    fnames = smart_phrase_filenames(voice, my_txt, fail_quietly=fail_quietly)
-    return fnames
+def speak_a_randomly_chosen_smart_sentence(owner, voice, message_template_list, fail_quietly=True, time_24h=None, time_minute=None):
+    """Speak a randomly chosen sentence, using snippets from our cache.
 
+    Owner: e.g. Charlie
+    Voice: Name of ElevenLabs voice to use
+    message_template_list: List [] of templates that I could use. I'll pick one at random.
+    fail_quietly: If a sample is missing, should I fail quietly (by ignoring it) or raise an exception?
+    time_24h: Self-explanatory.
+    time_minute: See above.
 
-def speak_a_random_alarm_message(owner, hour, minute, voice, snoozed=False, fail_quietly=True):
-    for f in get_list_of_files_for_speaking_a_random_alarm_message(owner, hour, minute, voice, snoozed, fail_quietly):
-        print("Playing", f)
-        queue_oggfile(f)
-
-
-def speak_a_random_hello_message(owner, voice, fail_quietly=True):
-    message_template = random.choice(hello_owner_lst)
-    message = generate_detokenized_message(owner=owner, time_24h=0, time_minutes=0, message_template=message_template)
+    """
+    message_template = random.choice(message_template_list)
+    if time_24h is None or time_minute is None:
+        t = datetime.now()
+        time_24h = t.hour
+        time_minute = t.minute
+    message = generate_detokenized_message(owner=owner, time_24h=time_24h, time_minutes=time_minute, message_template=message_template)
     fnames = smart_phrase_filenames(voice, message, fail_quietly=fail_quietly)
     for f in fnames:
         print("Playing", f)
         queue_oggfile(f)
+
+# def get_list_of_files_for_speaking_a_random_alarm_message(owner, hour, minute, voice, snoozed=False, fail_quietly=False):
+#     my_txt = generate_random_alarm_message(owner_of_clock=owner, time_24h=hour, time_minutes=minute, snoozed=snoozed)
+#     print("Random alarm message:", my_txt)
+#     fnames = smart_phrase_filenames(voice, my_txt, fail_quietly=fail_quietly)
+#     return fnames
+#
+#
+# def speak_a_random_alarm_message(owner, hour, minute, voice, snoozed=False, fail_quietly=True):
+#     for f in get_list_of_files_for_speaking_a_random_alarm_message(owner, hour, minute, voice, snoozed, fail_quietly):
+#         print("Playing", f)
+#         queue_oggfile(f)
+
+
+def speak_a_random_alarm_message(owner, voice, alarm_time=None, snoozed=False, fail_quietly=True):
+    if alarm_time is None:
+        t = datetime.now()
+        hour = t.hour
+        minute = t.minute
+    else:
+        hour = int(alarm_time[:2])
+        minute = int(alarm_time[3:])
+    message_template_lst = postsnooze_alrm_msgs_lst if snoozed else alarm_messages_lst
+    speak_a_randomly_chosen_smart_sentence(owner=owner, voice=voice, message_template_list=message_template_lst,
+                                           fail_quietly=fail_quietly, time_24h=hour, time_minute=minute)
+
+
+def speak_a_random_hello_message(owner, voice, fail_quietly=True):
+    speak_a_randomly_chosen_smart_sentence(owner, voice, hello_owner_lst, fail_quietly)
+
+
+def speak_a_random_wannasnooze_message(owner, voice, fail_quietly=True):
+    speak_a_randomly_chosen_smart_sentence(owner, voice, wannasnooze_msgs_lst, fail_quietly)
 
 
 def get_random_fart_fname():
