@@ -130,7 +130,19 @@ def ogg_file_queue_thread_func(qu):
             qu.task_done()
 
 
-def queue_oggfile(fname):
+def clear_ogg_queue():
+    while True:
+        try:
+            _ = ogg_queue.get_nowait()
+        except Empty:
+            break
+    stop_sounds()
+
+
+_CLEAR_THE_QUEUE = False
+
+
+def queue_oggfile(fname):  # TODO: rename queue_audiofile
     global ogg_queue
     if not os.path.exists(fname):
         raise MissingFromCacheError("queue_oggfile() cannot queue %s: it doesn't exist" % fname)
