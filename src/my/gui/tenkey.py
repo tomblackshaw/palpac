@@ -76,11 +76,11 @@ class TenkeyDialog(QDialog):
         self.hide_and_show_aux_buttons_appropriately()
 
     def digit_pushed(self, i):
-        print("%d pushed" % i)
+#        print("tenkey: %d pushed" % i)
         if len(self.get_youtyped()) < self.maxlen:
             self.set_youtyped(self.get_youtyped() + str(i))
         else:
-            print("Sorry. Ignoring it. Max len already.")
+            print("tenkey: Sorry. Ignoring it. Max len already.")
         self.hide_and_show_aux_buttons_appropriately()
 
 #    @property
@@ -95,23 +95,23 @@ class TenkeyDialog(QDialog):
         self.enteredtext_lineedit.setText(format_the_number_string(self.formatstring, value))
 
     def backspace_pushed(self):
-        print("backspace pushed")
+#        print("tenkey: backspace pushed")
         if len(self.get_youtyped()) > 0:
             self.set_youtyped(self.get_youtyped()[:-1])
         else:
-            print("Sorry. Ignoring it. Zero length already.")
+            print("tenkey: Sorry. Ignoring it. Zero length already.")
         self.hide_and_show_aux_buttons_appropriately()
 
     def cancel_pushed(self):
-        print("cancel pushed")
+#        print("tenkey: cancel pushed")
         self.reject()
 
     def accept_pushed(self):
         if self.minlen <= len(self.get_youtyped()) <= self.maxlen:
-            print("accept pushed")
+            print("tenkey: accept pushed")
             self.accept()
         else:
-            print("ignored: wrong length")
+            print("tenkey: ignored: wrong length")
 
     def hide_and_show_aux_buttons_appropriately(self):
         if len(self.get_youtyped()) == 0:
@@ -140,5 +140,5 @@ class TenkeyDialog(QDialog):
 if __name__ == '__main__':
     app = QApplication(sys.argv)
     output, ok = TenkeyDialog.getOutput(formatstring='..:..', minlen=2, maxlen=4)
-    print("output=%s; ok=%s" % (str(output), str(ok)))
+    print("tenkey: output=%s; ok=%s" % (str(output), str(ok)))
 #    app.exec_()
