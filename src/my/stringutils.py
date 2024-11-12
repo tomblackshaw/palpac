@@ -316,32 +316,31 @@ def generate_detokenized_message(owner:str, time_24h:int, time_minutes:int, mess
         raise KeyError("Unresolved variable in {newval}. Look for the string in braces and check your source code.".format(newval=newval))
     return newval
 
-
-def generate_random_alarm_message(owner_of_clock:str, time_24h:int, time_minutes:int, snoozed:bool=False) -> str:
-    """Example function with types documented in the docstring.
-
-    `PEP 484`_ type annotations are supported. If attribute, parameter, and
-    return types are annotated according to `PEP 484`_, they do not need to be
-    included in the docstring:
-
-    Args:
-        owner_of_clock: The person whose alarm clock it is.
-        time_24h: hour.
-        time_minutes: minutes.
-        snoozed: If we're snoozing or not.
-
-    Returns:
-        str: Alarm message.
-
-    TODO: Write me
-
-    """
-    if snoozed:
-        message_template = random.choice(postsnooze_alrm_msgs_lst)
-    else:
-        message_template = random.choice(alarm_messages_lst)
-    message = generate_detokenized_message(owner_of_clock, time_24h, time_minutes, message_template)
-    return message
+# def generate_random_alarm_message(owner_of_clock:str, time_24h:int, time_minutes:int, snoozed:bool=False) -> str:
+#     """Example function with types documented in the docstring.
+#
+#     `PEP 484`_ type annotations are supported. If attribute, parameter, and
+#     return types are annotated according to `PEP 484`_, they do not need to be
+#     included in the docstring:
+#
+#     Args:
+#         owner_of_clock: The person whose alarm clock it is.
+#         time_24h: hour.
+#         time_minutes: minutes.
+#         snoozed: If we're snoozing or not.
+#
+#     Returns:
+#         str: Alarm message.
+#
+#     TODO: Write me
+#
+#     """
+#     if snoozed:
+#         message_template = random.choice(postsnooze_alrm_msgs_lst)
+#     else:
+#         message_template = random.choice(alarm_messages_lst)
+#     message = generate_detokenized_message(owner_of_clock, time_24h, time_minutes, message_template)
+#     return message
 
 
 def pathname_of_phrase_audio(voice:str, text:str=None, suffix:str='ogg') -> str:
