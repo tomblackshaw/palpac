@@ -22,7 +22,8 @@ Todo:
 
 """
 
-from my.consts import OWNER_NAME, alarm_messages_lst, postsnooze_alrm_msgs_lst, hours_lst, minutes_lst, hello_owner_lst
+from my.consts import OWNER_NAME, alarm_messages_lst, postsnooze_alrm_msgs_lst, hours_lst, minutes_lst, hello_owner_lst, \
+    wannasnooze_msgs_lst
 from my.text2speech import smart_phrase_audio, deliberately_cache_a_smart_sentence, look_for_dupes, smart_phrase_filenames
 
 from my.text2speech import Text2SpeechSingleton as tts
@@ -115,6 +116,7 @@ if __name__ == '__main__':
     the_voices_i_care_about = (sys.argv[1],) if len(sys.argv) > 1 else tts.all_voices  # [:20]
     for my_voice in the_voices_i_care_about:
         print("Working on", my_voice)
+        cache_and_check_list_of_smart_sentences(voice=my_voice, owner=OWNER_NAME, lst=wannasnooze_msgs_lst, do_punctuation=False)
         cache_phrases_for_voice(my_voice, OWNER_NAME)  # ...which generates mp3 and ogg files
     sys.exit(0)
     # q = Queue(maxsize=0)
