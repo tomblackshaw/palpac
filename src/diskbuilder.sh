@@ -729,19 +729,8 @@ rollback() {
 }
 
 
-
-
-do_primaries
-last_good_snapshot=""
-do_btrfs_prep
-add_rollmeback_script
-for jjjj in install_the_software       \
-        compile_and_install_kernel_and_modules \
-        purge_crap                     \
-        shave_three_seconds_off_boot   \
-        configure_stuff                \
-        run_home_tweaker_script        \
-        run_pi0circle_screen_installer; do
+do_my_hip_thang() {
+    local jjjj=$1
     remount_p4_p2_and_p1
     if [ -e "/tmp/p4/@after_$jjjj" ]; then
         echo "Skipping @after_$jjjj -- we already have a snapshot"
@@ -755,7 +744,25 @@ for jjjj in install_the_software       \
         $jjjj
         snappit "@"after_"$jjjj"
     fi
-done
+}
+
+
+############################################
+
+
+do_primaries
+last_good_snapshot=""
+do_btrfs_prep
+add_rollmeback_script
+
+do_my_hip_thang install_the_software
+do_my_hip_thang compile_and_install_kernel_and_modules
+do_my_hip_thang purge_crap
+do_my_hip_thang shave_three_seconds_off_boot
+do_my_hip_thang configure_stuff   
+do_my_hip_thang run_home_tweaker_script        
+do_my_hip_thang run_pi0circle_screen_installer
+
 if [ "$last_good_snapshot" != "" ]; then
     $last_good_snapshot
     last_good_snapshot=""
