@@ -230,10 +230,9 @@ class FaceDateTimeWindow(QMainWindow):
         self.currentdate_button.clicked.connect(self.set_current_date)
         self.currentyear_button.clicked.connect(self.set_current_year)
         self.currenttime_button.clicked.connect(self.set_current_time)
-        self.year_str = None
-        self.date_str = None
-        self.time_str = None
-        # self.get_current_date_and_time() is called by setVisible()
+        self.year_str = None  # set by setVisible(), which calls self.get_current_date_and_time()
+        self.date_str = None  # set by setVisible(), which calls self.get_current_date_and_time()
+        self.time_str = None  # set by setVisible(), which calls self.get_current_date_and_time()
 
     def is_our_date_string_valid(self):
         return is_date_string_valid(self.currentyear_button.text(), self.currentdate_button.text())
@@ -287,34 +286,34 @@ class FaceDateTimeWindow(QMainWindow):
         output, ok = TenkeyDialog.getOutput(formatstring='../..', minlen=4, maxlen=4)
         if not ok:
             print("Canceled the date-setter")
-        elif not self.is_our_date_string_valid():
-            popup_message("Bad Date", "You specified a dodgy date.")
-        else:
+        elif self.is_our_date_string_valid():
             self.date_str = output
             self.currentdate_button.setText(output)
-        self.set_system_clock()
+            self.set_system_clock()
+        else:
+            popup_message("Bad Date", "You specified a dodgy date.")
 
     def set_current_year(self):
         output, ok = TenkeyDialog.getOutput(formatstring='....', minlen=4, maxlen=4)
         if not ok:
             print("Canceled the year-setter")
-        elif not self.is_our_date_string_valid():
-            popup_message("Bad Year", "You specified a dodgy year.")
-        else:
+        elif self.is_our_date_string_valid():
             self.year_str = output
             self.currentyear_button.setText(output)
-        self.set_system_clock()
+            self.set_system_clock()
+        else:
+            popup_message("Bad Year", "You specified a dodgy year.")
 
     def set_current_time(self):
         output, ok = TenkeyDialog.getOutput(formatstring='..:..', minlen=4, maxlen=4)
         if not ok:
             print("Canceled the time-setter")
-        elif not self.is_our_time_string_valid():
-            popup_message("Bad Time", "You specified a dodgy time.")
-        else:
+        elif self.is_our_time_string_valid():
             self.time_str = output
             self.currenttime_button.setText(output)
-        self.set_system_clock()
+            self.set_system_clock()
+        else:
+            popup_message("Bad Time", "You specified a dodgy time.")
 
     def setVisible(self, onoroff):
         stop_sounds()
