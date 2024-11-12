@@ -23,7 +23,7 @@ Todo:
 """
 
 from my.consts import OWNER_NAME, alarm_messages_lst, postsnooze_alrm_msgs_lst, hours_lst, minutes_lst, hello_owner_lst, \
-    wannasnooze_msgs_lst
+    wannasnooze_msgs_lst, farting_msgs_lst
 from my.text2speech import smart_phrase_audio, deliberately_cache_a_smart_sentence, look_for_dupes, smart_phrase_filenames
 
 from my.text2speech import Text2SpeechSingleton as tts
@@ -103,6 +103,7 @@ def cache_phrases_for_voice(voice:str, owner:str):
     cache_and_check_list_of_smart_sentences(voice, alarm_messages_lst, owner=owner, do_punctuation=False)
     cache_and_check_list_of_smart_sentences(voice, hours_lst, owner=owner)
     cache_and_check_list_of_smart_sentences(voice, minutes_lst, owner=owner)
+    cache_and_check_list_of_smart_sentences(voice, farting_msgs_lst, owner, do_punctuation=False)
 
 # def do_stuff(q):
 #     while True:
