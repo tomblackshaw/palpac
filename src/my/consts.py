@@ -94,7 +94,7 @@ alarm_messages_lst = [
 """At the beep, the time will be ${shorttime}. Beep. Sorry, no, that was premature. Wait? Okay, now, beep.""",
 """Like, Oh Em Gee, you are totes late, ${owner}. JK, it's ${shorttime} and POV your drip is straight fire. Or gay fire. Whatevs. Anyway, time to rise and shine, my short boss sigma!""",
 """${hello_owner}. If you want your bed to outlast its warranty, get up! C'mon! It's ${shorttime} and time's a-wastin', ${owner}.""",
-"""It pulls the bedsheets off its skin, or else it sleeps in late again! It's ${shorttime}, ${owner}?""",
+"""It's ${shorttime}. Hello, Clarice! I mean, ${owner}! It pulls the bedsheets off its skin, or else it sleeps in late again!""",
 """This just in — it is now ${shorttime} and ${owner} is sleeping through the alarm, again. Sources report that our short boss has been up late, sticking out his ghee-at for the rizzler. More to come, after the skibbiddee.""",
 """Hello ${owner}, my favorite minion! It's ${shorttime}. Today, we are going to blow up? The bathroom!""",
 """Oi, ${owner}, mate! It's ${shorttime}. Time to have a red hot go, son! Go waltz your Matilda. Good on ya!""",
@@ -109,20 +109,20 @@ alarm_messages_lst = [
 """Goddamn man-child, you're snoring so loudly, I almost said, "You're so late." ${hello_owner}. It's ${shorttime}""",
 """Hello ${owner}, do do de do de do. Hello ${owner}, do do de do de do, Hello ${owner}, do do de do de do, Hello ${owner}! It's ${shorttime}.""",
 """${hello_owner}. Hop to it, kick some ass, and walk it off. This message does not apply to Stephen Hawking. The time is ${shorttime}.""",
+"""Awake, ${owner}. Heretofore henceforth forthwith and post haste. It's ${shorttime}, my dear, so hither your yon and gird up your loins. It's ${shorttime}.""",
+"""It is now ${shorttime}, and you're Day Loo Loo if you think you can lie in bed all day. Just put the fries in the bag, bro.""",
 ]
 
 postsnooze_alrm_msgs_lst = [
 """Oversleeping is dog water, ${owner}. It's ${shorttime}. Skirrrt!""",
-"""It is now ${shorttime}, and you're Day Loo Loo if you think you can lie in bed all day. Just put the fries in the bag, bro.""",
 """So, ${owner}, were those few extra minutes worthwhile? Ring. Ring. Ring, ring. Yep, it's ${shorttime} now.""",
 """Hi, my name's ${owner}, and I don't like getting up. It's ${shorttime}. Stop snoozing.""",
 """Snooze these nuts, home skillet. It's ${shorttime}, ${owner}. Drag yourself out of bed now.""",
 """${owner} has snoozed, ${owner} hasn't risen, ${owner} will probably snooze again. Whatever. It's ${shorttime} and you've snoozed enough.""",
 """In the beginning was the snooze, and the snooze was with ${owner}, and the snooze was ${owner}. It's ${shorttime} and you're still napping.""",
 """As it is written in Ezekiel 23 verse 20, ${owner}, born of woman, shall have a short time to snooze. It's ${shorttime} and you should get up.""",
-"""Look, you had your fun, ${owner}, but time is passing you by. It's ${shorttime}. Get out there and fuck some shit up, yo.""",
+"""Look, you had your fun, ${owner}, but time is passing you by. It's ${shorttime}. Quit snoozing, get out there and fuck some shit up, yo.""",
 """Buddhists ask, what is the sound of one hand clapping? I ask, what is the sound of one ${owner} napping? It's ${shorttime} and you need to get up.""",
-"""Awake, ${owner}. Heretofore henceforth forthwith and post haste. It's ${shorttime}, my dear, so hither your yon and gird up your loins.""",
 """Hey Alexa, play Baby Shark by Pink Fong, at maximum volume.""",
 """And now it's ${shorttime}. Fantastic. Fan bloody tastic.""",
 """Seriously? You pushed the snooze button, ${owner}, and now it's ${shorttime}. Who raised you?""",
@@ -150,7 +150,7 @@ farting_msgs_lst = [
     """That wasn't me.""",
     """Who was that?""",
     """Who farted?""",
-    """Hey ALexa, who farted?""",
+    """Hey Alexa, who farted?""",
     """Uh-oh.""",
     """I'm sorry.""",
     """Excuse me.""",
@@ -170,3 +170,15 @@ farting_msgs_lst = [
     """Gas leak, detected.""",
     ]
 
+wannasnooze_msgs_lst = [
+    """Five more minutes.""",
+    """Activating Lazy Mode.""",
+    """Okay, slug-a-bed.""",
+    """Whatever. Stay horizontal.""",
+    """Fine, sleepyhead.""",
+    """Whatever.""",
+    """OK, fine.""",
+    """If you must, you must.""",
+    """Really? Really.""",
+    """Le Sigh.""",
+    ]
