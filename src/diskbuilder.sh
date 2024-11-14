@@ -758,10 +758,10 @@ add_rollmeback_script
 do_my_hip_thang install_the_software
 do_my_hip_thang compile_and_install_kernel_and_modules
 do_my_hip_thang purge_crap
-do_my_hip_thang shave_three_seconds_off_boot
-do_my_hip_thang configure_stuff   
-do_my_hip_thang run_home_tweaker_script        
+do_my_hip_thang configure_stuff
+do_my_hip_thang run_home_tweaker_script
 do_my_hip_thang run_pi0circle_screen_installer
+do_my_hip_thang shave_three_seconds_off_boot
 
 if [ "$last_good_snapshot" != "" ]; then
     $last_good_snapshot
