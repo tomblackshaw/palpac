@@ -11,6 +11,8 @@ are named accordingly.
 
 Error
     StartupError
+        AudioStartupError
+            PygameStartupError
         PyQtStartupError
             PyQtUICompilerError
         VersionError
@@ -68,6 +70,20 @@ class VersionError(StartupError):
 
 class PythonVersionError(VersionError):
     """Class for all main app startup errors"""
+
+    def __init__(self, message):  # pylint: disable=useless-parent-delegation
+        super().__init__(message)
+
+
+class AudioStartupError(StartupError):
+    """Class for all audio startup errors"""
+
+    def __init__(self, message):  # pylint: disable=useless-parent-delegation
+        super().__init__(message)
+
+
+class PygameStartupError(StartupError):
+    """Class for pygame startup errors"""
 
     def __init__(self, message):  # pylint: disable=useless-parent-delegation
         super().__init__(message)
