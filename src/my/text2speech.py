@@ -42,7 +42,7 @@ from pydub.exceptions import CouldntDecodeError
 
 from my.classes.exceptions import NoProfessionalVoicesError, MissingFromCacheError
 from my.consts import hours_lst, minutes_lst, farting_msgs_lst, OWNER_NAME, hello_owner_lst, wannasnooze_msgs_lst, \
-    postsnooze_alrm_msgs_lst, alarm_messages_lst
+    postsnooze_alrm_msgs_lst, alarm_messages_lst, motivational_comments_lst
 from my.stringutils import generate_detokenized_message, pathname_of_phrase_audio
 from my.tools.sound.trim import convert_audio_recordings_list_into_one_audio_recording
 from pydub.audio_segment import AudioSegment
@@ -537,6 +537,10 @@ def speak_a_random_alarm_message(owner, voice, alarm_time=None, snoozed=False, f
 
 def speak_a_random_hello_message(owner, voice, fail_quietly=True):
     speak_a_randomly_chosen_smart_sentence(owner, voice, hello_owner_lst, fail_quietly)
+
+
+def speak_a_random_motivational_comment(owner, voice, fail_quietly=True):
+    speak_a_randomly_chosen_smart_sentence(owner, voice, motivational_comments_lst, fail_quietly)
 
 
 def speak_a_random_wannasnooze_message(owner, voice, fail_quietly=True):
