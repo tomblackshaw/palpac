@@ -33,7 +33,7 @@ from pydub.exceptions import CouldntDecodeError
 import os
 from os import listdir
 from os.path import isfile, join
-from my.classes.exceptions import MissingFromCacheError
+from my.classes.exceptions import MissingFromCacheError, PygameStartupError
 from threading import Thread
 from queue import Empty, Queue
 
@@ -152,7 +152,10 @@ def queue_oggfile(fname):  # TODO: rename queue_audiofile
 
 
 ogg_queue = Queue()
-pygame.mixer.init()
+try:
+    pygame.mixer.init()
+except Exception as e:
+    raise PygameStartupError("Unable to initialize pygame -- perhaps you don't have a loudspeaker >>>%s<<<" % str(e)) from e
 consumer_thread = Thread(
         target=ogg_file_queue_thread_func,
         args=(ogg_queue,),
