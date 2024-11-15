@@ -23,9 +23,9 @@ Todo:
 """
 
 from my.consts import OWNER_NAME, alarm_messages_lst, postsnooze_alrm_msgs_lst, hours_lst, minutes_lst, hello_owner_lst, \
-    wannasnooze_msgs_lst, farting_msgs_lst
-from my.text2speech import smart_phrase_audio, deliberately_cache_a_smart_sentence, look_for_dupes, smart_phrase_filenames
-
+    wannasnooze_msgs_lst, farting_msgs_lst, motivational_comments_lst
+from my.text2speech import smart_phrase_audio, deliberately_cache_a_smart_sentence, \
+                    look_for_dupes, smart_phrase_filenames, speak_a_random_motivational_comment
 from my.text2speech import Text2SpeechSingleton as tts
 from my.globals import SOUNDS_ALARMS_PATH, SOUNDS_FARTS_PATH
 from my.tools.sound import mp3_to_ogg_conversions
