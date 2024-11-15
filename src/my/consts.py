@@ -185,7 +185,7 @@ wannasnooze_msgs_lst = [
 
 motivational_comments_lst = [
     """Every day has 24 hours. You are awake for at least 12 of them.""",
-    """Did you charge your cellphone and other electronics devices?""",
+    """Did you charge your cellphone and other electronic devices?""",
     """The floor is not a storage system.""",
     """I love you, but the world doesn't give a shit.""",
     """You understand it. You just don't like it.""",
@@ -198,7 +198,7 @@ motivational_comments_lst = [
     """This is a teachable moment.""",
     """Toss your dirty shoes in my washing machine heart, baby. bang it up inside!""",
     """I want a love that falls as fast as a body from the balcony and I want a kiss like my heart is hitting the ground""",
-    """“Beautiful people are not always good, but good people are always beautiful""",
+    """Beautiful people are not always good, but good people are always beautiful""",
     """The people who are crazy enough to think that they can change the world, are the ones who do.""",
     """We are what we repeatedly do. Excellence, then, is not an act, but a habit.""",
     """If you are always trying to be normal, you’ll never know how amazing you can be.""",
