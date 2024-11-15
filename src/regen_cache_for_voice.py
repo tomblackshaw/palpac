@@ -117,6 +117,11 @@ if __name__ == '__main__':
     the_voices_i_care_about = (sys.argv[1],) if len(sys.argv) > 1 else tts.all_voices  # [:20]
     for my_voice in the_voices_i_care_about:
         print("Working on", my_voice)
+        if my_voice == 'Brian':
+            print("Nope. Brian sucks.")
+            continue
+        cache_and_check_list_of_smart_sentences(voice=my_voice, owner=OWNER_NAME, lst=motivational_comments_lst, do_punctuation=False)
+        cache_and_check_list_of_smart_sentences(voice=my_voice, owner=OWNER_NAME, lst=farting_msgs_lst, do_punctuation=False)
         cache_and_check_list_of_smart_sentences(voice=my_voice, owner=OWNER_NAME, lst=wannasnooze_msgs_lst, do_punctuation=False)
         cache_phrases_for_voice(my_voice, OWNER_NAME)  # ...which generates mp3 and ogg files
     sys.exit(0)
