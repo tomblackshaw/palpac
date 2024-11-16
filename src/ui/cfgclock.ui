@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>480</width>
-    <height>360</height>
+    <height>380</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -61,10 +61,10 @@
    <widget class="QPushButton" name="currenttime_button">
     <property name="geometry">
      <rect>
-      <x>90</x>
-      <y>240</y>
-      <width>300</width>
-      <height>96</height>
+      <x>120</x>
+      <y>304</y>
+      <width>240</width>
+      <height>80</height>
      </rect>
     </property>
     <property name="font">
@@ -79,10 +79,10 @@
    <widget class="QPushButton" name="currentdate_button">
     <property name="geometry">
      <rect>
-      <x>30</x>
-      <y>160</y>
-      <width>211</width>
-      <height>72</height>
+      <x>60</x>
+      <y>250</y>
+      <width>180</width>
+      <height>60</height>
      </rect>
     </property>
     <property name="font">
@@ -97,10 +97,10 @@
    <widget class="QPushButton" name="currentyear_button">
     <property name="geometry">
      <rect>
-      <x>269</x>
-      <y>160</y>
-      <width>181</width>
-      <height>72</height>
+      <x>260</x>
+      <y>250</y>
+      <width>160</width>
+      <height>60</height>
      </rect>
     </property>
     <property name="font">
@@ -115,19 +115,22 @@
    <widget class="QLabel" name="label">
     <property name="geometry">
      <rect>
-      <x>240</x>
-      <y>166</y>
-      <width>21</width>
-      <height>61</height>
+      <x>234</x>
+      <y>254</y>
+      <width>32</width>
+      <height>50</height>
      </rect>
     </property>
     <property name="font">
      <font>
-      <pointsize>72</pointsize>
+      <pointsize>48</pointsize>
      </font>
     </property>
     <property name="text">
      <string>/</string>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignCenter</set>
     </property>
    </widget>
   </widget>

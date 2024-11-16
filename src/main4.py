@@ -31,25 +31,21 @@ it again will hide the configuration tools.
 import os
 import sys
 
+from my.classes.exceptions import MissingFromCacheError
 from PyQt5 import uic
-
 from PyQt5.QtCore import QUrl, Qt, QObject, pyqtSignal, QSize, QTimer
 from PyQt5.QtWidgets import QApplication, QMainWindow, QLabel, QStackedLayout, QWidget, QVBoxLayout, QDialog
-
-from my.gui import BrowserView, set_vdu_brightness, set_audio_volume, make_background_translucent, \
-                screenCaptureWidget, make_scrollbars_zeropixels_in_size, enable_touchscroll, popup_message
+from my.gui import BrowserView, set_vdu_brightness, set_audio_volume, make_background_translucent, screenCaptureWidget, make_scrollbars_zeropixels_in_size, popup_message
 from my.globals import PATHNAMES_OF_CLOCKFACES, TOUCHSCREEN_SIZE_X, TOUCHSCREEN_SIZE_Y, ZOOMS_DCT, SOUNDS_CACHE_PATH, SOUNDS_ALARMS_PATH
 from os.path import join, isdir, isfile
 from os import listdir
 from my.text2speech import speak_a_random_alarm_message, fart_and_apologize, get_random_fart_fname, speak_a_random_hello_message, \
-    speak_a_random_wannasnooze_message
+    speak_a_random_wannasnooze_message, speak_a_random_motivational_comment
 from my.text2speech import Text2SpeechSingleton as tts
 
 from my.consts import OWNER_NAME
 from my import BASEDIR
 from my.classes import singleton
-from my.tools.sound import stop_sounds, play_audiofile, queue_oggfile, clear_ogg_queue
-from my.classes.exceptions import MissingFromCacheError
 import random
 import pwd
 from PyQt5.QtGui import QFont
@@ -66,6 +62,11 @@ BRIGHTNESS = 100
 VOLUME = 8
 SNOOZE_TIMER = QTimer()
 SNOOZE_TIMER.timeout.connect(lambda x=True: Yo.triggerAlarm.emit(x))
+# try:
+from my.tools.sound import stop_sounds, play_audiofile, queue_oggfile, clear_ogg_queue
+# except PygameStartupError as e:
+#     popup_message(str(type(e)), "GET A FRICKIN' LOUDSPEAKER")
+#     sys.exit(0)
 
 
 @singleton
@@ -92,12 +93,12 @@ def set_the_system_clock(year, month, day, hour, minute):
     cmd = '''sudo date -s "%02d/%02d/%04d %02d:%02d"''' % (month, day, year, hour, minute)
     print("cmd = >>>%s<<<" % cmd)
     if 0 != os.system(cmd):
-        print("Failed to run" % cmd)
+        print("Failed to run >>>%s<<<" % cmd)
         raise PermissionError("Unable to set time/date")
 
 
 def trigger_alarm(snoozed):
-    global SNOOZE_TIMER
+#    global SNOOZE_TIMER
     SNOOZE_TIMER.stop()
     print("ALARM IS GOING OFF")
     set_vdu_brightness(100)
@@ -106,7 +107,7 @@ def trigger_alarm(snoozed):
         print("Somehow, you canceled the wakeup dialog")
     elif wannasnooze:
         print("QQQ WE ARE SNOOZING.")
-        SNOOZE_TIMER.start(15000)  # Five minutes = 300,000
+        SNOOZE_TIMER.start(5 * 60 * 10 * 3)  # Five minutes = 5 * 60 * 1000
         speak_a_random_wannasnooze_message(owner=OWNER_NAME, voice=VOICE_NAME)
     else:
         print("So, I'm awake, then. Yay.")
@@ -230,6 +231,10 @@ class FaceDateTimeWindow(QMainWindow):
         self.currentdate_button.clicked.connect(self.set_current_date)
         self.currentyear_button.clicked.connect(self.set_current_year)
         self.currenttime_button.clicked.connect(self.set_current_time)
+        self.currentdate_button.setStyleSheet('QPushButton {color: red;}')  # background-color: #A3C1DA;
+        self.currentyear_button.setStyleSheet('QPushButton {color: red;}')  # background-color: #A3C1DA;
+        self.currenttime_button.setStyleSheet('QPushButton {color: red;}')  # background-color: #A3C1DA;
+        self.label.setStyleSheet('QLabel {background-color: #FFFFFF; color: red;}')
         self.year_str = None  # set by setVisible(), which calls self.get_current_date_and_time()
         self.date_str = None  # set by setVisible(), which calls self.get_current_date_and_time()
         self.time_str = None  # set by setVisible(), which calls self.get_current_date_and_time()
@@ -276,10 +281,10 @@ class FaceDateTimeWindow(QMainWindow):
                             hour=int(hh),
                             minute=int(mm))
         except Exception as e:
-            popup_message(str(type(e)), "You do not have the authority to set the date.")
+            popup_message(str(type(e)), "I was unable to set the time and date.")
             self.get_current_date_and_time()
         except Exception as e:  # pylint: disable=broad-exception-caught
-            popup_message(str(type(e)), "Failed to set date: %s" % str(type(e)))
+            popup_message(str(type(e)), "I failed to make the time/date stick: %s" % str(type(e)))
             self.get_current_date_and_time()
 
     def set_current_date(self):
@@ -395,6 +400,7 @@ class VoicesWindow(QMainWindow):
         self.hello_button.clicked.connect(self.hello_button_clicked)
         self.wakeup_button.clicked.connect(self.wakeup_button_clicked)
         self.randomizer_button.clicked.connect(self.voice_at_random)
+        self.shrek_button.clicked.connect(self.shrek_button_clicked)
         _ = SOUNDS_CACHE_PATH
 
     def voice_at_random(self):
@@ -410,6 +416,13 @@ class VoicesWindow(QMainWindow):
             except Exception as _:  # pylint: disable=broad-exception-caught
                 print("This voice >>>%s<<< failed. Trying another..." % vox)
         print("Random voice >>>%s<<< selected" % vox)
+
+    def shrek_button_clicked(self):
+        stop_sounds()
+        try:
+            speak_a_random_motivational_comment(owner=OWNER_NAME, voice=VOICE_NAME)
+        except MissingFromCacheError:
+            self.fart_button_clicked()
 
     def fart_button_clicked(self):
         stop_sounds()
@@ -461,7 +474,7 @@ class TestingWindow(QMainWindow):
         self.startjs_button.clicked.connect(lambda: Yo.setJsTest.emit(True))
 
     def js_test_button_clicked(self, true_or_false):
-        global ALARM_TIME
+#        global ALARM_TIME
         if true_or_false is True:
             print("START button was clicked")
 #            the_date = datetime.now()
@@ -548,7 +561,7 @@ class ClockFace(BrowserView):
     etc. etc.
 
     Accepted signals:
-        setFace
+        showClockFace
     """
 
     def __init__(self, parent=None):
@@ -616,7 +629,7 @@ class MainWindow(QMainWindow):
         self.our_layout = QStackedLayout()
         self.alarmchecker_timer = QTimer()
         self.alarmchecker_timer.timeout.connect(self.check_timer)
-        self.alarmchecker_timer.start(5000)
+        self.alarmchecker_timer.start(1000)
         self.beard = QLabel("")  # This label (which is invisible) is *stacked* in front of the clock, making it clickable.
         self.clockface = ClockFace(self)  # The clock itself, on display
         self.settings = SettingsWindow(self)  # The configuration window that appears when the user clicks on the beard/clock.
@@ -664,12 +677,12 @@ class MainWindow(QMainWindow):
 
     def check_timer(self):
 #        print("CHECKING TIMER")
-        self.alarmchecker_timer.start(5000)
+        self.alarmchecker_timer.start(2000)
         the_date = datetime.now()
         if ALARM_TIME == '%02d:%02d' % (the_date.hour, the_date.minute):
             self.alarmchecker_timer.stop()
             Yo.triggerAlarm.emit(False)
-            self.alarmchecker_timer.start(55000)  # A minute *after* the alarm time has passed, we'll resume timer-checking. This does not affect the Snooze function.
+            self.alarmchecker_timer.start(58000)  # A minute *after* the alarm time has passed, we'll resume timer-checking. This does not affect the Snooze function.
 
 
 if __name__ == '__main__':
