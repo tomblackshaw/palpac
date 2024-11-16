@@ -178,7 +178,8 @@ wannasnooze_msgs_lst = [
     """Whatever.""",
     """OK, fine.""",
     """If you must, you must.""",
-    """Really? Really.""",
+    """Really? Are you for cereal?""",
+    """Bruh. That's cap.""",
     """Le Sigh.""",
     ]
 
