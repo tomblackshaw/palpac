@@ -11,10 +11,6 @@ This module contains the single-line constants.
 Attributes:
     ELEVENLABS_KEY_BASENAME (str): The path, within the user's home directory,
         to the API key that Eleven Labs uses.
-    MAX_LATLONG_TIMEOUT (int): How long is the default timeout for calling
-        get_lat_and_long() and waiting for the reply?
-    DEFAULT_LATLONG_URL (str): The default URL for finding out our latitude
-        and longitude. It is cqcounter usually.
 
 .. _Style Guide:
    https://sphinxcontrib-napoleon.readthedocs.io/en/latest/example_google.html
@@ -32,7 +28,6 @@ ELEVENLABS_KEY_FILENAME = '%s%s%s' % (os.path.expanduser('~'), os.sep, '.eleven_
 SOUNDS_CACHE_PATH = 'sounds/cache'
 SOUNDS_ALARMS_PATH = 'sounds/alarms'
 SOUNDS_FARTS_PATH = 'sounds/farts'
-MAX_LATLONG_TIMEOUT = 999
 LAZY_SILENCE_THRESHOLD = -65.0
 DEFAULT_SILENCE_THRESHOLD = -50.0
 SNIPPY_SILENCE_THRESHOLD = -30.0
