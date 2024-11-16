@@ -71,6 +71,14 @@ from my.tools.sound import stop_sounds, play_audiofile, queue_oggfile, clear_ogg
 
 @singleton
 class _MyQtSignals(QObject):
+    """Globally available class for triggering specific Qt-level signals for events such as:-
+    - showing a specific clock face
+    - taking a picture of the current clock face that's currently on display on the widget
+    - show a specific image on the widget that usually displays a clock face
+    - hide the Settings window
+    - show the Settings window
+    - trigger the ALARM (plus a 'You were snoozing' message...or not)
+    """
     showClockFace = pyqtSignal(str)
     takePictureOfCurrentClockFace = pyqtSignal()
     showImage = pyqtSignal(str)
@@ -84,6 +92,25 @@ Yo = _MyQtSignals()
 
 
 def face_snapshot_fname(face_path):
+    """Filename of the snapshot of the specific clock face.
+
+    There are a dozen (or so) available clock faces. Each has a name. The name has
+    a relative path -- see PATHNAMES_OF_CLOCKFACES -- associated with it. The path
+    tends to be the path of the index.html file that displays the clock face.
+
+    This function takes the path of a clock face's index.html file, derives a
+    sensible pathname for the snapshot (a sample picture of the clock face), and
+    returns it. This is the location where a snapshot will be saved... presumably
+    by the code that called me.
+
+    Args:
+        face_path (int): The pathname of the clock face's index.html or whatever.
+
+    Returns:
+        str: The pathname of the file where a snapshot of this clock face should
+            be saved.
+
+    """
     homedir = pwd.getpwuid(os.getuid()).pw_dir
     assert('"' not in face_path)
     return('{home}/dotpalpac/thumbs/{faceish}.png'.format(home=homedir, faceish=face_path.replace('/', '_')))
