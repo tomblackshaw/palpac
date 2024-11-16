@@ -104,11 +104,6 @@ def cache_phrases_for_voice(voice:str, owner:str):
     cache_and_check_list_of_smart_sentences(voice, minutes_lst, owner=owner)
     cache_and_check_list_of_smart_sentences(voice, farting_msgs_lst, owner, do_punctuation=False)
 
-# def do_stuff(q):
-#     while True:
-#         cache_phrases_for_voice(q.get(), OWNER_NAME)
-#         q.task_done()
-
 
 if __name__ == '__main__':
     mp3_to_ogg_conversions(SOUNDS_ALARMS_PATH)
@@ -124,14 +119,4 @@ if __name__ == '__main__':
         cache_and_check_list_of_smart_sentences(voice=my_voice, owner=OWNER_NAME, lst=wannasnooze_msgs_lst, do_punctuation=False)
         cache_phrases_for_voice(my_voice, OWNER_NAME)  # ...which generates mp3 and ogg files
     sys.exit(0)
-    # q = Queue(maxsize=0)
-    # workers = []
-    # num_threads = 8
-    # for i in range(num_threads):
-    #     worker = Thread(target=do_stuff, args=(q,))
-    #     worker.setDaemon(True)
-    #     worker.start()
-    # for this_voice in tts.all_voices:
-    #     q.put(this_voice)
-    # q.join()
 
