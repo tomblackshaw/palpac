@@ -36,8 +36,8 @@ MAX_LATLONG_TIMEOUT = 999
 LAZY_SILENCE_THRESHOLD = -65.0
 DEFAULT_SILENCE_THRESHOLD = -50.0
 SNIPPY_SILENCE_THRESHOLD = -30.0
-_faces_dct = {'neon 1':'ui/clocks/neon-clock-css-jquery/dist/index.html',
-             'neon 2':'ui/clocks/this-neon/dist/index.html',
+_faces_dct = {  # 'neon 1':'ui/clocks/neon-clock-css-jquery/dist/index.html',
+#             'neon 2':'ui/clocks/this-neon/dist/index.html',
              'braun':'ui/clocks/braun-clock/dist/index.html',
              'analog 1':'ui/clocks/analog-clock-1/dist/index.html',
              'analog 2':'ui/clocks/analog-digital-clock/dist/index.html',
@@ -48,20 +48,20 @@ _faces_dct = {'neon 1':'ui/clocks/neon-clock-css-jquery/dist/index.html',
              'wall':'ui/clocks/wall-clock/dist/index.html',
              'rounded':'ui/clocks/rounded-clock-main/index.html',
              'series 2':'ui/clocks/time-series-2-typographic-clock/dist/index.html',
-             '3D':'ui/clocks/3d-clock/dist/index.html',
+#             '3D':'ui/clocks/3d-clock/dist/index.html',
              'slide':'ui/clocks/slide-clock/dist/index.html',
              'challenge':'ui/clocks/dev-challenge-week-3/dist/index.html',
              'another':'ui/clocks/another-canvas-clock/dist/index.html',
              'reddy':'ui/clocks/reddy-clock/index.html',
     }
 PATHNAMES_OF_CLOCKFACES = [_faces_dct[k] for k in _faces_dct]
-ZOOMS_DCT = {_faces_dct['neon 1']:.9,
-              _faces_dct['neon 2']:1.16,
+ZOOMS_DCT = {  # _faces_dct['neon 1']:.9,
+#              _faces_dct['neon 2']:1.16,
               _faces_dct['analog 1']:1.46,
               _faces_dct['simple']:1.75,
               _faces_dct['another']:0.93,
               _faces_dct['digital 1']:1.1,
-              _faces_dct['3D']:1.5,
+#              _faces_dct['3D']:1.5,
               _faces_dct['braun']:1.3,
               }
 
