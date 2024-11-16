@@ -2,7 +2,6 @@
 """Wraparound for audio playback, courtesy of pydub and pygame.
 
 Created on Aug 21, 2024
-Updated on Nov 05, 2024
 
 @author: Tom Blackshaw
 

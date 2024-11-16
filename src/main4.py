@@ -3,7 +3,6 @@
 """Sheepdip for a clock display.
 
 Created on Aug 19, 2024
-Updated on Nov 05, 2024
 
 @author: Tom Blackshaw
 

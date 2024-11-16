@@ -2,7 +2,6 @@
 """Creates singleton for _RandomQuoteClass
 
 Created on May 24, 2024
-Updated on Nov 05, 2024
 
 @author: Tom Blackshaw
 

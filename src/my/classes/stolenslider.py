@@ -1,6 +1,5 @@
 '''
 Created on Nov 6, 2024
-Modified on Nov 6, 2024
 
 @author: NIKLASHENNING - https://github.com/niklashenning/pyqt-advanced-slider/blob/master/README.md
 

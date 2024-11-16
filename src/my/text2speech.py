@@ -2,7 +2,6 @@
 """my.text2speech
 
 Created on May 19, 2024
-Updated on Nov 05, 2024
 
 @author: Tom Blackshaw
 
