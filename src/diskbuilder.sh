@@ -591,7 +591,7 @@ compile_and_install_kernel_and_modules() {
         if [ -e "/boot/kernel-v8-$ver.img" ]; then
             echo "Skipping $ver because we did it already"
         else
-            echo "Building kernel variant $verb"
+            echo "Building kernel variant $ver"
             test_optim $ver
         fi
     done
