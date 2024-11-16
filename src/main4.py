@@ -158,7 +158,8 @@ class WakeupDialog(QDialog):
         if timestring is not None:
             self.time_label.setText('GET UP' if timestring is None else timestring)
         speak_a_random_alarm_message(owner=OWNER_NAME, voice=VOICE_NAME, alarm_time=ALARM_TIME, snoozed=snoozed)  # queued
-        queue_oggfile('%s/%s' % (SOUNDS_ALARMS_PATH, ALARMTONE_NAME))
+        for _ in range(0, 64):
+            queue_oggfile('%s/%s' % (SOUNDS_ALARMS_PATH, ALARMTONE_NAME))
 
     def you_pushed_wannasnooze(self):
         self.wannasnooze = True
@@ -715,6 +716,8 @@ if __name__ == '__main__':
     if tts is not None:  # This means we're connected to the Internet. In that case, we're probably running on a Mac Mini (not a PALPAC unit)
         os.system("timedatectl set-ntp false")  # stop auto-update of time&date
         os.system("rm %s/*.png" % os.path.dirname(face_snapshot_fname("foo")))
+    import os
+    os.environ["QV4_JIT_CALL_THRESHOLD"] = "1"
     app = QApplication(sys.argv)
     mainwin = MainWindow()
     mainwin.show()
