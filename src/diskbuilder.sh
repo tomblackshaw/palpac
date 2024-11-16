@@ -554,6 +554,7 @@ EOF
 
 test_optim() {
     local ver=$1
+    cd /usr/src/linux
     optim$ver
     sed -i s/CONFIG_LOCALVERSION=.*/CONFIG_LOCALVERSION=\"-v8-palpac-$ver\"/ .config
     cp -f .config .config.$ver
@@ -565,24 +566,34 @@ test_optim() {
     cp arch/arm/boot/dts/overlays/*.dtb* /boot/overlays/
     cp arch/arm/boot/dts/overlays/README /boot/overlays/
     cp arch/arm/boot/zImage /boot/kernel-v8-$ver.img
+    sed -i s/kernel=.*// /boot/config.txt
+    echo "kernel=kernel-v8-$ver.img" >> /boot/config.txt
+    snappit "@after_building_kernel_$ver"
 }
 
 
 
 compile_and_install_kernel_and_modules() {
-    snag_kernel_src
+    local ver
     mount /boot
-    cpufreq-set -g performance
-    cd /usr/src/linux
-    zcat /proc/config.gz > .config
-    yes "" | make oldconfig
-    sed -i s/CONFIG_LOCALVERSION=.*/CONFIG_LOCALVERSION=\"-v8-stockish\"/ .config
-    yes "" | make -j4 zImage modules dtbs; mount /boot; make modules_install; cp arch/arm/boot/dts/*.dtb /boot/; cp arch/arm/boot/dts/overlays/*.dtb* /boot/overlays/; cp arch/arm/boot/dts/overlays/README /boot/overlays/; cp arch/arm/boot/zImage /boot/kernel-v8-stockish.img
-    for c in A B C D E F G H; do
-        test_optim $c
-        sed -i s/kernel=.*// /boot/config.txt
-        echo "kernel=kernel-v8-$c.img" >> /boot/config.txt
-        snappit "@after_building_kernel_$c"
+    cpufreq-set -g powersave # performance
+    if [ -e "/boot/kernel-v8-stockish.img" ]; then
+        echo "Built the stock(ish) kernel already. No need to snag kernel code etc."
+    else
+        snag_kernel_src
+        cd /usr/src/linux
+        zcat /proc/config.gz > .config
+        yes "" | make oldconfig
+        sed -i s/CONFIG_LOCALVERSION=.*/CONFIG_LOCALVERSION=\"-v8-stockish\"/ .config
+        yes "" | make -j4 zImage modules dtbs; mount /boot; make modules_install; cp arch/arm/boot/dts/*.dtb /boot/; cp arch/arm/boot/dts/overlays/*.dtb* /boot/overlays/; cp arch/arm/boot/dts/overlays/README /boot/overlays/; cp arch/arm/boot/zImage /boot/kernel-v8-stockish.img
+    fi
+    for ver in A B C D E F G H; do
+        if [ -e "/boot/kernel-v8-$ver.img" ]; then
+            echo "Skipping $ver because we did it already"
+        else
+            echo "Building kernel variant $verb"
+            test_optim $ver
+        fi
     done
 }
 
@@ -633,7 +644,12 @@ shave_three_seconds_off_boot() {
 # -retro -rw -background # https://www.computerhope.com/unix/ux.htm
 /usr/bin/X -retro -nolisten &
 for i in {1..999}; do
-    DISPLAY=:0 xhost + && su -l m -c "DISPLAY=:0 /home/m/autorun" >> /tmp/log.txt 2>> /tmp/log.txt
+    DISPLAY=:0 xhost +
+    DISPLAY=:0 xset s off
+    DISPLAY=:0 xset -dpms
+    DISPLAY=:0 xset s 0 0
+    DISPLAY=:0 xset s noblank
+    DISPLAY=:0 systemd-inhibit su -l m -c "DISPLAY=:0 /home/m/autorun" >> /tmp/log.txt 2>> /tmp/log.txt
     sleep 0.4
 done
 exit 0
@@ -691,6 +707,8 @@ set border 0
 set startupmessage 0
 exec xset s off
 exec xset -dpms
+exec xset s 0 0
+exec xset s noblank
 exec xsetroot -cursor /home/m/.emptycursor /home/m/.emptycursor
 exec ~/autorun
 EOF
@@ -750,18 +768,19 @@ do_my_hip_thang() {
 ############################################
 
 
-do_primaries
 last_good_snapshot=""
+do_primaries
 do_btrfs_prep
 add_rollmeback_script
 
+echo "DOING MY HIP THANG"
 do_my_hip_thang install_the_software
 do_my_hip_thang compile_and_install_kernel_and_modules
 do_my_hip_thang purge_crap
 do_my_hip_thang configure_stuff
 do_my_hip_thang run_home_tweaker_script
 do_my_hip_thang run_pi0circle_screen_installer
-do_my_hip_thang shave_three_seconds_off_boot
+#do_my_hip_thang shave_three_seconds_off_boot
 
 if [ "$last_good_snapshot" != "" ]; then
     $last_good_snapshot
