@@ -140,6 +140,8 @@ if [ -e "/boot/firmware/hostname" ] || [ -e "/boot/firmware/wpa_supplicant.conf"
     fi
 fi
 /usr/bin/tvservice -o # disable HDMI until reboot
+cpufreq-set -g performance
+timedatectl set-ntp false
 exit 0
 EOF
 cat << EOF > /boot/firmware/wpa_supplicant.conf.EXAMPLE

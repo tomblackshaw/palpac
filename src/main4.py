@@ -714,7 +714,6 @@ class MainWindow(QMainWindow):
 
 if __name__ == '__main__':
     if tts is not None:  # This means we're connected to the Internet. In that case, we're probably running on a Mac Mini (not a PALPAC unit)
-        os.system("timedatectl set-ntp false")  # stop auto-update of time&date
         os.system("rm %s/*.png" % os.path.dirname(face_snapshot_fname("foo")))
     import os
     os.environ["QV4_JIT_CALL_THRESHOLD"] = "1"
