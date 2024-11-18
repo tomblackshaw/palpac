@@ -52,7 +52,8 @@ from my.classes.stolenslider import StolenSlider
 from my.gui.tenkey import TenkeyDialog
 from my.stringutils import is_time_string_valid, is_date_string_valid
 from datetime import datetime
-VOICE_NAME = [f for f in listdir(SOUNDS_CACHE_PATH) if isdir(join(SOUNDS_CACHE_PATH, f))][0]
+VOICES_LST = [f for f in listdir(SOUNDS_CACHE_PATH) if isdir(join(SOUNDS_CACHE_PATH, f))]
+VOICE_NAME = random.choice(VOICES_LST)
 ALARMTONES_LST = [f for f in listdir(SOUNDS_ALARMS_PATH) if isfile(join(SOUNDS_ALARMS_PATH, f)) and f.endswith('.ogg')]
 ALARMTONE_NAME = random.choice(ALARMTONES_LST)
 ALARM_TIME = None
@@ -715,7 +716,6 @@ class MainWindow(QMainWindow):
 if __name__ == '__main__':
     if tts is not None:  # This means we're connected to the Internet. In that case, we're probably running on a Mac Mini (not a PALPAC unit)
         os.system("rm %s/*.png" % os.path.dirname(face_snapshot_fname("foo")))
-    import os
     os.environ["QV4_JIT_CALL_THRESHOLD"] = "1"
     app = QApplication(sys.argv)
     mainwin = MainWindow()
