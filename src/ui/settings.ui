@@ -159,38 +159,6 @@
      <bool>true</bool>
     </property>
    </widget>
-   <widget class="QPushButton" name="testing_button">
-    <property name="geometry">
-     <rect>
-      <x>190</x>
-      <y>240</y>
-      <width>96</width>
-      <height>96</height>
-     </rect>
-    </property>
-    <property name="sizePolicy">
-     <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-      <horstretch>0</horstretch>
-      <verstretch>0</verstretch>
-     </sizepolicy>
-    </property>
-    <property name="text">
-     <string/>
-    </property>
-    <property name="icon">
-     <iconset>
-      <normaloff>icons/testing.png</normaloff>icons/testing.png</iconset>
-    </property>
-    <property name="iconSize">
-     <size>
-      <width>96</width>
-      <height>96</height>
-     </size>
-    </property>
-    <property name="flat">
-     <bool>true</bool>
-    </property>
-   </widget>
    <widget class="QPushButton" name="alarms_button">
     <property name="geometry">
      <rect>
