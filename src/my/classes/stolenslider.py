@@ -215,6 +215,7 @@ class StolenSlider(QWidget):
         :param event: event sent by PyQt
         """
 
+        del event
         # Only repaint if widget has been resized or value has changed
         resized = self.__slider.size() != self.size()
         value_changed = self.__value != self.__value_last_paint_event
