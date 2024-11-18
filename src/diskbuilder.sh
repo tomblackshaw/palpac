@@ -119,11 +119,10 @@ EOF
 chmod +x /etc/cron.minutely/reboot_if_wifi_dies
 sed -i s/CONF_SWAPSIZE=.*/CONF_SWAPSIZE=2048/ /etc/dphys-swapfile
 sed -i s/'exit 0'// /etc/rc.local
-cat << 'EOF' >> /etc/sudoers
-m       ALL=(ALL:ALL) /usr/bin/date
-EOF
+# cat << 'EOF' >> /etc/sudoers
+# m       ALL=(ALL:ALL) /usr/bin/date
+# EOF
 cat << 'EOF' >> /etc/rc.local
-cpufreq-set -g powersave # ondemand
 if [ -e "/boot/firmware/hostname" ] || [ -e "/boot/firmware/wpa_supplicant.conf" ] ; then
     if [ -e "/boot/firmware/hostname" ] ; then
         oldhost=$(cat /etc/hostname)
