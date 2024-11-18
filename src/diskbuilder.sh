@@ -55,7 +55,7 @@ install_rust() {
 }
 
 
-pythonmodules="timesetter readline wheel setuptools pillow elevenlabs numpy speechrecognition parse annotated-types bs4 more_itertools soxr soundfile pydub sliced librosa" # psola pyqt5 vosk kivymd open-meteo llvmlite
+pythonmodules="timesetter qtpy readline wheel setuptools pillow elevenlabs numpy speechrecognition parse annotated-types bs4 more_itertools soxr soundfile pydub sliced librosa" # psola pyqt5 vosk kivymd open-meteo llvmlite
 
 
 SUB_install_these_modules_with_this_python() {
