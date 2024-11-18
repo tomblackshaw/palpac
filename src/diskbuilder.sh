@@ -750,7 +750,7 @@ rollback() {
 
 do_my_hip_thang() {
     local jjjj=$1
-    remount_p4_p2_and_p1
+    remount_p4_p2_and_p1 2> /dev/null
     if [ -e "/tmp/p4/@after_$jjjj" ]; then
         echo "Skipping @after_$jjjj -- we already have a snapshot"
         last_good_snapshot=@after_$jjjj
