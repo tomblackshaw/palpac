@@ -235,7 +235,7 @@ if [ "$g" == "" ] || [ ! -e "/tmp/p4/"$g ]; then
     echo "SNAPSHOT NOT FOUND; PLEASE CHOOSE ONE OF THESE:
 $(btrfs subvolume list /tmp/p4 | cut -d' ' -f9)" >> /dev/stderr; exit 2
 else
-    rsync -av --del --exclude=tmp /tmp/p4/"$g"/{bin,boot,etc,home,lib,opt,root,sbin,srv,usr,var} /tmp/p2/
+    rsync -av --del --exclude=tmp,home /tmp/p4/"$g"/{bin,boot,etc,home,lib,opt,root,sbin,srv,usr,var} /tmp/p2/
     cp -f /tmp/p4/"$g"/boot/config.txt /tmp/p2/boot/
 fi
 read -t 10 -p "Reboot (y/n)?" choice
