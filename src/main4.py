@@ -529,9 +529,9 @@ class SettingsWindow(QMainWindow):
                         self.configure_a_subwindow(AlarmsWindow, self.alarms_button),
                         self.configure_a_subwindow(VoicesWindow, self.voices_button),
                         self.configure_a_subwindow(VolumeWindow, self.volume_button),
-                        self.configure_a_subwindow(TestingWindow, self.testing_button),
                         self.configure_a_subwindow(FaceDateTimeWindow, self.faces_button),
-                        self.configure_a_subwindow(BrightnessWindow, self.brightness_button)
+                        self.configure_a_subwindow(BrightnessWindow, self.brightness_button),
+#                        self.configure_a_subwindow(TestingWindow, self.testing_button),
                         ]
 
     def configure_a_subwindow(self, a_class, a_button):
