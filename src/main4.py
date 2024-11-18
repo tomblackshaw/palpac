@@ -117,7 +117,7 @@ def face_snapshot_fname(face_path):
 
 
 def set_the_system_clock(year, month, day, hour, minute):
-    cmd = '''sudo date -s "%02d/%02d/%04d %02d:%02d"''' % (month, day, year, hour, minute)
+    cmd = '''sudo /usr/bin/date -s "%02d/%02d/%04d %02d:%02d"''' % (month, day, year, hour, minute)
     print("cmd = >>>%s<<<" % cmd)
     if 0 != os.system(cmd):
         print("Failed to run >>>%s<<<" % cmd)
@@ -134,7 +134,7 @@ def trigger_alarm(snoozed):
         print("Somehow, you canceled the wakeup dialog")
     elif wannasnooze:
         print("QQQ WE ARE SNOOZING.")
-        SNOOZE_TIMER.start(5 * 60 * 10 * 3)  # Five minutes = 5 * 60 * 1000
+        SNOOZE_TIMER.start(5 * 60 * 1000)  # Five minutes = 5 * 60 * 1000
         speak_a_random_wannasnooze_message(owner=OWNER_NAME, voice=VOICE_NAME)
     else:
         print("So, I'm awake, then. Yay.")
