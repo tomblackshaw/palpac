@@ -103,7 +103,7 @@ alarm_messages_lst = [
 """What has four wheels and flies? A dumpster! Speaking of dumpster fires, good morning, ${owner}! It's ${shorttime}.""",
 """Bruh! Procrastinators get minus 100 aura points, but early birds get ate. Get it? Ate, like eaten, but eight like the number? Never mind. It's ${shorttime}""",
 """${hello_owner}. Gird up thy loins, empower thyself, embrace the sunrise, and stop rolling your eyes at me. It's ${shorttime}.""",
-"""Catchphrase! Hm. Catchphrase is my catchphrase? My catchphrase literally is catchphase. Catchy. Very meta. Oh hi, ${owner}! It's ${shorttime}.""",
+"""Catchphrase! Hm. Catchphrase is my catchphrase? My catchphrase literally is catchphrase. Catchy. Very meta. Oh hi, ${owner}! It's ${shorttime}.""",
 """${hello_owner}. The Honeymoon is over. I'm Norman Fucking Rockwell, born to die. Get up or I'll lasso you for some Ultraviolence. It's ${shorttime}""",
 """Goddamn man-child, you're snoring so loudly, I almost said, "You're so late." ${hello_owner}. It's ${shorttime}""",
 """Hello ${owner}, do do de do de do. Hello ${owner}, do do de do de do, Hello ${owner}, do do de do de do, Hello ${owner}! It's ${shorttime}.""",
