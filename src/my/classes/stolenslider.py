@@ -247,7 +247,7 @@ class StolenSlider(QWidget):
         painter = QPainter(self.__canvas)
         try:
             painter.setRenderHint(QPainter.RenderHint.Antialiasing)  # pylint: disable=no-member
-        except:
+        except:  # pylint: disable=bare-except
             pass
         painter.setFont(self.__font)
 
