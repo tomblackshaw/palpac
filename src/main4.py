@@ -399,7 +399,7 @@ class AlarmsWindow(QMainWindow):
                     ALARMTONE_NAME = ALARMTONES_PLS.next
                 print("New alarm chosen", ALARMTONE_NAME)
             try:
-                play_audiofile('%s/%s' % (SOUNDS_ALARMS_PATH, ALARMTONE_NAME), nowait=True)
+                queue_oggfile('%s/%s' % (SOUNDS_ALARMS_PATH, ALARMTONE_NAME))  # play_audiofile('%s/%s' % (SOUNDS_ALARMS_PATH, ALARMTONE_NAME), nowait=True)
                 self.already_playing = True
             except FileNotFoundError:
                 print("alarm_at_random() -- alarm sound file was not found. Therefore, I cannot play it.")
