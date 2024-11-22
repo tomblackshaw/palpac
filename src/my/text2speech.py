@@ -481,9 +481,15 @@ def generate_timedate_phrases_list(timedate_str:str) -> list:
     elif the_hr in (12, '12') and the_min in (0, '0', '00'):
         return ("twelve newn",)  # UGH! Necessary, because ElevenLabs can't pronounce 'noon' properly.
     elif the_ampm == '':
-        return (hours_lst[int(the_hr)] + '?', minutes_lst[int(the_min)])
+        return (hours_lst[int(the_hr)] + '?',
+                minutes_lst[int(the_min)],
+                )
     else:
-        return (hours_lst[int(the_hr)] + '?', minutes_lst[int(the_min)], the_ampm + ',')
+        return (
+            hours_lst[int(the_hr)] + '?',
+            minutes_lst[int(the_min)] + '?',
+            the_ampm + ',',
+            )
 
 
 def speak_a_randomly_chosen_smart_sentence(owner, voice, message_template_list, fail_quietly=True, time_24h=None, time_minute=None):

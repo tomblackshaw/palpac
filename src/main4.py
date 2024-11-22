@@ -45,7 +45,6 @@ from my.text2speech import Text2SpeechSingleton as tts
 from my.consts import OWNER_NAME, motivational_comments_lst, wannasnooze_msgs_lst, hello_owner_lst, alarm_messages_lst
 from my import BASEDIR
 from my.classes import singleton
-import random
 import pwd
 from PyQt5.QtGui import QFont
 from my.classes.stolenslider import StolenSlider
@@ -142,7 +141,7 @@ def trigger_alarm(snoozed):
         print("Somehow, you canceled the wakeup dialog")
     elif wannasnooze:
         print("QQQ WE ARE SNOOZING.")
-        SNOOZE_TIMER.start(5 * 60 * 1000)  # Five minutes = 5 * 60 * 1000
+        SNOOZE_TIMER.start(5 * 60 * 10)  # Five minutes = 5 * 60 * 1000
         speak_this_smart_sentence(owner=OWNER_NAME, voice=VOICE_NAME, message_template=WANNASNOOZE_MSGS_PLS.next)
     else:
         print("So, I'm awake, then. Yay.")
