@@ -113,3 +113,25 @@ class ReadWriteLock:
         """Release a write lock."""
         self._read_ready.release()
 
+
+class ShuffledPlaylist:  # TODO: Make subclass of LIST, please.
+
+    def __init__(self, playlist):
+        self.playlist = playlist
+        random.shuffle(self.playlist)
+        self._itemno = 0
+
+    @property
+    def next(self):
+        retval = self.playlist[self._itemno]
+        self._itemno = (self._itemno + 1) % len(self.playlist)
+        return retval
+
+    @next.setter
+    def next(self, value):
+        raise AttributeError("Nope")
+
+    @property
+    def length(self):
+        return len(self.playlist)
+

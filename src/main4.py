@@ -38,11 +38,10 @@ from my.gui import BrowserView, set_vdu_brightness, set_audio_volume, make_backg
 from my.globals import PATHNAMES_OF_CLOCKFACES, TOUCHSCREEN_SIZE_X, TOUCHSCREEN_SIZE_Y, ZOOMS_DCT, SOUNDS_CACHE_PATH, SOUNDS_ALARMS_PATH
 from os.path import join, isdir, isfile
 from os import listdir
-from my.text2speech import speak_a_random_alarm_message, fart_and_apologize, get_random_fart_fname, speak_a_random_hello_message, \
-    speak_a_random_wannasnooze_message, speak_a_random_motivational_comment
+from my.text2speech import fart_and_apologize, get_random_fart_fname, speak_this_smart_sentence
 from my.text2speech import Text2SpeechSingleton as tts
 
-from my.consts import OWNER_NAME
+from my.consts import OWNER_NAME, motivational_comments_lst, wannasnooze_msgs_lst, hello_owner_lst, alarm_messages_lst
 from my import BASEDIR
 from my.classes import singleton
 import random
@@ -52,12 +51,19 @@ from my.classes.stolenslider import StolenSlider
 from my.gui.tenkey import TenkeyDialog
 from my.stringutils import is_time_string_valid, is_date_string_valid
 from datetime import datetime
-VOICES_LST = [f for f in listdir(SOUNDS_CACHE_PATH) if isdir(join(SOUNDS_CACHE_PATH, f))]
-VOICE_NAME = random.choice(VOICES_LST)
-ALARMTONES_LST = [f for f in listdir(SOUNDS_ALARMS_PATH) if isfile(join(SOUNDS_ALARMS_PATH, f)) and f.endswith('.ogg')]
-ALARMTONE_NAME = random.choice(ALARMTONES_LST)
+from my.classes import ShuffledPlaylist
+
+ALL_VOICES_PLS = ShuffledPlaylist([f for f in listdir(SOUNDS_CACHE_PATH) if isdir(join(SOUNDS_CACHE_PATH, f))])
+VOICE_NAME = ALL_VOICES_PLS.next
+ALARMTONES_PLS = ShuffledPlaylist([f for f in listdir(SOUNDS_ALARMS_PATH) if isfile(join(SOUNDS_ALARMS_PATH, f)) and f.endswith('.ogg')])
+ALARMTONE_NAME = ALARMTONES_PLS.next
+HELLO_OWNER_PLS = ShuffledPlaylist(hello_owner_lst)
+MOTIVATIONAL_COMMENTS_PLS = ShuffledPlaylist(motivational_comments_lst)
+ALARM_MSGS_PLS = ShuffledPlaylist(alarm_messages_lst)
+WANNASNOOZE_MSGS_PLS = ShuffledPlaylist(wannasnooze_msgs_lst)
 ALARM_TIME = None
-MY_CLOCKFACE = random.choice(PATHNAMES_OF_CLOCKFACES)
+CLOCKFACES_PLS = ShuffledPlaylist(PATHNAMES_OF_CLOCKFACES)
+MY_CLOCKFACE = CLOCKFACES_PLS.next
 BRIGHTNESS = 100
 VOLUME = 8
 SNOOZE_TIMER = QTimer()
@@ -135,7 +141,7 @@ def trigger_alarm(snoozed):
     elif wannasnooze:
         print("QQQ WE ARE SNOOZING.")
         SNOOZE_TIMER.start(5 * 60 * 1000)  # Five minutes = 5 * 60 * 1000
-        speak_a_random_wannasnooze_message(owner=OWNER_NAME, voice=VOICE_NAME)
+        speak_this_smart_sentence(owner=OWNER_NAME, voice=VOICE_NAME, message_template=WANNASNOOZE_MSGS_PLS.next)
     else:
         print("So, I'm awake, then. Yay.")
     set_vdu_brightness(BRIGHTNESS)
@@ -158,7 +164,7 @@ class WakeupDialog(QDialog):
         self.awake_button.clicked.connect(self.you_pushed_yesiamawake)
         if timestring is not None:
             self.time_label.setText('GET UP' if timestring is None else timestring)
-        speak_a_random_alarm_message(owner=OWNER_NAME, voice=VOICE_NAME, alarm_time=ALARM_TIME, snoozed=snoozed)  # queued
+        speak_this_smart_sentence(OWNER_NAME, VOICE_NAME, ALARM_MSGS_PLS.next)
         for _ in range(0, 64):
             queue_oggfile('%s/%s' % (SOUNDS_ALARMS_PATH, ALARMTONE_NAME))
 
@@ -289,7 +295,7 @@ class FaceDateTimeWindow(QMainWindow):
         else:
             old_face_path = MY_CLOCKFACE
             while old_face_path == MY_CLOCKFACE:
-                MY_CLOCKFACE = random.choice(PATHNAMES_OF_CLOCKFACES)
+                MY_CLOCKFACE = CLOCKFACES_PLS.next
             print("Random clockface chosen:", MY_CLOCKFACE.split('/')[2])
             Yo.showClockFace.emit(MY_CLOCKFACE)
 
@@ -380,7 +386,7 @@ class AlarmsWindow(QMainWindow):
     def alarm_at_random(self):
         global ALARMTONE_NAME
         self.noof_randomizer_clicks += 1
-        if len(ALARMTONES_LST) <= 1:
+        if ALARMTONES_PLS.length <= 1:
             print("Can't pick an alarmtone at random: there's only one available!")
         elif self.already_playing:
             self.stop_playing()
@@ -390,7 +396,7 @@ class AlarmsWindow(QMainWindow):
             if self.noof_randomizer_clicks > 1:
                 old_name = ALARMTONE_NAME
                 while old_name == ALARMTONE_NAME:
-                    ALARMTONE_NAME = random.choice(ALARMTONES_LST)
+                    ALARMTONE_NAME = ALARMTONES_PLS.next
                 print("New alarm chosen", ALARMTONE_NAME)
             try:
                 play_audiofile('%s/%s' % (SOUNDS_ALARMS_PATH, ALARMTONE_NAME), nowait=True)
@@ -437,7 +443,7 @@ class VoicesWindow(QMainWindow):
             attempts += 1
             vox = "???"
             try:
-                vox = random.choice([f for f in listdir(SOUNDS_CACHE_PATH) if isdir(join(SOUNDS_CACHE_PATH, f))])
+                vox = ALL_VOICES_PLS.next  # random.choice([f for f in listdir(SOUNDS_CACHE_PATH) if isdir(join(SOUNDS_CACHE_PATH, f))])
                 if vox != VOICE_NAME:
                     self.new_voice_chosen(vox)
                     break
@@ -448,7 +454,7 @@ class VoicesWindow(QMainWindow):
     def shrek_button_clicked(self):
         stop_sounds()
         try:
-            speak_a_random_motivational_comment(owner=OWNER_NAME, voice=VOICE_NAME)
+            speak_this_smart_sentence(OWNER_NAME, VOICE_NAME, MOTIVATIONAL_COMMENTS_PLS.next)
         except MissingFromCacheError:
             self.fart_button_clicked()
 
@@ -462,18 +468,14 @@ class VoicesWindow(QMainWindow):
     def hello_button_clicked(self):
         stop_sounds()
         try:
-            speak_a_random_hello_message(owner=OWNER_NAME, voice=VOICE_NAME)
+            speak_this_smart_sentence(OWNER_NAME, VOICE_NAME, HELLO_OWNER_PLS.next)
         except MissingFromCacheError:
             popup_message("Voice Missing", "Please pick a different voice.")
 
     def wakeup_button_clicked(self):
         stop_sounds()
         try:
-            speak_a_random_alarm_message(owner=OWNER_NAME, voice=VOICE_NAME)  # and snooze is False by default
-            # t = datetime.now()
-            # speak_a_random_alarm_message(owner=OWNER_NAME, voice=VOICE_NAME,
-            #                          hour=t.hour, minute=t.minute,
-            #                          snoozed=False, fail_quietly=True)
+            speak_this_smart_sentence(OWNER_NAME, VOICE_NAME, ALARM_MSGS_PLS.next)
         except MissingFromCacheError as _:
             popup_message("Voice Missing", "Please pick a different voice.")
 
