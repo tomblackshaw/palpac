@@ -466,7 +466,7 @@ def smart_phrase_filenames(voice:str, smart_phrase:str, owner:str=None, time_24h
     return audiofilenames
 
 
-def generate_timedate_phrases_list(timedate_str:str) -> str:
+def generate_timedate_phrases_list(timedate_str:str) -> list:
     # FIXME WRITE DOX
     the_hr, the_min = timedate_str.split(':')
     the_hr = the_hr.strip('.')
