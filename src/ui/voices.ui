@@ -29,8 +29,8 @@
    <widget class="QPushButton" name="fart_button">
     <property name="geometry">
      <rect>
-      <x>180</x>
-      <y>140</y>
+      <x>190</x>
+      <y>170</y>
       <width>140</width>
       <height>128</height>
      </rect>
@@ -61,8 +61,8 @@
    <widget class="QPushButton" name="wakeup_button">
     <property name="geometry">
      <rect>
-      <x>60</x>
-      <y>210</y>
+      <x>70</x>
+      <y>240</y>
       <width>128</width>
       <height>128</height>
      </rect>
@@ -93,8 +93,8 @@
    <widget class="QPushButton" name="randomizer_button">
     <property name="geometry">
      <rect>
-      <x>50</x>
-      <y>60</y>
+      <x>70</x>
+      <y>100</y>
       <width>128</width>
       <height>128</height>
      </rect>
@@ -125,8 +125,8 @@
    <widget class="QPushButton" name="hello_button">
     <property name="geometry">
      <rect>
-      <x>180</x>
-      <y>0</y>
+      <x>190</x>
+      <y>30</y>
       <width>140</width>
       <height>128</height>
      </rect>
@@ -157,8 +157,8 @@
    <widget class="QPushButton" name="shrek_button">
     <property name="geometry">
      <rect>
-      <x>190</x>
-      <y>280</y>
+      <x>200</x>
+      <y>300</y>
       <width>128</width>
       <height>128</height>
      </rect>
