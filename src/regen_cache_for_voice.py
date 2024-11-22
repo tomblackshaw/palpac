@@ -25,8 +25,8 @@ from my.consts import OWNER_NAME, alarm_messages_lst, postsnooze_alrm_msgs_lst, 
     wannasnooze_msgs_lst, farting_msgs_lst, motivational_comments_lst
 from my.text2speech import look_for_dupes, deliberately_cache_a_smart_sentence, smart_phrase_audio
 from my.text2speech import Text2SpeechSingleton as tts
-from my.globals import SOUNDS_ALARMS_PATH, SOUNDS_FARTS_PATH
-from my.tools.sound import mp3_to_ogg_conversions
+from my.globals import SOUNDS_ALARMS_PATH, SOUNDS_FARTS_PATH, TRIMMED_ALARMS_PATH
+from my.tools.sound import mp3_to_ogg_conversions, generate_trimmed_alarm_sounds
 import sys
 from my.stringutils import generate_detokenized_message
 
@@ -103,8 +103,13 @@ def cache_phrases_for_voice(voice:str, owner:str):
     cache_and_check_list_of_smart_sentences(voice, farting_msgs_lst, owner, do_punctuation=False)
 
 
+import os
+from os import listdir
+from os.path import isfile, join
+
 if __name__ == '__main__':
     mp3_to_ogg_conversions(SOUNDS_ALARMS_PATH)
+    generate_trimmed_alarm_sounds(SOUNDS_ALARMS_PATH, TRIMMED_ALARMS_PATH, trim_level=3)
     mp3_to_ogg_conversions(SOUNDS_FARTS_PATH)
     the_voices_i_care_about = (sys.argv[1],) if len(sys.argv) > 1 else tts.all_voices  # [:20]
     for my_voice in the_voices_i_care_about:

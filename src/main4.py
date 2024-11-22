@@ -35,7 +35,8 @@ from PyQt5 import uic
 from PyQt5.QtCore import QUrl, Qt, QObject, pyqtSignal, QSize, QTimer
 from PyQt5.QtWidgets import QApplication, QMainWindow, QLabel, QStackedLayout, QWidget, QVBoxLayout, QDialog
 from my.gui import BrowserView, set_vdu_brightness, set_audio_volume, make_background_translucent, screenCaptureWidget, make_scrollbars_zeropixels_in_size, popup_message
-from my.globals import PATHNAMES_OF_CLOCKFACES, TOUCHSCREEN_SIZE_X, TOUCHSCREEN_SIZE_Y, ZOOMS_DCT, SOUNDS_CACHE_PATH, SOUNDS_ALARMS_PATH
+from my.globals import PATHNAMES_OF_CLOCKFACES, TOUCHSCREEN_SIZE_X, TOUCHSCREEN_SIZE_Y, ZOOMS_DCT, SOUNDS_CACHE_PATH, SOUNDS_ALARMS_PATH, \
+    TRIMMED_ALARMS_PATH
 from os.path import join, isdir, isfile
 from os import listdir
 from my.text2speech import fart_and_apologize, get_random_fart_fname, speak_this_smart_sentence, postsnooze_alrm_msgs_lst
@@ -400,7 +401,7 @@ class AlarmsWindow(QMainWindow):
                     ALARMTONE_NAME = ALARMTONES_PLS.next
                 print("New alarm chosen", ALARMTONE_NAME)
             try:
-                queue_oggfile('%s/%s' % (SOUNDS_ALARMS_PATH, ALARMTONE_NAME))  # play_audiofile('%s/%s' % (SOUNDS_ALARMS_PATH, ALARMTONE_NAME), nowait=True)
+                queue_oggfile('%s/%s' % (TRIMMED_ALARMS_PATH, ALARMTONE_NAME))  # play_audiofile('%s/%s' % (SOUNDS_ALARMS_PATH, ALARMTONE_NAME), nowait=True)
                 self.already_playing = True
             except FileNotFoundError:
                 print("alarm_at_random() -- alarm sound file was not found. Therefore, I cannot play it.")

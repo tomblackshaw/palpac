@@ -138,6 +138,21 @@ def clear_ogg_queue():
     stop_sounds()
 
 
+def generate_trimmed_alarm_sounds(input_path, output_path, trim_level=1):
+    errors = 0
+    oggfiles = [f for f in listdir(input_path) if isfile(join(input_path, f)) and f.endswith('.ogg')]
+    for f in oggfiles:
+        oggfname = '%s/%s' % (input_path, f)
+        trimmedfname = '%s/%s' % (output_path, f)
+        generate_a_trimmed_alarm_sound(oggfname, trimmedfname, trim_level)
+
+
+def generate_a_trimmed_alarm_sound(oggfname, trimmedfname, trim_level):
+    untrimmed_audio = AudioSegment.from_ogg(oggfname)
+    trimmed_aud = trim_my_audio(untrimmed_audio, trim_level)
+    trimmed_aud.export(trimmedfname, format="ogg")
+
+
 _CLEAR_THE_QUEUE = False
 
 
