@@ -38,7 +38,7 @@ from my.gui import BrowserView, set_vdu_brightness, set_audio_volume, make_backg
 from my.globals import PATHNAMES_OF_CLOCKFACES, TOUCHSCREEN_SIZE_X, TOUCHSCREEN_SIZE_Y, ZOOMS_DCT, SOUNDS_CACHE_PATH, SOUNDS_ALARMS_PATH
 from os.path import join, isdir, isfile
 from os import listdir
-from my.text2speech import fart_and_apologize, get_random_fart_fname, speak_this_smart_sentence
+from my.text2speech import fart_and_apologize, get_random_fart_fname, speak_this_smart_sentence, postsnooze_alrm_msgs_lst
 from my.text2speech import Text2SpeechSingleton as tts
 
 from my.consts import OWNER_NAME, motivational_comments_lst, wannasnooze_msgs_lst, hello_owner_lst, alarm_messages_lst
@@ -61,6 +61,7 @@ HELLO_OWNER_PLS = ShuffledPlaylist(hello_owner_lst)
 MOTIVATIONAL_COMMENTS_PLS = ShuffledPlaylist(motivational_comments_lst)
 ALARM_MSGS_PLS = ShuffledPlaylist(alarm_messages_lst)
 WANNASNOOZE_MSGS_PLS = ShuffledPlaylist(wannasnooze_msgs_lst)
+POSTSNOOZE_ALARM_MSGS_PLS = ShuffledPlaylist(postsnooze_alrm_msgs_lst)
 ALARM_TIME = None
 CLOCKFACES_PLS = ShuffledPlaylist(PATHNAMES_OF_CLOCKFACES)
 MY_CLOCKFACE = CLOCKFACES_PLS.next
@@ -164,7 +165,7 @@ class WakeupDialog(QDialog):
         self.awake_button.clicked.connect(self.you_pushed_yesiamawake)
         if timestring is not None:
             self.time_label.setText('GET UP' if timestring is None else timestring)
-        speak_this_smart_sentence(OWNER_NAME, VOICE_NAME, ALARM_MSGS_PLS.next)
+        speak_this_smart_sentence(OWNER_NAME, VOICE_NAME, POSTSNOOZE_ALARM_MSGS_PLS.next if snoozed else ALARM_MSGS_PLS.next)
         for _ in range(0, 64):
             queue_oggfile('%s/%s' % (SOUNDS_ALARMS_PATH, ALARMTONE_NAME))
 
