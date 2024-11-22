@@ -508,18 +508,6 @@ def speak_a_randomly_chosen_smart_sentence(owner, voice, message_template_list, 
         print("Playing", f)
         queue_oggfile(f)
 
-# def get_list_of_files_for_speaking_a_random_alarm_message(owner, hour, minute, voice, snoozed=False, fail_quietly=False):
-#     my_txt = generate_random_alarm_message(owner_of_clock=owner, time_24h=hour, time_minutes=minute, snoozed=snoozed)
-#     print("Random alarm message:", my_txt)
-#     fnames = smart_phrase_filenames(voice, my_txt, fail_quietly=fail_quietly)
-#     return fnames
-#
-#
-# def speak_a_random_alarm_message(owner, hour, minute, voice, snoozed=False, fail_quietly=True):
-#     for f in get_list_of_files_for_speaking_a_random_alarm_message(owner, hour, minute, voice, snoozed, fail_quietly):
-#         print("Playing", f)
-#         queue_oggfile(f)
-
 
 def speak_a_random_alarm_message(owner, voice, alarm_time=None, snoozed=False, fail_quietly=True):
     if alarm_time is None:
