@@ -498,6 +498,10 @@ def speak_a_randomly_chosen_smart_sentence(owner, voice, message_template_list, 
 
     """
     message_template = random.choice(message_template_list)
+    speak_this_smart_sentence(owner, voice, message_template, fail_quietly, time_24h, time_minute)
+
+
+def speak_this_smart_sentence(owner, voice, message_template, fail_quietly=True, time_24h=None, time_minute=None):
     if time_24h is None or time_minute is None:
         t = datetime.now()
         time_24h = t.hour
