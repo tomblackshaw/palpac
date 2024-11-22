@@ -377,7 +377,7 @@ class AlarmsWindow(QMainWindow):
     def update_alarmtime_button_text(self):
         self.alarmtime_button.setText("(none)" if ALARM_TIME is None else ALARM_TIME)
 
-    def stop_playing(self):
+    def stop_playing_it(self):
         stop_sounds()
         self.already_playing = False
         sz = self.randomizer_button.iconSize()
@@ -389,7 +389,7 @@ class AlarmsWindow(QMainWindow):
         if ALARMTONES_PLS.length <= 1:
             print("Can't pick an alarmtone at random: there's only one available!")
         elif self.already_playing:
-            self.stop_playing()
+            self.stop_playing_it()
         else:
             sz = self.randomizer_button.iconSize()
             self.randomizer_button.setIconSize(QSize(sz.width() * 2, sz.height() * 2))
