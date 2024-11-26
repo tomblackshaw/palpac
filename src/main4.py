@@ -141,7 +141,7 @@ def trigger_alarm(snoozed):
         print("Somehow, you canceled the wakeup dialog")
     elif wannasnooze:
         print("QQQ WE ARE SNOOZING.")
-        SNOOZE_TIMER.start(5 * 60 * 10)  # Five minutes = 5 * 60 * 1000
+        SNOOZE_TIMER.start(5 * 60 * 1000)  # Five minutes = 5 * 60 * 1000
         speak_this_smart_sentence(owner=OWNER_NAME, voice=VOICE_NAME, message_template=WANNASNOOZE_MSGS_PLS.next)
     else:
         print("So, I'm awake, then. Yay.")
