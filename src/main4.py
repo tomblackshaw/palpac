@@ -136,7 +136,9 @@ def trigger_alarm(snoozed):
     SNOOZE_TIMER.stop()
     print("ALARM IS GOING OFF")
     set_vdu_brightness(100)
-    wannasnooze, ok = WakeupDialog.getOutput(timestring=ALARM_TIME, snoozed=snoozed)
+    the_date = datetime.now()
+    timestring = '%02d:%02d' % (the_date.hour, the_date.minute)
+    wannasnooze, ok = WakeupDialog.getOutput(timestring=timestring, snoozed=snoozed)
     if not ok:
         print("Somehow, you canceled the wakeup dialog")
     elif wannasnooze:
